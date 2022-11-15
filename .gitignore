@@ -19,6 +19,7 @@
 .idea/**/contentModel.xml
 */bin
 */obj
+/API/appsettings.json
 
 # Sensitive or high-churn files
 .idea/**/dataSources/
