@@ -1,3 +1,8 @@
+using System.Text.Json.Serialization;
+using Infrastructure.DB;
+using Infrastructure.DBPostgresql;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -7,17 +12,30 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddControllers()
+    .AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
-
-/* Setup the Database Context Class with ConnectionString in AppSettings
- 
-builder.Services.AddDbContext<DBContext>(options => options. //UseSomeDatabaseServer//(
-builder.Configuration.GetConnectionString("SQLDatabaseConnection");
-*/
 
 // Setup DependencyResolver Service
 Application.DependencyResolver.DependencyResolverService.RegisterApplicationLayer(builder.Services);
 Infrastructure.DependencyResolver.DependencyResolverService.RegisterInfrastructureLayer(builder.Services);
+
+if (builder.Environment.IsDevelopment())
+{
+    /* Setup the Database Context Class with ConnectionString in AppSettings */
+   
+    builder.Services.AddDbContext<DBContextSqlite>(options => options.UseSqlite(
+       builder.Configuration.GetConnectionString("ConnectionStringsDevelopment")));
+}
+
+if (builder.Environment.IsProduction())
+{
+    builder.Services.AddDbContext<DBContextPostgresql>(options => options.UseNpgsql(
+        builder.Configuration.GetConnectionString("ConnectionStringsProduction")));
+}
+
+
+
 
 var app = builder.Build();
 
@@ -26,6 +44,11 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+}
+
+if (app.Environment.IsProduction())
+{
+    
 }
 
 app.UseHttpsRedirection();

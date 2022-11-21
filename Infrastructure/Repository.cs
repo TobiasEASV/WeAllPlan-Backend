@@ -5,4 +5,5 @@ namespace Infrastructure;
 
 public class Repository:IRepository
 {
+    
 }
