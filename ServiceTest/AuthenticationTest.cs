@@ -11,10 +11,15 @@ namespace ServiceTest;
 public class AuthenticationTest
 {
     private readonly ITestOutputHelper _testOutputHelper;
+    private Mock<IUserRepository> _mockRepo;
+    private Mock<IOptions<AppSettings>> _mockAppSetting;
 
     public AuthenticationTest(ITestOutputHelper testOutputHelper)
     {
         _testOutputHelper = testOutputHelper;
+        _mockRepo = new Mock<IUserRepository>();
+        _mockAppSetting = new Mock<IOptions<AppSettings>>();
+        
     }
 
     /// <summary>
@@ -25,10 +30,9 @@ public class AuthenticationTest
     {
         // Arrange
         Mock<IUserRepository> mockRepo = new Mock<IUserRepository>();
-        Mock<IOptions<AppSettings>> mockAppSetting = new Mock<IOptions<AppSettings>>();
-
+        
         // Act
-        IAuthenticationService authService = new AuthenticationService(mockRepo.Object, mockAppSetting.Object);
+        IAuthenticationService authService = new AuthenticationService(_mockRepo.Object, _mockAppSetting.Object);
 
         // Assert
         Assert.NotNull(authService);
@@ -45,11 +49,9 @@ public class AuthenticationTest
         IAuthenticationService authService;
         string expected = "Can't create service object with null repository.";
 
-        Mock<IOptions<AppSettings>> mockAppSetting = new Mock<IOptions<AppSettings>>();
-
         // Act + Assert
         var ex = Assert.Throws<NullReferenceException>(() =>
-            authService = new AuthenticationService(null, mockAppSetting.Object));
+            authService = new AuthenticationService(null, _mockAppSetting.Object));
         Assert.Equal(expected, ex.Message);
     }
 
@@ -63,20 +65,57 @@ public class AuthenticationTest
         IAuthenticationService authService;
         string expected = "Can't create service object without secret file (appsetting).";
 
-        Mock<IUserRepository> mockRepo = new Mock<IUserRepository>();
-
         // Act + Assert
         var ex = Assert.Throws<NullReferenceException>(() =>
-            authService = new AuthenticationService(mockRepo.Object, null));
+            authService = new AuthenticationService(_mockRepo.Object, null));
         Assert.Equal(expected, ex.Message);
         
     }
 
     /// <summary>
-    /// Test case 2.1
+    /// Test case 2.1 - 2.2
     /// </summary>
-    [Fact]
-    public void InValidRegisterTest()
+    [InlineData( "jan@easv.dk", "jan12345", "John Doe")]
+    [InlineData( null, null, null)]
+    public void InValidRegisterTest(string email, string password, string name)
     {
+        // Arrange
+        
+
+        // Act
+        
+        
+        // Assert
+      
+    }
+    
+    /// <summary>
+    /// Test case 2.3 - 2.6
+    /// </summary>
+    [InlineData( "jan@easvdk", "jan12345", "John Doe")]
+    [InlineData( "janeasv.dk", "jan12345", "John Doe")]
+    [InlineData( "jan@.dk", "jan12345", "John Doe")]
+    [InlineData( "jan#@easv.dk", "jan12345", "John Doe")]
+    public void InValidEmailTest(string email, string password, string name)
+    {
+        
+    }
+    
+    /// <summary>
+    /// Test case 2.7
+    /// </summary>
+    [InlineData( "jan@easvdk", "jan1234", "John Doe")]
+    public void InValidPasswordTest(string email, string password, string name)
+    {
+        
+    }
+    
+    /// <summary>
+    /// Test case 2.8
+    /// </summary>
+    [InlineData( "jan@easvdk", "jan12345", "")]
+    public void InValidNameTest(string email, string password, string name)
+    {
+        
     }
 }

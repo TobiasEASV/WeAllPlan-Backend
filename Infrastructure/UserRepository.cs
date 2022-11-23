@@ -1,8 +1,9 @@
-﻿using Core;
+﻿using Application.Interfaces;
+using Core;
 
 namespace Infrastructure;
 
-public class UserRepository
+public class UserRepository: IUserRepository
 {
     
 }
