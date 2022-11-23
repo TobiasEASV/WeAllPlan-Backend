@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using Application.Helpers;
+using FluentValidation;
 using Infrastructure.DB;
 using Infrastructure.DBPostgresql;
 using Microsoft.EntityFrameworkCore;
@@ -21,6 +22,8 @@ builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSet
 // Setup DependencyResolver Service
 Application.DependencyResolver.DependencyResolverService.RegisterApplicationLayer(builder.Services);
 Infrastructure.DependencyResolver.DependencyResolverService.RegisterInfrastructureLayer(builder.Services);
+
+builder.Services.AddValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
 
 if (builder.Environment.IsDevelopment())
 {

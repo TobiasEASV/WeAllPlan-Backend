@@ -1,14 +1,17 @@
-﻿using Application;
+﻿using System.Security.Cryptography;
+using Application;
 using Application.DTO;
 using Application.Helpers;
 using Application.Interfaces;
+using Application.Validators;
 using AutoMapper;
 using Core;
 using Core.Interfaces;
+using FluentValidation;
 using Microsoft.Extensions.Options;
 using Moq;
-using Npgsql.TypeMapping;
 using Xunit.Abstractions;
+using ValidationException = System.ComponentModel.DataAnnotations.ValidationException;
 
 namespace ServiceTest;
 
@@ -19,19 +22,22 @@ public class AuthenticationTest
     private Mock<IOptions<AppSettings>> _mockAppSetting;
     private IAuthenticationService _service;
     private IMapper _mapper;
+    private IValidator<RegisterUserDto> _validator;
 
     public AuthenticationTest(ITestOutputHelper testOutputHelper)
     {
         _testOutputHelper = testOutputHelper;
         _mockRepo = new Mock<IUserRepository>();
         _mockAppSetting = new Mock<IOptions<AppSettings>>();
-        _service = new AuthenticationService(_mockRepo.Object, _mockAppSetting.Object);
+        _validator = new UserValidator();
+        
         
         var config = new MapperConfiguration(conf => {
             conf.CreateMap<RegisterUserDto, User>(); //RegisterUserDto ==> User - create new user
         });
         _mapper = config.CreateMapper();
 
+        _service = new AuthenticationService(_mockRepo.Object, _mockAppSetting.Object, _validator);
     }
 
     /// <summary>
@@ -41,10 +47,8 @@ public class AuthenticationTest
     public void ValidAuthenticationServiceTest()
     {
         // Arrange
-        Mock<IUserRepository> mockRepo = new Mock<IUserRepository>();
-        
         // Act
-        IAuthenticationService authService = new AuthenticationService(_mockRepo.Object, _mockAppSetting.Object);
+        IAuthenticationService authService = new AuthenticationService(_mockRepo.Object, _mockAppSetting.Object, _validator);
 
         // Assert
         Assert.NotNull(authService);
@@ -63,7 +67,7 @@ public class AuthenticationTest
 
         // Act + Assert
         var ex = Assert.Throws<NullReferenceException>(() =>
-            authService = new AuthenticationService(null, _mockAppSetting.Object));
+            authService = new AuthenticationService(null, _mockAppSetting.Object, _validator));
         Assert.Equal(expected, ex.Message);
     }
 
@@ -79,7 +83,7 @@ public class AuthenticationTest
 
         // Act + Assert
         var ex = Assert.Throws<NullReferenceException>(() =>
-            authService = new AuthenticationService(_mockRepo.Object, null));
+            authService = new AuthenticationService(_mockRepo.Object, null, _validator));
         Assert.Equal(expected, ex.Message);
         
     }
@@ -91,15 +95,16 @@ public class AuthenticationTest
     public void InvalidRegisterUserExcistTest()
     {
         // Arrange
-        var fakeUser = new RegisterUserDto() { Email = "jan@easv.dk", Password = "jan12345", Name = "John Doe" };
+        RegisterUserDto fakeUser = new RegisterUserDto() { Email = "jan@easv.dk", Password = "jan12345", Name = "John Doe" };
         string expected = fakeUser.Email + " is already in use.";
         _mockRepo.Setup(UserRepository => UserRepository.GetUserByEmail(fakeUser.Email)).Returns(_mapper.Map<User>(fakeUser));
 
         // Act + assert
-        var ex = Assert.Throws<Exception>(() =>
+        Exception ex = Assert.Throws<Exception>(() =>
             _service.Register(fakeUser));
         
         Assert.Equal(expected, ex.Message);
+        _mockRepo.Verify(repository => repository.CreateNewUser(_mapper.Map<User>(fakeUser)), Times.Never);
     }
     
     /// <summary>
@@ -117,35 +122,94 @@ public class AuthenticationTest
             _service.Register(fakeUser));
         
         Assert.Equal(expected, ex.Message);
+        _mockRepo.Verify(repository => repository.CreateNewUser(_mapper.Map<User>(fakeUser)), Times.Never);
     }
     
     /// <summary>
-    /// Test case 2.3 - 2.6
+    /// Test case 2.3 - 2.5
     /// </summary>
+    [Theory]
     [InlineData( "jan@easvdk", "jan12345", "John Doe")]
     [InlineData( "janeasv.dk", "jan12345", "John Doe")]
     [InlineData( "jan@.dk", "jan12345", "John Doe")]
-    [InlineData( "jan#@easv.dk", "jan12345", "John Doe")]
-    public void InValidEmailTest(string email, string password, string name)
+    public void InvalidRegisterEmailTest(string email, string password, string name)
     {
+        // Arrange
+        string expected = "invalid email, email must follow pattern John.doe@example.com";
+        var fakeUser = new RegisterUserDto() { Email = email, Password = password, Name = name };
         
+        // Act
+        var ex = Assert.Throws<ValidationException>(() =>
+            _service.Register(fakeUser));
+        
+        // Assert
+        Assert.Equal(expected, ex.Message);
+        _mockRepo.Verify(repository => repository.CreateNewUser(_mapper.Map<User>(fakeUser)), Times.Never);
+    }
+    
+    /// <summary>
+    /// Test case 2.6
+    /// </summary>
+    [Fact]
+    public void InvalidRegisterPasswordTest()
+    {
+        // Arrange
+        string email = "jan@easvdk";
+        string password = "jan1234";
+        string name = "John Doe";
+        string expected = "invalid password, password must be greater than eight characters.";
+        var fakeUser = new RegisterUserDto() { Email = email, Password = password, Name = name };
+        
+        // Act
+        var ex = Assert.Throws<ValidationException>(() =>
+            _service.Register(fakeUser));
+        
+        // Assert
+        Assert.Equal(expected, ex.Message);
+        _mockRepo.Verify(repository => repository.CreateNewUser(_mapper.Map<User>(fakeUser)), Times.Never);
     }
     
     /// <summary>
     /// Test case 2.7
     /// </summary>
-    [InlineData( "jan@easvdk", "jan1234", "John Doe")]
-    public void InValidPasswordTest(string email, string password, string name)
+    [Fact]
+    public void InvalidRegisterNameTest()
     {
+        // Arrange
+        string email = "jan@easvdk";
+        string password = "jan12345";
+        string name = "";
+        string expected =  "invalid name, name cannot be empty";
+        var fakeUser = new RegisterUserDto() { Email = email, Password = password, Name = name };
         
+        // Act
+        var ex = Assert.Throws<ValidationException>(() =>
+            _service.Register(fakeUser));
+        
+        // Assert
+        Assert.Equal(expected, ex.Message);
+        _mockRepo.Verify(repository => repository.CreateNewUser(_mapper.Map<User>(fakeUser)), Times.Never);
     }
     
     /// <summary>
-    /// Test case 2.8
+    /// Test case 3.1
     /// </summary>
-    [InlineData( "jan@easvdk", "jan12345", "")]
-    public void InValidNameTest(string email, string password, string name)
+    [Fact]
+    public void ValidRegisterTest()
     {
-        
+        // Arrange
+        string email = "jan@easv.dk";
+        string password = "jan12345";
+        string name = "John Doe";
+        string expected = "User successfully registered";
+        var fakeUser = new RegisterUserDto() { Email = email, Password = password, Name = name };
+        _mockRepo.Setup(UserRepository => UserRepository.GetUserByEmail(fakeUser.Email)).Throws(new KeyNotFoundException());
+
+        // Act
+        var actual = _service.Register(fakeUser);
+
+        // Assert
+         Assert.Equal(expected, actual);
+         _mockRepo.Verify(repository => repository.CreateNewUser(It.IsAny<User>()), Times.Once);
     }
 }

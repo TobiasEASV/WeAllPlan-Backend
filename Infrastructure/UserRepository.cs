@@ -20,6 +20,6 @@ public class UserRepository: IUserRepository
 
     public void CreateNewUser(User user)
     {
-        throw new NotImplementedException();
+        
     }
 }
