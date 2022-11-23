@@ -2,17 +2,26 @@ using Application;
 using Application.Interfaces;
 using AutoMapper;
 using Core;
+using Infrastructure;
 using Moq;
 
 namespace ServiceTest;
 
 public class EventTest
 {
-    private IMapper mapper = new MapperConfiguration(config =>
+    
+    private IMapper _mapper;
+
+    public EventTest()
     {
-        config.CreateMap<EventDTO, Event>();
         
-    }).CreateMapper();
+        var config = new MapperConfiguration(conf => {
+            conf.CreateMap<EventDTO, Event>(); //RegisterUserDto ==> User - create new user
+            conf.CreateMap<Event,EventDTO>();
+        });
+        _mapper = config.CreateMapper();
+    }
+    
     /// <summary>
     /// 1.1
     /// </summary>
@@ -21,9 +30,9 @@ public class EventTest
     {
         // Arrange
         Mock<IEventRepository> mockRepo = new Mock<IEventRepository>();
-
+      
         // Act
-        IEventService service = new EventService(mockRepo.Object,mapper);
+        IEventService service = new EventService(mockRepo.Object,_mapper);
         
 
         // Assert
@@ -53,16 +62,17 @@ public class EventTest
         // Arrange
         Mock<IEventRepository> mockRepo = new Mock<IEventRepository>();
         
-        
-        
+        IEventService service = new EventService(mockRepo.Object, _mapper);
 
-        IEventService service = new EventService(mockRepo.Object, mapper);
-        
         //Act
-        Event testEvent = service.CreateEvent(eventDto);
+        EventDTO tesst = service.CreateEvent(eventDto);
+        
+        
         
         //assert
-        Assert.True(testEvent is Event);
+        mockRepo.Verify( repo => repo.CreateEvent(_mapper.Map<Event>(eventDto)), Times.Once);
+        //Assert.True(mockRepo.Object.CreateEvent(_mapper.Map<Event>(eventDto)) is null);
+        //Assert.True( tesst is null);
         
         
     }

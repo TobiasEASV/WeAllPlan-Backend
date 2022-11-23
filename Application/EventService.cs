@@ -17,10 +17,12 @@ public class EventService : IEventService
         _mapper = mapper;
     }
 
-    public Event CreateEvent(EventDTO eventDto)
+    public EventDTO CreateEvent(EventDTO eventDto)
     {
         Event testEvent = _mapper.Map<Event>(eventDto);
-        
-        return _repository.CreateEvent(testEvent);
+
+        Event RepoEvent = _repository.CreateEvent(testEvent);
+        EventDTO eventDTO = _mapper.Map<EventDTO>(RepoEvent);
+        return eventDTO ;
     }
 }

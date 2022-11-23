@@ -11,14 +11,24 @@ public class TestData
         //2.1 Some fields filled out
         yield return new Object[]
         {
-            new EventDTO("Kæmpe fedt event", new User(){Email = "Email",Id = 2,Name = "Mikkel",Password = "Hest",Salt = "Ko"})
+            new EventDTO(){
+                Title="Kæmpe fedt event", 
+                User =new User(), 
+                EventSlots = new List<EventSlot>()}
         }; 
 
         //2.2 Return with all fields
         
         yield return new Object[]
         {
-            new EventDTO("SIMONS GODE FEST",new User()){Description ="Mega nice fest. Kom glad.", Location = "PÅ SKOLEEEEN"}
+            new EventDTO()
+            {
+                Title= "SIMONS GODE FEST", 
+                User =new User(), 
+                EventSlots = new List<EventSlot>(),
+                Description ="Mega nice fest. Kom glad.", 
+                Location = "PÅ SKOLEEEEN"
+            }
         };
     }
 }
