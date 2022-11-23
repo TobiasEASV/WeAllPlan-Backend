@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Application.Helpers;
 using Infrastructure.DB;
 using Infrastructure.DBPostgresql;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddControllers()
     .AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
+builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
 
 // Setup DependencyResolver Service
 Application.DependencyResolver.DependencyResolverService.RegisterApplicationLayer(builder.Services);
