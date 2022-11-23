@@ -1,5 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using Application.DTO;
 using Application.Helpers;
@@ -34,7 +35,30 @@ public class AuthenticationService: IAuthenticationService
 
     public string Register(RegisterUserDto dto)
     {
-        throw new NotImplementedException();
+        if (dto.Email is null || dto.Name is null || dto.Password is null)
+        {
+            throw new NullReferenceException("null is an invalid input.");
+        }
+        
+        try
+        {
+            _userRepository.GetUserByEmail(dto.Email);
+        }
+        catch (KeyNotFoundException e)
+        {
+            var salt = RandomNumberGenerator.GetBytes(32).ToString();
+            var user = new User
+            {
+                Email = dto.Email,
+                Salt = salt,
+                Password = BCrypt.Net.BCrypt.HashPassword(dto.Password + salt)
+            };
+
+            _userRepository.CreateNewUser(user);
+            return "User successfully registered";
+        }
+
+        throw new Exception(dto.Email + " is already in use.");
     }
 
     public LoggedInUserDto Login(LoginUserDto dto)

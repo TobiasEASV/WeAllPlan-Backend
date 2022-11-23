@@ -1,9 +1,13 @@
 ﻿using Application;
+using Application.DTO;
 using Application.Helpers;
 using Application.Interfaces;
+using AutoMapper;
+using Core;
 using Core.Interfaces;
 using Microsoft.Extensions.Options;
 using Moq;
+using Npgsql.TypeMapping;
 using Xunit.Abstractions;
 
 namespace ServiceTest;
@@ -13,13 +17,21 @@ public class AuthenticationTest
     private readonly ITestOutputHelper _testOutputHelper;
     private Mock<IUserRepository> _mockRepo;
     private Mock<IOptions<AppSettings>> _mockAppSetting;
+    private IAuthenticationService _service;
+    private IMapper _mapper;
 
     public AuthenticationTest(ITestOutputHelper testOutputHelper)
     {
         _testOutputHelper = testOutputHelper;
         _mockRepo = new Mock<IUserRepository>();
         _mockAppSetting = new Mock<IOptions<AppSettings>>();
+        _service = new AuthenticationService(_mockRepo.Object, _mockAppSetting.Object);
         
+        var config = new MapperConfiguration(conf => {
+            conf.CreateMap<RegisterUserDto, User>(); //RegisterUserDto ==> User - create new user
+        });
+        _mapper = config.CreateMapper();
+
     }
 
     /// <summary>
@@ -73,20 +85,38 @@ public class AuthenticationTest
     }
 
     /// <summary>
-    /// Test case 2.1 - 2.2
+    /// Test case 2.1
     /// </summary>
-    [InlineData( "jan@easv.dk", "jan12345", "John Doe")]
-    [InlineData( null, null, null)]
-    public void InValidRegisterTest(string email, string password, string name)
+    [Fact]
+    public void InvalidRegisterUserExcistTest()
     {
         // Arrange
-        
+        var fakeUser = new RegisterUserDto() { Email = "jan@easv.dk", Password = "jan12345", Name = "John Doe" };
+        string expected = fakeUser.Email + " is already in use.";
+        _mockRepo.Setup(UserRepository => UserRepository.GetUserByEmail(fakeUser.Email)).Returns(_mapper.Map<User>(fakeUser));
 
-        // Act
+        // Act + assert
+        var ex = Assert.Throws<Exception>(() =>
+            _service.Register(fakeUser));
         
+        Assert.Equal(expected, ex.Message);
+    }
+    
+    /// <summary>
+    /// Test case 2.2
+    /// </summary>
+    [Fact]
+    public void InvalidRegisterNullValuesTest()
+    {
+        // Arrange
+        var fakeUser = new RegisterUserDto() { Email = null, Password = null, Name = null };
+        string expected = "null is an invalid input.";
+
+        // Act + assert
+        var ex = Assert.Throws<NullReferenceException>(() =>
+            _service.Register(fakeUser));
         
-        // Assert
-      
+        Assert.Equal(expected, ex.Message);
     }
     
     /// <summary>
