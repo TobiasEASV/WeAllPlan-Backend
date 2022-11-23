@@ -10,12 +10,9 @@ public class EventDTO
     public string? Location { get; set; }
     public List<EventSlot>? EventSlots { get; set; }
 
-    public EventDTO(string title, User user, string description, string location, List<EventSlot> eventSlots)
+    public EventDTO(string title, User user)
     {
         Title = title;
         User = user;
-        Description = description;
-        Location = location;
-        EventSlots = eventSlots;
     }
 }

@@ -1,7 +1,12 @@
 using System.Text.Json.Serialization;
+using Application;
+using AutoMapper;
+using Core;
+using Infrastructure;
 using Infrastructure.DB;
 using Infrastructure.DBPostgresql;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +16,12 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+var mapper = new MapperConfiguration(config =>
+{
+    config.CreateMap<EventDTO, Event>();
+}).CreateMapper();
+builder.Services.AddSingleton(mapper);
 
 builder.Services.AddControllers()
     .AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
@@ -58,3 +69,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+

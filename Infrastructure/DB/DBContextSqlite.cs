@@ -9,9 +9,9 @@ public class DBContextSqlite:DbContext
     {
         
     }
-    DbSet<Event> Events { get; set; }
-    DbSet<EventSlot> EventSlots { get; set; }
-    DbSet<SlotAnswer> SlotAnswers { get; set; }
-    DbSet<User> Users { get; set; }
+    public DbSet<Event> Events { get; set; }
+    public DbSet<EventSlot> EventSlots { get; set; }
+    public DbSet<SlotAnswer> SlotAnswers { get; set; }
+    public DbSet<User> Users { get; set; }
 
 }
