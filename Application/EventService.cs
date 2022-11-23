@@ -21,8 +21,22 @@ public class EventService : IEventService
     {
         Event testEvent = _mapper.Map<Event>(eventDto);
 
-        Event RepoEvent = _repository.CreateEvent(testEvent);
-        EventDTO eventDTO = _mapper.Map<EventDTO>(RepoEvent);
-        return eventDTO ;
+        
+        var test = new Event()
+        {
+            Title = "Tobiasssss"
+        };
+        var RepoEvent = _repository.CreateEvent(test);
+        try
+        {
+            Console.WriteLine(RepoEvent.Title);
+        }
+        catch (Exception e)
+        {
+            throw new Exception("der er noget lort");
+        }
+       
+       // EventDTO eventDTO = _mapper.Map<EventDTO>(test);
+        return _mapper.Map<EventDTO>(test);
     }
 }

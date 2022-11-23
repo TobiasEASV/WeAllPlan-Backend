@@ -4,16 +4,20 @@ using AutoMapper;
 using Core;
 using Infrastructure;
 using Moq;
+using Xunit.Abstractions;
 
 namespace ServiceTest;
 
 public class EventTest
 {
-    
+
     private IMapper _mapper;
 
-    public EventTest()
+    private readonly ITestOutputHelper _testOutputHelper;
+
+    public EventTest(ITestOutputHelper testOutputHelper)
     {
+        _testOutputHelper = testOutputHelper;
         
         var config = new MapperConfiguration(conf => {
             conf.CreateMap<EventDTO, Event>(); //RegisterUserDto ==> User - create new user
@@ -61,6 +65,13 @@ public class EventTest
     {
         // Arrange
         Mock<IEventRepository> mockRepo = new Mock<IEventRepository>();
+        var test = new Event()
+        {
+            Title = "topbias"
+        };
+        
+        mockRepo.Setup(r => r.CreateEvent(test)).Returns(test);
+        
         
         IEventService service = new EventService(mockRepo.Object, _mapper);
 
@@ -70,11 +81,12 @@ public class EventTest
         
         
         //assert
-        mockRepo.Verify( repo => repo.CreateEvent(_mapper.Map<Event>(eventDto)), Times.Once);
+        _testOutputHelper.WriteLine(tesst.Title);
+        //Assert.Equal( "Kæmpe fedt event", tesst.Title);
+        //_testOutputHelper.WriteLine(mockRepo.Object.CreateEvent(_mapper.Map<Event>(eventDto)).Title);
+        mockRepo.Verify( repo => repo.CreateEvent(null), Times.Never);
         //Assert.True(mockRepo.Object.CreateEvent(_mapper.Map<Event>(eventDto)) is null);
-        //Assert.True( tesst is null);
-        
-        
+        //Assert.True( tesst is EventDTO);
     }
     
     

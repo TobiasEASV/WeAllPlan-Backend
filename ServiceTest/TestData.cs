@@ -11,10 +11,13 @@ public class TestData
         //2.1 Some fields filled out
         yield return new Object[]
         {
-            new EventDTO(){
+            new EventDTO()
+            {
                 Title="Kæmpe fedt event", 
                 User =new User(), 
-                EventSlots = new List<EventSlot>()}
+                EventSlots = new List<EventSlot>()
+                
+            }
         }; 
 
         //2.2 Return with all fields
