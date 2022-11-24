@@ -1,9 +1,11 @@
+using System.Security.Authentication;
 using Application;
 using Application.Interfaces;
 using AutoMapper;
 using Core;
 using FluentValidation;
 using Infrastructure;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Moq;
 using Xunit.Abstractions;
 using Xunit.Sdk;
@@ -214,7 +216,7 @@ public class EventTest
     /// 4.1 - 4.3
     /// </summary>
     [Fact]
-    public async Task GetEventListFromInvalidUserTest()
+    public async Task UpdateValidEventTest()
     {
         // Arrange
         int id = 1;
@@ -228,6 +230,7 @@ public class EventTest
         mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(_mapper.Map<List<Event>>(mockEvents));
         
         EventDTO eventDTO = new EventDTO();
+        
         mockRepo.Setup(repo => repo.UpdateEvent(It.IsAny<Event>())).Callback<Event>((Event) =>
         {
             eventDTO.Id = id;
@@ -236,19 +239,107 @@ public class EventTest
             eventDTO.Location = location;
             eventDTO.User = new User() { Id = id };
         });
+        
         IEventService service = new EventService(mockRepo.Object, _mapper, _validator);
 
         EventDTO eventdto = service.GetEvent(id).Result;
         
         // Act
-        await service.UpdateEvent(eventdto);
+        await service.UpdateEvent(eventdto, userId);
         
         // Assert
         mockRepo.Verify(repo => repo.UpdateEvent(It.IsAny<Event>()), Times.Once);
         mockRepo.Verify(repo => repo.GetAll(), Times.Once);
     }
     
+    /// <summary>
+    /// 4.7
+    /// </summary>
+    [Fact]
+    public async Task UpdateInvalidWithBadTitleEventTest()
+    {
+        Mock<IEventRepository> mockRepo = new Mock<IEventRepository>();
+
+        mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(_mapper.Map<List<Event>>(mockEvents));
+        IEventService service = new EventService(mockRepo.Object, _mapper, _validator);
+
+        EventDTO eventdto = service.GetEvent(1).Result;
+        eventdto.Title = null;
+
+        string expected = "The event needs a title";
+        
+        // Act + Assert
+        ValidationException validationException =
+            Assert.ThrowsAsync<ValidationException>(() => service.UpdateEvent(eventdto,eventdto.User.Id)).Result;
+        Assert.Equal(expected,validationException.Message);
+
+    }
     
+    /// <summary>
+    /// 4.8
+    /// </summary>
+    [Fact]
+    public async Task UpdateInvalidWithBadUserIdEventTest()
+    {
+        Mock<IEventRepository> mockRepo = new Mock<IEventRepository>();
+
+        mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(_mapper.Map<List<Event>>(mockEvents));
+        IEventService service = new EventService(mockRepo.Object, _mapper, _validator);
+
+        EventDTO eventdto = service.GetEvent(1).Result;
+        
+
+        string expected = "Wrong User";
+        
+        // Act + Assert
+        AuthenticationException validationException =
+            Assert.ThrowsAsync<AuthenticationException>(() => service.UpdateEvent(eventdto,5)).Result;
+        Assert.Equal(expected,validationException.Message);
+
+    }
+
+    /// <summary>
+    /// 5.1
+    /// </summary>
+    [Fact]
+    public void DeleteValidEventTest()
+    {
+        //Assert
+        Mock<IEventRepository> mockRepo = new Mock<IEventRepository>();
+        mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(_mapper.Map<List<Event>>(mockEvents));
+        
+        IEventService service = new EventService(mockRepo.Object, _mapper,_validator);
+        int eventId = 1;
+        int userId = 1;
+
+        //Act
+        service.DeleteEvent(eventId, userId);
+        
+        //Assert
+        mockRepo.Verify(repo => repo.Delete(It.IsAny<Event>()), Times.Once);
+    }
+    
+    /// <summary>
+    /// 5.2
+    /// </summary>
+    [Fact]
+    public void DeleteInvalidEventTest()
+    {
+        //Assert
+        Mock<IEventRepository> mockRepo = new Mock<IEventRepository>();
+        mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(_mapper.Map<List<Event>>(mockEvents));
+        
+        IEventService service = new EventService(mockRepo.Object, _mapper,_validator);
+        int eventId = 1;
+        int userId = 5;
+
+        string expected = "You do not own this Event";
+
+        //Act + Assert
+        AuthenticationException authenticationException =
+            Assert.Throws<AuthenticationException>(() => service.DeleteEvent(eventId, userId));
+        Assert.Equal(expected,authenticationException.Message);
+    }
     
     
     //Test Data

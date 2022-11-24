@@ -35,4 +35,10 @@ public class EventRepository : IEventRepository
         _dbContextSqlite.SaveChanges();
         return Event;
     }
+
+    public void Delete(Event Event)
+    {
+        _dbContextSqlite.Events.Remove(Event);
+        _dbContextSqlite.SaveChanges();
+    }
 }

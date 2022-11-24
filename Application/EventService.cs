@@ -1,9 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Security.Authentication;
 using Application.Interfaces;
 using AutoMapper;
 using Core;
 using FluentValidation;
 using ValidationException = FluentValidation.ValidationException;
+using ValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace Application;
 
@@ -53,9 +55,34 @@ public class EventService : IEventService
         return await Task.Run(() => _mapper.Map<List<EventDTO>>(eventTasks));
     }
 
-    public Task<EventDTO> UpdateEvent(EventDTO eventDto)
+    public Task<EventDTO> UpdateEvent(EventDTO eventDto, int userId)
     {
+        ValidationResult validationResult = _eventValidator.Validate(eventDto);
+        if (!validationResult.IsValid)
+        {
+            throw new ValidationException(validationResult.ToString());
+        }
+
+        if (eventDto.User.Id != userId)
+        {
+            throw new AuthenticationException("Wrong User");
+        }
         Event Event = _repository.UpdateEvent(_mapper.Map<Event>(eventDto)).Result;
         return Task.Run( () => _mapper.Map<EventDTO>(Event));
+    }
+
+    public void DeleteEvent(int eventId, int userId)
+    {
+        Event eventToDelete= _repository.GetAll().Result.Find(Event => Event.Id == eventId);
+        if (eventToDelete == null)
+        {
+            throw new NullReferenceException("Event does not exist");
+        }
+
+        if (userId !=eventToDelete.User.Id)
+        {
+            throw new AuthenticationException("You do not own this Event");
+        }
+        _repository.Delete(eventToDelete);
     }
 }
