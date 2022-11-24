@@ -9,15 +9,15 @@ public class EventValidator : AbstractValidator<EventDTO>
     {
         RuleFor(Event => Event.Title)
             .NotEmpty()
-            .WithMessage("The Event Needs a Title");
+            .WithMessage("The event needs a title");
         
         RuleFor(Event => Event.Title)
             .NotNull()
-            .WithMessage("The Event Needs a Title");
+            .WithMessage("The event needs a title");
 
         RuleFor(Event => Event.User)
             .NotNull()
-            .WithMessage("Event Must have an Event Owner");
+            .WithMessage("Event must have an Event Owner");
 
     }
 }
