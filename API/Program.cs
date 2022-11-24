@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using Application;
 using AutoMapper;
 using Core;
+using FluentValidation;
 using Infrastructure;
 using Infrastructure.DB;
 using Infrastructure.DBPostgresql;
@@ -23,6 +24,8 @@ var mapper = new MapperConfiguration(config =>
     config.CreateMap<Event,EventDTO>();
 }).CreateMapper();
 builder.Services.AddSingleton(mapper);
+
+builder.Services.AddValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddControllers()
     .AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);

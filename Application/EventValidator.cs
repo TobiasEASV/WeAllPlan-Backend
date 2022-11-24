@@ -17,7 +17,7 @@ public class EventValidator : AbstractValidator<EventDTO>
 
         RuleFor(Event => Event.User)
             .NotNull()
-            .WithMessage("Event Must have a Event Owner");
+            .WithMessage("Event Must have an Event Owner");
 
     }
 }
