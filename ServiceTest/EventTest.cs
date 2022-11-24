@@ -211,7 +211,7 @@ public class EventTest
     }
     
     /// <summary>
-    /// 4
+    /// 4.1 - 4.3
     /// </summary>
     [Fact]
     public async Task GetEventListFromInvalidUserTest()
@@ -227,22 +227,25 @@ public class EventTest
 
         mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(_mapper.Map<List<Event>>(mockEvents));
         
+        EventDTO eventDTO = new EventDTO();
+        mockRepo.Setup(repo => repo.UpdateEvent(It.IsAny<Event>())).Callback<Event>((Event) =>
+        {
+            eventDTO.Id = id;
+            eventDTO.Description = description;
+            eventDTO.Title = title;
+            eventDTO.Location = location;
+            eventDTO.User = new User() { Id = id };
+        });
         IEventService service = new EventService(mockRepo.Object, _mapper, _validator);
 
         EventDTO eventdto = service.GetEvent(id).Result;
-
-        eventdto.Title = title;
-        eventdto.Description = description;
-        eventdto.Location = location;
         
         // Act
         await service.UpdateEvent(eventdto);
-        EventDTO actualEventDTO = service.GetEvent(1).Result;
-
+        
         // Assert
-        Assert.Equal(eventdto.Title, actualEventDTO.Title);
-        Assert.Equal(eventdto.Description, actualEventDTO.Description);
-        Assert.Equal(eventdto.Location, actualEventDTO.Location);
+        mockRepo.Verify(repo => repo.UpdateEvent(It.IsAny<Event>()), Times.Once);
+        mockRepo.Verify(repo => repo.GetAll(), Times.Once);
     }
     
     
