@@ -2,6 +2,7 @@ using Application;
 using Application.Interfaces;
 using AutoMapper;
 using Core;
+using FluentValidation;
 using Infrastructure;
 using Moq;
 
@@ -11,6 +12,7 @@ public class EventTest
 {
     
     private IMapper _mapper;
+    private IValidator<EventDTO> _validator;
 
     public EventTest()
     {
@@ -20,6 +22,7 @@ public class EventTest
             conf.CreateMap<Event,EventDTO>();
         });
         _mapper = config.CreateMapper();
+        _validator = new EventValidator();
     }
     
     /// <summary>
@@ -32,7 +35,7 @@ public class EventTest
         Mock<IEventRepository> mockRepo = new Mock<IEventRepository>();
       
         // Act
-        IEventService service = new EventService(mockRepo.Object,_mapper);
+        IEventService service = new EventService(mockRepo.Object,_mapper,_validator);
         
 
         // Assert
@@ -51,7 +54,7 @@ public class EventTest
         string expected = "Repository is null";
         
         // Act + Assert
-        var ex = Assert.Throws<NullReferenceException>(() => service = new EventService(null, null));
+        var ex = Assert.Throws<NullReferenceException>(() => service = new EventService(null, null,null));
         Assert.Equal(expected, ex.Message);
     }
 
@@ -62,18 +65,18 @@ public class EventTest
         // Arrange
         Mock<IEventRepository> mockRepo = new Mock<IEventRepository>();
         
-        IEventService service = new EventService(mockRepo.Object, _mapper);
-
+        Event testEvent = _mapper.Map<Event>(eventDto);
+        mockRepo.Setup(r => r.CreateEvent(testEvent)).Returns(testEvent);
+        
+        IEventService service = new EventService(mockRepo.Object, _mapper,_validator);
+        
         //Act
         EventDTO tesst = service.CreateEvent(eventDto);
         
         
         
-        //assert
-        mockRepo.Verify( repo => repo.CreateEvent(_mapper.Map<Event>(eventDto)), Times.Once);
-        //Assert.True(mockRepo.Object.CreateEvent(_mapper.Map<Event>(eventDto)) is null);
-        //Assert.True( tesst is null);
-        
+        //Assert
+        mockRepo.Verify( repo => repo.CreateEvent(It.IsAny<Event>()), Times.Once);
         
     }
     
