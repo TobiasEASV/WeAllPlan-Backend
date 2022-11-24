@@ -10,10 +10,6 @@ public class EventValidator : AbstractValidator<EventDTO>
         RuleFor(Event => Event.Title)
             .NotEmpty()
             .WithMessage("The event needs a title");
-        
-        RuleFor(Event => Event.Title)
-            .NotNull()
-            .WithMessage("The event needs a title");
 
         RuleFor(Event => Event.User)
             .NotNull()

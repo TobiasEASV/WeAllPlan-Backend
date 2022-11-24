@@ -4,5 +4,6 @@ namespace Application.Interfaces;
 
 public interface IEventRepository
 {
-    Event CreateEvent(Event testEvent);
+    Task<Event> CreateEvent(Event testEvent);
+    Task<List<Event>> GetAll();
 }

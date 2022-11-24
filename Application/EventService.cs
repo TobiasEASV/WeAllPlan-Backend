@@ -22,7 +22,7 @@ public class EventService : IEventService
         _eventValidator = eventValidator;
     }
 
-    public EventDTO CreateEvent(EventDTO eventDto)
+    public async Task<EventDTO> CreateEvent(EventDTO eventDto)
     {
         var validation = _eventValidator.Validate(eventDto);
         if (!validation.IsValid)
@@ -30,8 +30,14 @@ public class EventService : IEventService
             throw new ValidationException(validation.ToString());
         }
         Event testEvent = _mapper.Map<Event>(eventDto); // Map the DTO to an actual Object.
-        Event RepoEvent = _repository.CreateEvent(testEvent); // Get the actual object from the DB
+        Event RepoEvent = await _repository.CreateEvent(testEvent); // Get the actual object from the DB
         EventDTO eventDTO = _mapper.Map<EventDTO>(RepoEvent); // Map the actual object to a DTO and send it back
         return eventDTO ;
+    }
+
+    public async Task<EventDTO> GetEvent(int id)
+    {
+        Event x = _repository.GetAll().Result.Find(Event => Event.Id.Equals(id));
+        return await Task.Run(() => _mapper.Map<EventDTO>(x));
     }
 }

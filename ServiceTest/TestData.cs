@@ -34,4 +34,48 @@ public class TestData
             }
         };
     }
+    
+    public static IEnumerable<Object[]> CreateInvalidEventTestData()
+    {
+        //2.3 Invalid Title, exists, but empty.
+        yield return new Object[]
+        {
+            new EventDTO()
+            {
+                Title="", 
+                User = new User(), 
+                EventSlots = new List<EventSlot>()
+            },
+            new[]{"The event needs a title"}
+        }; 
+
+        //2.3 Invalid Title, doesnt exist.
+        yield return new Object[]
+        {
+            new EventDTO()
+            {
+                Title = null,
+                User = new User(), 
+                EventSlots = new List<EventSlot>(),
+                Description ="Mega nice fest. Kom glad.", 
+                Location = "PÅ SKOLEEEEN"
+            },
+            new[]{"The event needs a title"}
+        };
+        
+        //2.3 Invalid User, doesnt exist.
+        yield return new Object[]
+        {
+            new EventDTO()
+            {
+                Title = "ffs",
+                User = null,
+                EventSlots = new List<EventSlot>(),
+                Description ="Mega nice fest. Kom glad.", 
+                Location = "PÅ SKOLEEEEN"
+            },
+            new[]{"Event must have an Event Owner"}
+        };
+    }
+    
 }

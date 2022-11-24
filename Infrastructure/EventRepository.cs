@@ -2,6 +2,8 @@
 using Application.Interfaces;
 using Core;
 using Infrastructure.DB;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Infrastructure;
 
@@ -12,10 +14,15 @@ public class EventRepository : IEventRepository
     {
         _dbContextSqlite = dbContextSqlite;
     }
-    public Event CreateEvent(Event anEvent)
+    public async Task<Event> CreateEvent(Event anEvent)
     {
-        _dbContextSqlite.Events.Add(anEvent);
-        _dbContextSqlite.SaveChanges();
-        return anEvent;
+        EntityEntry<Event> x = await _dbContextSqlite.Events.AddAsync(anEvent);
+        await _dbContextSqlite.SaveChangesAsync();
+        return x.Entity;
+    }
+
+    public async Task<List<Event>> GetAll()
+    {
+        return await _dbContextSqlite.Events.ToListAsync();
     }
 }
