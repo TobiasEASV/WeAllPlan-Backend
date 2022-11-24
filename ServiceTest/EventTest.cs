@@ -5,6 +5,8 @@ using Core;
 using FluentValidation;
 using Infrastructure;
 using Moq;
+using Xunit.Abstractions;
+using Xunit.Sdk;
 
 namespace ServiceTest;
 
@@ -13,8 +15,9 @@ public class EventTest
     
     private IMapper _mapper;
     private IValidator<EventDTO> _validator;
+    private ITestOutputHelper _testOutputHelper;
 
-    public EventTest()
+    public EventTest(ITestOutputHelper testOutputHelper)
     {
         
         var config = new MapperConfiguration(conf => {
@@ -23,6 +26,7 @@ public class EventTest
         });
         _mapper = config.CreateMapper();
         _validator = new EventValidator();
+        _testOutputHelper = testOutputHelper;
     }
     
     /// <summary>
@@ -69,10 +73,7 @@ public class EventTest
         // Arrange
         Mock<IEventRepository> mockRepo = new Mock<IEventRepository>();
         
-        Event testEvent = _mapper.Map<Event>(eventDto);
-        // mockRepo.Setup(r => r.CreateEvent(testEvent)).Returns(testEvent);
-        
-        IEventService service = new EventService(mockRepo.Object, _mapper,_validator);
+       IEventService service = new EventService(mockRepo.Object, _mapper,_validator);
         
         //Act
         service.CreateEvent(eventDto);
@@ -97,8 +98,8 @@ public class EventTest
         IEventService service = new EventService(mockRepo.Object, _mapper,_validator);
 
         //Act + Assert
-        ValidationException x = Assert.ThrowsAsync<ValidationException>(() => service.CreateEvent(eventDto)).Result;
-        Assert.Equal(expected.First(), x.Message);
+        ValidationException validationException = Assert.ThrowsAsync<ValidationException>(() => service.CreateEvent(eventDto)).Result;
+        Assert.Equal(expected.First(), validationException.Message);
         mockRepo.Verify( repo => repo.CreateEvent(It.IsAny<Event>()), Times.Never);
     }
 
@@ -118,18 +119,108 @@ public class EventTest
         IEventService service = new EventService(mockRepo.Object, _mapper, _validator);
 
         // Act
-        EventDTO x = service.GetEvent(id).Result;
+        EventDTO eventDto = service.GetEvent(id).Result;
 
         // Assert
-        Assert.Equal(x.Id, id);
+        Assert.Equal(eventDto.Id, id);
     }
     
+    /// <summary>
+    /// 3.2
+    /// </summary>
+    [Fact]
+    public void GetAValidListOfEventsFromUserIdTest()
+    {
+        // Arrange
+        int UserId = 1;
+
+        List<EventDTO> expected = new List<EventDTO>()
+        {
+            new EventDTO()
+            {
+                Title = "eventTest", Id = 1, Description = "its so fun", Location = "India",
+                User = new User()
+                    { Id = 1, Name = "Peter", Email = "Min@email.com", Password = "hest", Salt = "HjemmeFest" }
+            },
+            new EventDTO()
+            {
+                Title = "anotherEvent", Id = 4, Description = "its also fun", Location = "Russia",
+                User = new User()
+                    { Id = 1, Name = "Peter", Email = "Min@email.com", Password = "hest", Salt = "HjemmeFest" }
+            },
+        };
+        Mock<IEventRepository> mockRepo = new Mock<IEventRepository>();
+
+        mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(_mapper.Map<List<Event>>(mockEvents));
+        
+        IEventService service = new EventService(mockRepo.Object, _mapper, _validator);
+
+        // Act
+        List<EventDTO> eventDtos = service.GetEventsFromUser(UserId).Result;
+
+        // Assert
+        Assert.True(eventDtos[0].Id == expected[0].Id && eventDtos[1].Id == expected[1].Id);
+        Assert.Equal(eventDtos.Count, expected.Count);
+    }
+    
+    /// <summary>
+    /// 3.3
+    /// </summary>
+    [Fact]
+    public void GetAValidEmptyListOfEventsFromUserIdTest()
+    {
+        // Arrange
+        int UserId = 2;
+
+        
+        Mock<IEventRepository> mockRepo = new Mock<IEventRepository>();
+
+        mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(_mapper.Map<List<Event>>(mockEvents));
+        
+        IEventService service = new EventService(mockRepo.Object, _mapper, _validator);
+
+        // Act
+        List<EventDTO> eventDtos = service.GetEventsFromUser(UserId).Result;
+
+        // Assert
+        Assert.Empty(eventDtos);
+    }
+    
+    /// <summary>
+    /// 3.4
+    /// </summary>
+    [Fact]
+    public async Task GetInvalidEventFromEventIdTest()
+    {
+        // Arrange
+        int eventId = 2;
+
+        
+        Mock<IEventRepository> mockRepo = new Mock<IEventRepository>();
+
+        mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(_mapper.Map<List<Event>>(mockEvents));
+        
+        IEventService service = new EventService(mockRepo.Object, _mapper, _validator);
+
+        // Act
+        NullReferenceException nullReferenceException =
+            await Assert.ThrowsAsync<NullReferenceException>(() =>service.GetEvent(eventId));
+        string expected = "Event doesn't exist";
+
+        // Assert
+        Assert.Equal(expected,nullReferenceException.Message);
+    }
+    
+    
+    //Test Data
      List<EventDTO> mockEvents = new()
     {
         new EventDTO()
-            { Title = "eventTest", Id = 1, Description = "its so fun", Location = "India", User = new User() },
+            { Title = "eventTest", Id = 1, Description = "its so fun", Location = "India", User = new User(){Id=1, Name = "Peter", Email = "Min@email.com",Password = "hest",Salt = "HjemmeFest"} },
         new EventDTO()
-            { Title = "anotherEvent", Id = 2, Description = "its also fun", Location = "Russia", User = new User() }
-    };
+            { Title = "anotherEvent", Id = 4, Description = "its also fun", Location = "Russia", User = new User(){Id=1, Name = "Peter", Email = "Min@email.com",Password = "hest",Salt = "HjemmeFest" }}, 
+        new EventDTO()
+                {Title = "A THIRD EVENT", Id = 3, Description = "its also fun", Location = "Money Land", User = new User(){Id=3, Name = "Hans", Email = "Hans@email.com",Password = "MegetKortAdgangsordErBrugtHer",Salt = "UdeFest"}}
+            };
     
 }

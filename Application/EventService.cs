@@ -37,7 +37,19 @@ public class EventService : IEventService
 
     public async Task<EventDTO> GetEvent(int id)
     {
-        Event x = _repository.GetAll().Result.Find(Event => Event.Id.Equals(id));
-        return await Task.Run(() => _mapper.Map<EventDTO>(x));
+        Event Event = _repository.GetAll().Result.Find(Event => Event.Id.Equals(id));
+        if (Event ==null)
+        {
+            throw new NullReferenceException("Event doesn't exist");
+        }
+        return await Task.Run(() => _mapper.Map<EventDTO>(Event));
+    }
+
+    public async Task<List<EventDTO>> GetEventsFromUser(int userId)
+    {
+        List<Event> eventTasks =  _repository.GetAll().Result.FindAll(e => e.User.Id.Equals(userId));
+        
+        
+        return await Task.Run(() => _mapper.Map<List<EventDTO>>(eventTasks));
     }
 }
