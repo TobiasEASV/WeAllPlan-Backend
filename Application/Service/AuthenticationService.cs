@@ -7,7 +7,6 @@ using System.Text.RegularExpressions;
 using Application.DTO;
 using Application.Helpers;
 using Application.Interfaces;
-using Application.Validators;
 using Core;
 using Core.Interfaces;
 using FluentValidation;
@@ -18,30 +17,32 @@ using ValidationException = System.ComponentModel.DataAnnotations.ValidationExce
 
 namespace Application;
 
-public class AuthenticationService: IAuthenticationService
+public class AuthenticationService : IAuthenticationService
 {
-
     private readonly IUserRepository _userRepository;
     private readonly AppSettings _appSettings;
     private readonly IValidator<RegisterUserDto> _userValidator;
 
-    public AuthenticationService(IUserRepository userRepository, IOptions<AppSettings> appSettings, IValidator<RegisterUserDto> userValidator)
+    public AuthenticationService(IUserRepository userRepository, IOptions<AppSettings> appSettings,
+        IValidator<RegisterUserDto> userValidator)
     {
         if (appSettings is null)
         {
             throw new NullReferenceException("Can't create service object without secret file (appsetting).");
         }
+
         if (userRepository is null)
         {
             throw new NullReferenceException("Can't create service object with null repository.");
         }
+
         _appSettings = appSettings.Value;
         _userRepository = userRepository;
         _userValidator = userValidator;
     }
 
 
-    public string Register(RegisterUserDto dto)
+    public async Task<string> Register(RegisterUserDto dto)
     {
         if (dto.Email is null || dto.Name is null || dto.Password is null)
         {
@@ -54,7 +55,7 @@ public class AuthenticationService: IAuthenticationService
         {
             throw new ValidationException(Validation.ToString());
         }
-        
+
         if (!IsValidEmail(dto.Email))
         {
             throw new ValidationException("invalid email, email must follow pattern John.doe@example.com");
@@ -62,7 +63,7 @@ public class AuthenticationService: IAuthenticationService
 
         try
         {
-            _userRepository.GetUserByEmail(dto.Email);
+            await _userRepository.GetUserByEmail(dto.Email);
         }
         catch (KeyNotFoundException)
         {
@@ -75,17 +76,17 @@ public class AuthenticationService: IAuthenticationService
                 Password = BCrypt.Net.BCrypt.HashPassword(dto.Password + salt)
             };
 
-            _userRepository.CreateNewUser(user);
+            await _userRepository.CreateNewUser(user);
             return "User successfully registered";
         }
 
         throw new Exception(dto.Email + " is already in use.");
     }
 
-    public LoggedInUserDto Login(LoginUserDto dto)
+    public async Task<LoggedInUserDto> Login(LoginUserDto dto)
     {
-        var user = _userRepository.GetUserByEmail(dto.Email);
-        if (BCrypt.Net.BCrypt.Verify(dto.Password+user.Salt, user.Password))
+        var user = await _userRepository.GetUserByEmail(dto.Email);
+        if (BCrypt.Net.BCrypt.Verify(dto.Password + user.Salt, user.Password))
         {
             return new LoggedInUserDto()
             {
@@ -104,7 +105,7 @@ public class AuthenticationService: IAuthenticationService
         var key = Encoding.UTF8.GetBytes(_appSettings.Secret);
         var tokenDescriptor = new SecurityTokenDescriptor
         {
-            Subject = new ClaimsIdentity(new[] { new Claim("Email", user.Email)}),
+            Subject = new ClaimsIdentity(new[] { new Claim("Email", user.Email) }),
             Expires = DateTime.UtcNow.AddHours(2),
             SigningCredentials =
                 new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -112,7 +113,7 @@ public class AuthenticationService: IAuthenticationService
         var tokenHandler = new JwtSecurityTokenHandler();
         return tokenHandler.WriteToken(tokenHandler.CreateToken(tokenDescriptor));
     }
-    
+
     private bool IsValidEmail(string email)
     {
         if (string.IsNullOrWhiteSpace(email))

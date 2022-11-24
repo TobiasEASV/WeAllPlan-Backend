@@ -97,11 +97,10 @@ public class AuthenticationTest
         // Arrange
         RegisterUserDto fakeUser = new RegisterUserDto() { Email = "jan@easv.dk", Password = "jan12345", Name = "John Doe" };
         string expected = fakeUser.Email + " is already in use.";
-        _mockRepo.Setup(UserRepository => UserRepository.GetUserByEmail(fakeUser.Email)).Returns(_mapper.Map<User>(fakeUser));
 
         // Act + assert
-        Exception ex = Assert.Throws<Exception>(() =>
-            _service.Register(fakeUser));
+        Exception ex = Assert.ThrowsAsync<Exception>(() =>
+            _service.Register(fakeUser)).Result;
         
         Assert.Equal(expected, ex.Message);
         _mockRepo.Verify(repository => repository.CreateNewUser(_mapper.Map<User>(fakeUser)), Times.Never);
@@ -114,12 +113,12 @@ public class AuthenticationTest
     public void InvalidRegisterNullValuesTest()
     {
         // Arrange
-        var fakeUser = new RegisterUserDto() { Email = null, Password = null, Name = null };
+        RegisterUserDto fakeUser = new RegisterUserDto() { Email = null, Password = null, Name = null };
         string expected = "null is an invalid input.";
 
         // Act + assert
-        var ex = Assert.Throws<NullReferenceException>(() =>
-            _service.Register(fakeUser));
+        Exception ex = Assert.ThrowsAsync<NullReferenceException>(() =>
+            _service.Register(fakeUser)).Result;
         
         Assert.Equal(expected, ex.Message);
         _mockRepo.Verify(repository => repository.CreateNewUser(_mapper.Map<User>(fakeUser)), Times.Never);
@@ -139,8 +138,8 @@ public class AuthenticationTest
         var fakeUser = new RegisterUserDto() { Email = email, Password = password, Name = name };
         
         // Act
-        var ex = Assert.Throws<ValidationException>(() =>
-            _service.Register(fakeUser));
+        ValidationException ex = Assert.ThrowsAsync<ValidationException>(() =>
+            _service.Register(fakeUser)).Result;
         
         // Assert
         Assert.Equal(expected, ex.Message);
@@ -161,8 +160,8 @@ public class AuthenticationTest
         var fakeUser = new RegisterUserDto() { Email = email, Password = password, Name = name };
         
         // Act
-        var ex = Assert.Throws<ValidationException>(() =>
-            _service.Register(fakeUser));
+        ValidationException ex = Assert.ThrowsAsync<ValidationException>(() =>
+            _service.Register(fakeUser)).Result;
         
         // Assert
         Assert.Equal(expected, ex.Message);
@@ -183,8 +182,8 @@ public class AuthenticationTest
         var fakeUser = new RegisterUserDto() { Email = email, Password = password, Name = name };
         
         // Act
-        var ex = Assert.Throws<ValidationException>(() =>
-            _service.Register(fakeUser));
+        ValidationException ex = Assert.ThrowsAsync<ValidationException>(() =>
+            _service.Register(fakeUser)).Result;
         
         // Assert
         Assert.Equal(expected, ex.Message);
@@ -206,7 +205,7 @@ public class AuthenticationTest
         _mockRepo.Setup(UserRepository => UserRepository.GetUserByEmail(fakeUser.Email)).Throws(new KeyNotFoundException());
 
         // Act
-        var actual = _service.Register(fakeUser);
+        string actual = _service.Register(fakeUser).Result;
 
         // Assert
          Assert.Equal(expected, actual);

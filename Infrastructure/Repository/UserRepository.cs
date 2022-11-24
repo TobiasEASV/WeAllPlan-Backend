@@ -13,13 +13,14 @@ public class UserRepository: IUserRepository
     {
         _context = context;
     }
-    public User GetUserByEmail(string email)
+    public async Task<User> GetUserByEmail(string email)
     {
-        throw new NotImplementedException();
+        return await _context.Users.FirstOrDefaultAsync(user => user.Email == email) ?? throw new KeyNotFoundException("Invalid login");
     }
 
-    public void CreateNewUser(User user)
+    public async Task CreateNewUser(User user)
     {
-        
+        await _context.Users.AddAsync(user);
+        await _context.SaveChangesAsync();
     }
 }
