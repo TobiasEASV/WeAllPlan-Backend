@@ -172,7 +172,6 @@ public class EventTest
         // Arrange
         int UserId = 2;
 
-        
         Mock<IEventRepository> mockRepo = new Mock<IEventRepository>();
 
         mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(_mapper.Map<List<Event>>(mockEvents));
@@ -210,6 +209,43 @@ public class EventTest
         // Assert
         Assert.Equal(expected,nullReferenceException.Message);
     }
+    
+    /// <summary>
+    /// 4
+    /// </summary>
+    [Fact]
+    public async Task GetEventListFromInvalidUserTest()
+    {
+        // Arrange
+        int id = 1;
+        string title = "shabuah";
+        int userId = 1;
+        string description = "kom gerne og vær med";
+        string location = "Tyskland";
+
+        Mock<IEventRepository> mockRepo = new Mock<IEventRepository>();
+
+        mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(_mapper.Map<List<Event>>(mockEvents));
+        
+        IEventService service = new EventService(mockRepo.Object, _mapper, _validator);
+
+        EventDTO eventdto = service.GetEvent(id).Result;
+
+        eventdto.Title = title;
+        eventdto.Description = description;
+        eventdto.Location = location;
+        
+        // Act
+        await service.UpdateEvent(eventdto);
+        EventDTO actualEventDTO = service.GetEvent(1).Result;
+
+        // Assert
+        Assert.Equal(eventdto.Title, actualEventDTO.Title);
+        Assert.Equal(eventdto.Description, actualEventDTO.Description);
+        Assert.Equal(eventdto.Location, actualEventDTO.Location);
+    }
+    
+    
     
     
     //Test Data

@@ -25,4 +25,14 @@ public class EventRepository : IEventRepository
     {
         return await _dbContextSqlite.Events.ToListAsync();
     }
+
+    public async Task<Event> UpdateEvent(Event Event)
+    {
+        await Task.Run(() => _dbContextSqlite.Attach(Event));
+        _dbContextSqlite.Entry(Event).Property(e => e.Title).IsModified = true;
+        _dbContextSqlite.Entry(Event).Property(e => e.Description).IsModified = true;
+        _dbContextSqlite.Entry(Event).Property(e => e.Location).IsModified = true;
+        _dbContextSqlite.SaveChanges();
+        return Event;
+    }
 }

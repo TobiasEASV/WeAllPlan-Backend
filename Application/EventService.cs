@@ -52,4 +52,10 @@ public class EventService : IEventService
         
         return await Task.Run(() => _mapper.Map<List<EventDTO>>(eventTasks));
     }
+
+    public Task<EventDTO> UpdateEvent(EventDTO eventDto)
+    {
+        Event Event = _repository.UpdateEvent(_mapper.Map<Event>(eventDto)).Result;
+        return Task.Run( () => _mapper.Map<EventDTO>(Event));
+    }
 }
