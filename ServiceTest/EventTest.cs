@@ -234,7 +234,7 @@ public class EventTest
             eventDTO.Description = description;
             eventDTO.Title = title;
             eventDTO.Location = location;
-            eventDTO.User = new User() { Id = id };
+            eventDTO.User = new User() { Id = userId };
         });
         
         IEventService service = new EventService(mockRepo.Object, _mapper, _validator);

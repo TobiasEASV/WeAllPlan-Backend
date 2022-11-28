@@ -89,23 +89,61 @@ public class TestData
         {
             new SlotAnswerDTO()
             {
-                Answer = 1,Email = "MyEmail",EventSlot = new EventSlot(),Id=1,UserName = "Mikkel"
-            }
+                Answer = 1,Email = "MyEmail",EventSlot = new EventSlot(),Id=1,UserName = null
+            },
+            new string("Username cannot be empty")
         };
         yield return new object[]
         {
             new SlotAnswerDTO()
             {
-                Answer = 6,Email = "MyEmail",EventSlot = new EventSlot(),Id=1,UserName = null
-            }
+                Answer = 6,Email = "MyEmail",EventSlot = new EventSlot(),Id=1,UserName = "Mingus"
+            },
+            new string("Answer has to be no, maybe or yes")
         };
         yield return new object[]
         {
             new SlotAnswerDTO()
             {
                 Answer = 1,Email = null,EventSlot = new EventSlot(),Id=1,UserName = "Mikkel"
-            }
+            },
+            new string("E-mail has to be of a correct format")
         };
     }
 
+    public static IEnumerable<Object[]> InvalidUpdateOnSlotAnswer()
+    {
+        yield return new object[]
+        {
+            new SlotAnswerDTO()
+            {
+                Answer = 5, Email = "truemingo@shababab.com", Id = 1, EventSlot = new EventSlot(), UserName = "mingo"
+            },
+            new string("Answer has to be no, maybe or yes")
+        };
+        yield return new object[]
+        {
+            new SlotAnswerDTO()
+            {
+                Answer = 1, Email = null, Id = 1, EventSlot = new EventSlot(), UserName = "mingo"
+            },
+            new string("E-mail has to be of a correct format")
+        };
+        yield return new object[] {
+            
+        new SlotAnswerDTO()
+            {
+                Answer = 1, Email = "truemingo@shababab.com", Id = 1, EventSlot = new EventSlot(), UserName = null
+            },
+        new string("Username cannot be empty")
+        };
+        yield return new object[]
+        {
+            new SlotAnswerDTO()
+            {
+                Answer = 1, Email = "truemingo@shababab.com", Id = 2, EventSlot = new EventSlot(), UserName = "mingo"
+            },
+            new string("You can only change your own answers")
+        };
+    }
 }

@@ -10,6 +10,7 @@ namespace Infrastructure;
 public class EventRepository : IEventRepository
 {
     private DBContextSqlite _dbContextSqlite;
+    
     public EventRepository(DBContextSqlite dbContextSqlite)
     {
         _dbContextSqlite = dbContextSqlite;
@@ -28,11 +29,11 @@ public class EventRepository : IEventRepository
 
     public async Task<Event> UpdateEvent(Event Event)
     {
-        await Task.Run(() => _dbContextSqlite.Attach(Event));
+        await Task.Run(() => _dbContextSqlite.Events.Attach(Event));
         _dbContextSqlite.Entry(Event).Property(e => e.Title).IsModified = true;
         _dbContextSqlite.Entry(Event).Property(e => e.Description).IsModified = true;
         _dbContextSqlite.Entry(Event).Property(e => e.Location).IsModified = true;
-        _dbContextSqlite.SaveChanges();
+        await _dbContextSqlite.SaveChangesAsync();
         return Event;
     }
 
