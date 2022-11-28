@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Net.Mail;
 
 namespace Core;
 
@@ -16,4 +17,6 @@ public class Event
     public string? Description { get; set; }
     public string? Location { get; set; }
     public List<EventSlot>? EventSlots { get; set; }
+    
+    
 }

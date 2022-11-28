@@ -1,13 +1,18 @@
+using System.Text;
 using System.Text.Json.Serialization;
 using Application;
 using AutoMapper;
 using Core;
 using FluentValidation;
 using Infrastructure;
+using Application.Helpers;
 using Infrastructure.DB;
 using Infrastructure.DBPostgresql;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
+using Microsoft.IdentityModel.Tokens;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,10 +37,30 @@ builder.Services.AddValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssembli
 builder.Services.AddControllers()
     .AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
+builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
+
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateAudience = false,
+        ValidateIssuer = false,
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
+            builder.Configuration.GetValue<string>("AppSettings:Secret")))
+    };
+});
+
+
+builder.Services.AddCors();
+
 
 // Setup DependencyResolver Service
 Application.DependencyResolver.DependencyResolverService.RegisterApplicationLayer(builder.Services);
 Infrastructure.DependencyResolver.DependencyResolverService.RegisterInfrastructureLayer(builder.Services);
+
+builder.Services.AddValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
 
 if (builder.Environment.IsDevelopment())
 {
@@ -52,8 +77,6 @@ if (builder.Environment.IsProduction())
 }
 
 
-
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -68,8 +91,15 @@ if (app.Environment.IsProduction())
     
 }
 
-app.UseHttpsRedirection();
+app.UseCors(options =>
+{
+    options.SetIsOriginAllowed(option => true)
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .AllowCredentials();
+});
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
