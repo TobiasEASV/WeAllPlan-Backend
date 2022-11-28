@@ -168,7 +168,7 @@ public class SlotAnswerTest
         
         ISlotAnswerService service = new SlotAnswerService(mockRepo.Object, _mapper, _validator);
 
-        SlotAnswerDTO slotAnswerDto = expectedGetSlotAnswers[0];
+        SlotAnswerDTO slotAnswerDto = fakeRepo[0];
         slotAnswerDto.Answer = 1;
 
         //Act
@@ -244,9 +244,12 @@ public class SlotAnswerTest
     {
         // Arrange
         Mock<ISlotAnswerRepository> mockRepo = new Mock<ISlotAnswerRepository>();
-        int eventId = 2;
+        int eventId = 1;
         string mail = "mi@yo.com";
-        List<SlotAnswerDTO> listToDelete = fakeRepo;
+        List<SlotAnswerDTO> listToDelete = new List<SlotAnswerDTO>()
+        {
+            fakeRepo[1]
+        };
         
         mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(_mapper.Map<List<SlotAnswer>>(fakeRepo));
 
@@ -259,9 +262,6 @@ public class SlotAnswerTest
             Assert.Throws<ValidationException>(() => service.DeleteSlotAnswers(eventId, mail, listToDelete));
         Assert.Equal(expected, actual.Message);
     }
-    
-    
-    
     
     // Data
     //Event Slots
@@ -289,7 +289,7 @@ public class SlotAnswerTest
     }};
     
     
-    
+    //The expected list for GetSlotAnswers.
     List<SlotAnswerDTO> expectedGetSlotAnswers = new List<SlotAnswerDTO>()
     {
         new SlotAnswerDTO()
@@ -302,6 +302,7 @@ public class SlotAnswerTest
         }
     };
     
+    //Base List
     List<SlotAnswerDTO> fakeRepo = new List<SlotAnswerDTO>()
     {
         new SlotAnswerDTO()
