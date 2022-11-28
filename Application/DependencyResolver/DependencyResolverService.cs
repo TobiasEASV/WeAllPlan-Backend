@@ -1,6 +1,7 @@
 
 ﻿using Application.Interfaces;
-using FluentValidation;
+ using Core.Interfaces;
+ using FluentValidation;
 
 
 using Microsoft.Extensions.DependencyInjection;
