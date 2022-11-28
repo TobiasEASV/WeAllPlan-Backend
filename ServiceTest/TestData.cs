@@ -9,7 +9,11 @@ namespace ServiceTest;
 public class TestData
 {
     private IConfigurationProvider _configuration;
-
+    //
+    //
+    //EVENT 
+    //
+    //
     public static IEnumerable<Object[]> CreateValidEventTestData()
     {
         //2.1 Some fields filled out
@@ -82,6 +86,12 @@ public class TestData
         };
     }
 
+    
+    //
+    //
+    //SLOT ANSWER
+    //
+    //
 
     public static IEnumerable<Object[]> InvalidCreateSlotAnswer()
     {
@@ -146,4 +156,11 @@ public class TestData
             new string("You can only change your own answers")
         };
     }
+    
+    
+    //
+    //
+    //EVENT SLOT
+    //
+    //
 }

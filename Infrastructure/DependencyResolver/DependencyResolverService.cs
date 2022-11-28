@@ -7,7 +7,7 @@ public static class DependencyResolverService
 {
     public static void RegisterInfrastructureLayer(IServiceCollection services)
     {
-
+        services.AddScoped<IEventSlotRepository, EventSlotRepository>();
         services.AddScoped<IEventRepository, EventRepository>();
         services.AddScoped<ISlotAnswerRepository, SlotAnswerRepository>();
         services.AddScoped<IUserRepository, UserRepository>();

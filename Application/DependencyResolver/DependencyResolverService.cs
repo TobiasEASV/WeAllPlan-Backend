@@ -16,6 +16,7 @@ public static class DependencyResolverService
         services.AddScoped<IEventService, EventService>();
         services.AddScoped<ISlotAnswerService, SlotAnswerService>();       
         services.AddScoped<IAuthenticationService, AuthenticationService>();
+        services.AddScoped<IEventSlotService, EventSlotService>();
 
     }
 }

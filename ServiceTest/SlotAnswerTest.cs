@@ -51,15 +51,17 @@ public class SlotAnswerTest
         //Arrange 
         Mock<ISlotAnswerRepository> mock = new Mock<ISlotAnswerRepository>();
 
-        string expected = "Service can not be created without all parameters.";
+        string expectedRepo = "Repository is null";
+        string expectedMapper = "Mapper is null";
+        string expectedValidator = "Validator is null";
         
         //Act + Assert
         NullReferenceException noMock = Assert.Throws<NullReferenceException>(() => new SlotAnswerService(null, _mapper, _validator));
         NullReferenceException noMapper = Assert.Throws<NullReferenceException>(() => new SlotAnswerService(mock.Object, null, _validator));
         NullReferenceException noValidator = Assert.Throws<NullReferenceException>(() => new SlotAnswerService(mock.Object, _mapper, null));
-        Assert.Equal(expected, noMock.Message);
-        Assert.Equal(expected, noMapper.Message);
-        Assert.Equal(expected, noValidator.Message);
+        Assert.Equal(expectedRepo, noMock.Message);
+        Assert.Equal(expectedMapper, noMapper.Message);
+        Assert.Equal(expectedValidator, noValidator.Message);
     }
 
     

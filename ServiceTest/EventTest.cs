@@ -54,11 +54,16 @@ public class EventTest
     {
         // Arrange
         IEventService service;
-        string expected = "Repository is null";
+        Mock<IEventRepository> mock = new Mock<IEventRepository>();
         
         // Act + Assert
-        var ex = Assert.Throws<NullReferenceException>(() => service = new EventService(null, null,null));
-        Assert.Equal(expected, ex.Message);
+        NullReferenceException noMock = Assert.Throws<NullReferenceException>(() => new EventService(null, _mapper,_validator ));
+        NullReferenceException noMapper = Assert.Throws<NullReferenceException>(() => new EventService(mock.Object, null,_validator ));
+        NullReferenceException noValidator = Assert.Throws<NullReferenceException>(() => new EventService(mock.Object, _mapper,null ));
+        Assert.Equal("Repository is null", noMock.Message);
+        Assert.Equal("Mapper is null", noMapper.Message);
+        Assert.Equal("Validator is null", noValidator.Message);
+        
     }
 
     /// <summary>
@@ -72,7 +77,7 @@ public class EventTest
         // Arrange
         Mock<IEventRepository> mockRepo = new Mock<IEventRepository>();
         
-       IEventService service = new EventService(mockRepo.Object, _mapper,_validator);
+        IEventService service = new EventService(mockRepo.Object, _mapper,_validator);
         
         //Act
         service.CreateEvent(eventDto);

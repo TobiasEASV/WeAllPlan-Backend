@@ -15,9 +15,19 @@ public class SlotAnswerService : ISlotAnswerService
 
     public SlotAnswerService(ISlotAnswerRepository slotAnswerRepository, IMapper mapper, IValidator<SlotAnswerDTO> validator)
     {
-        if (slotAnswerRepository == null || mapper ==null || validator ==null)
+        if (slotAnswerRepository is null   )
         {
-            throw new NullReferenceException("Service can not be created without all parameters.");
+            throw new NullReferenceException("Repository is null");
+        }
+
+        if (mapper is null)
+        {
+            throw new NullReferenceException("Mapper is null");
+        }
+
+        if (validator is null)
+        {
+            throw new NullReferenceException("Validator is null");
         }
         _slotAnswerRepository = slotAnswerRepository;
         _mapper = mapper;
