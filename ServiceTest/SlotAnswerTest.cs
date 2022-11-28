@@ -215,6 +215,7 @@ public class SlotAnswerTest
         Mock<ISlotAnswerRepository> mockRepo = new Mock<ISlotAnswerRepository>();
         int eventId = 1;
         string mail = "mingus@yo.com";
+        
         List<SlotAnswerDTO> listToDelete = new List<SlotAnswerDTO>()
         {
             new SlotAnswerDTO()
@@ -229,7 +230,7 @@ public class SlotAnswerTest
 
         // Act
 
-        service.DeleteSlotAnswers(eventId, mail, fakeRepo);
+        service.DeleteSlotAnswers(eventId, mail, listToDelete);
         
         // Assert
         mockRepo.Verify(repo => repo.DeleteSlotAnswers(It.IsAny<List<SlotAnswer>>()), Times.Once);
@@ -244,10 +245,10 @@ public class SlotAnswerTest
         // Arrange
         Mock<ISlotAnswerRepository> mockRepo = new Mock<ISlotAnswerRepository>();
         int eventId = 2;
-        string mail = "mingus@yo.com";
-        List<SlotAnswerDTO> listToDelete = expectedGetSlotAnswers;
+        string mail = "mi@yo.com";
+        List<SlotAnswerDTO> listToDelete = fakeRepo;
         
-        mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(_mapper.Map<List<SlotAnswer>>(expectedGetSlotAnswers));
+        mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(_mapper.Map<List<SlotAnswer>>(fakeRepo));
 
         ISlotAnswerService service = new SlotAnswerService(mockRepo.Object, _mapper, _validator);
 
@@ -263,6 +264,7 @@ public class SlotAnswerTest
     
     
     // Data
+    //Event Slots
     static EventSlot eventslot1 = new EventSlot()
         { Id = 1, StartTime = DateTime.Now.AddDays(1), EndTime = DateTime.Now.AddDays(2), Event = new Event()
         {
@@ -271,8 +273,23 @@ public class SlotAnswerTest
             {
                 Email = "mingus@yo.com", Id = 1, Name = "mikkel", Password = "123sværtatgætte", Salt = "yolo"
             }, 
-            Title = "kurt"
+            Title = "kurts Havefest"
         }};
+   
+    
+    static EventSlot eventslot2 = new EventSlot()
+    { Id = 2, StartTime = DateTime.Now.AddDays(2), EndTime = DateTime.Now.AddDays(2), Event = new Event()
+    {   
+        Id = 2, 
+        User = new User()
+        {
+            Email = "Myemail@yo.com", Id = 2, Name = "mikkel", Password = "123sværtatgætte", Salt = "yolo"
+        }, 
+        Title = "kurts Fest"
+    }};
+    
+    
+    
     List<SlotAnswerDTO> expectedGetSlotAnswers = new List<SlotAnswerDTO>()
     {
         new SlotAnswerDTO()
@@ -284,15 +301,7 @@ public class SlotAnswerTest
             Answer = 1, Email = "mingyo@hotmail.com", Id = 2, EventSlot = eventslot1, UserName = "youstolemyname"
         }
     };
-    static EventSlot eventslot2 = new EventSlot(){ Id = 2, StartTime = DateTime.Now.AddDays(1), EndTime = DateTime.Now.AddDays(2), Event = new Event()
-    {
-        Id = 2, 
-        User = new User()
-        {
-            Email = "Myemail@yo.com", Id = 2, Name = "mikkel", Password = "123sværtatgætte", Salt = "yolo"
-        }, 
-        Title = "kurt"
-    }};
+    
     List<SlotAnswerDTO> fakeRepo = new List<SlotAnswerDTO>()
     {
         new SlotAnswerDTO()

@@ -72,19 +72,22 @@ public class SlotAnswerService : ISlotAnswerService
 
     public void DeleteSlotAnswers(int eventId, string email, List<SlotAnswerDTO> slotAnswerDtos)
     {
-        List<SlotAnswer> listOfSlotAnswers = _slotAnswerRepository.GetAll().Result.FindAll(s => s.EventSlot.Event.Id == eventId);
+        List<SlotAnswer> listOfSlotAnswers = _slotAnswerRepository.GetAll().Result.FindAll(s => s.EventSlot.Event.Id == eventId );
         List<SlotAnswer> listToDelete = new List<SlotAnswer>();
         foreach (var dto in slotAnswerDtos)
         {
             foreach (var slotAnswers in listOfSlotAnswers)
             {
-                if (dto.Id == slotAnswers.Id && ((slotAnswers.Email != email && slotAnswers.EventSlot.Event.User.Email == email)
-                                                 || (slotAnswers.EventSlot.Event.User.Email != email && slotAnswers.Email == email) 
-                                                 || (slotAnswers.EventSlot.Event.User.Email == email && slotAnswers.Email == email)))
-                {
-                    listToDelete.Add(slotAnswers);
+                if (dto.Id == slotAnswers.Id)
+                { if ((slotAnswers.Email != email && slotAnswers.EventSlot.Event.User.Email == email)
+                        || (slotAnswers.EventSlot.Event.User.Email != email && slotAnswers.Email == email)
+                        || (slotAnswers.EventSlot.Event.User.Email == email && slotAnswers.Email == email))
+                    {
+                        listToDelete.Add(slotAnswers);
+                    }
+                    else throw new ValidationException("You do not have permission to delete these answers");
                 }
-                else throw new ValidationException("You do not have permission to delete these answers");
+                
             }
         }
         _slotAnswerRepository.DeleteSlotAnswers(listToDelete);
