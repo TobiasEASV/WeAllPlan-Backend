@@ -87,7 +87,24 @@ public class TestData
     {
         yield return new object[]
         {
-
+            new SlotAnswerDTO()
+            {
+                Answer = 1,Email = "MyEmail",EventSlot = new EventSlot(),Id=1,UserName = "Mikkel"
+            }
+        };
+        yield return new object[]
+        {
+            new SlotAnswerDTO()
+            {
+                Answer = 6,Email = "MyEmail",EventSlot = new EventSlot(),Id=1,UserName = null
+            }
+        };
+        yield return new object[]
+        {
+            new SlotAnswerDTO()
+            {
+                Answer = 1,Email = null,EventSlot = new EventSlot(),Id=1,UserName = "Mikkel"
+            }
         };
     }
 

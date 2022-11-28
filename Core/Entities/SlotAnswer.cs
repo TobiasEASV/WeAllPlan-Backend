@@ -7,7 +7,6 @@ public class SlotAnswer
     public int Id { get; set; }
     
     [Required]
-    [MaxLength(20)]
     public int Answer { get; set; }
     
     [Required]

@@ -91,7 +91,11 @@ public class SlotAnswerTest
     [MemberData(nameof(TestData.InvalidCreateSlotAnswer), MemberType = typeof(TestData))]
     public void InvalidCreateSlotAnswerTest(SlotAnswerDTO slotAnswerDto)
     {
+        
+        //Arrange
         Mock<ISlotAnswerRepository> mock = new Mock<ISlotAnswerRepository>();
+        
+        //Act + Assert
         
     }
     
