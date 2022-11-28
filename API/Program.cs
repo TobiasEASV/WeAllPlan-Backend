@@ -1,12 +1,18 @@
 using System.Text;
 using System.Text.Json.Serialization;
-using Application.Helpers;
+using Application;
+using AutoMapper;
+using Core;
 using FluentValidation;
+using Infrastructure;
+using Application.Helpers;
 using Infrastructure.DB;
 using Infrastructure.DBPostgresql;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
 using Microsoft.IdentityModel.Tokens;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +22,17 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+var mapper = new MapperConfiguration(config =>
+{
+    config.CreateMap<EventDTO, Event>();
+    config.CreateMap<Event,EventDTO>();
+    config.CreateMap<SlotAnswerDTO, SlotAnswer>();
+    config.CreateMap<SlotAnswer, SlotAnswerDTO>();
+}).CreateMapper();
+builder.Services.AddSingleton(mapper);
+
+builder.Services.AddValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddControllers()
     .AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
@@ -88,3 +105,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+

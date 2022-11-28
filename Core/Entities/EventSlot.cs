@@ -6,7 +6,6 @@ public class EventSlot
 {
     public int Id { get; set; }
     
-    [Required]
     public Event Event { get; set; }
     [Required]
     public DateTime StartTime { get; set; }
