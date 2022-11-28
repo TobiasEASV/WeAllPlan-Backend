@@ -4,5 +4,5 @@ namespace Application.Interfaces;
 
 public interface ISlotAnswerRepository
 {
-    void CreateSlotAnswer(SlotAnswer isAny);
+    Task<SlotAnswer> CreateSlotAnswer(SlotAnswer slotAnswer);
 }

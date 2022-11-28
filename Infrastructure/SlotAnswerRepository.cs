@@ -2,6 +2,7 @@
 using AutoMapper;
 using Core;
 using Infrastructure.DB;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Infrastructure;
 
@@ -14,8 +15,10 @@ public class SlotAnswerRepository : ISlotAnswerRepository
         _dbContextSqlite = dbContextSqlite;
     }
 
-    public void CreateSlotAnswer(SlotAnswer isAny)
+    public async Task<SlotAnswer> CreateSlotAnswer(SlotAnswer slotAnswer)
     {
-        throw new NotImplementedException();
+        EntityEntry<SlotAnswer> x = await _dbContextSqlite.SlotAnswers.AddAsync(slotAnswer);
+        await _dbContextSqlite.SaveChangesAsync();
+        return x.Entity;
     }
 }

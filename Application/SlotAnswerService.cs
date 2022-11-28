@@ -1,5 +1,6 @@
 ﻿using Application.Interfaces;
 using AutoMapper;
+using Core;
 using FluentValidation;
 
 namespace Application;
@@ -21,8 +22,16 @@ public class SlotAnswerService : ISlotAnswerService
         _validator = validator;
     }
 
-    public void CreateSlotAnswer(SlotAnswerDTO answerDto)
+    public async Task<SlotAnswerDTO> CreateSlotAnswer(SlotAnswerDTO answerDto)
     {
-        throw new NotImplementedException();
+        var validation = _validator.Validate(answerDto);
+        if (!validation.IsValid)
+        {
+            throw new ValidationException(validation.ToString());
+        }
+        SlotAnswer slotAnswer = _mapper.Map<SlotAnswer>(answerDto); // Map the DTO to an actual Object.
+        SlotAnswer repoAnswer = await _slotAnswerRepository.CreateSlotAnswer(slotAnswer); // Get the actual object from the DB
+        SlotAnswerDTO answerDTO = _mapper.Map<SlotAnswerDTO>(repoAnswer); // Map the actual object to a DTO and send it back
+        return answerDTO;
     }
 }

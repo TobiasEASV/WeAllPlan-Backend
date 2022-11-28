@@ -2,5 +2,5 @@
 
 public interface ISlotAnswerService
 {
-    void CreateSlotAnswer(SlotAnswerDTO answerDto);
+    Task<SlotAnswerDTO> CreateSlotAnswer(SlotAnswerDTO answerDto);
 }
