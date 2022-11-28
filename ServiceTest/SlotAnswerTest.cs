@@ -94,9 +94,14 @@ public class SlotAnswerTest
         
         //Arrange
         Mock<ISlotAnswerRepository> mock = new Mock<ISlotAnswerRepository>();
+
+        ISlotAnswerService service = new SlotAnswerService(mock.Object, _mapper, _validator);
+
+        string expected = "";
         
         //Act + Assert
-        
+        ValidationException actual =
+            Assert.ThrowsAsync< ValidationException>(() => service.CreateSlotAnswer(slotAnswerDto)).Result;
     }
     
     
