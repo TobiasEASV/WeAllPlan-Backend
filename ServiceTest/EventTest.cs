@@ -4,11 +4,8 @@ using Application.Interfaces;
 using AutoMapper;
 using Core;
 using FluentValidation;
-using Infrastructure;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using Moq;
 using Xunit.Abstractions;
-using Xunit.Sdk;
 
 namespace ServiceTest;
 

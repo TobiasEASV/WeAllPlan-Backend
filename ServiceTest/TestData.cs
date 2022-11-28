@@ -1,4 +1,6 @@
 ﻿using Application;
+using Application.Interfaces;
+using AutoMapper;
 using Core;
 using Moq;
 
@@ -6,6 +8,8 @@ namespace ServiceTest;
 
 public class TestData
 {
+    private IConfigurationProvider _configuration;
+
     public static IEnumerable<Object[]> CreateValidEventTestData()
     {
         //2.1 Some fields filled out
@@ -77,5 +81,14 @@ public class TestData
             new[]{"Event must have an Event Owner"}
         };
     }
-    
+
+
+    public static IEnumerable<Object[]> InvalidCreateSlotAnswer()
+    {
+        yield return new object[]
+        {
+
+        };
+    }
+
 }

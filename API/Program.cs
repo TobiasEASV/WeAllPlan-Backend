@@ -22,6 +22,8 @@ var mapper = new MapperConfiguration(config =>
 {
     config.CreateMap<EventDTO, Event>();
     config.CreateMap<Event,EventDTO>();
+    config.CreateMap<SlotAnswerDTO, SlotAnswer>();
+    config.CreateMap<SlotAnswer, SlotAnswerDTO>();
 }).CreateMapper();
 builder.Services.AddSingleton(mapper);
 

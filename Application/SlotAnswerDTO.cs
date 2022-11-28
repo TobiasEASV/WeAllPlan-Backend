@@ -1,24 +1,16 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Core;
 
-namespace Core;
+namespace Application;
 
-public class SlotAnswer
+public class SlotAnswerDTO
 {
     public int Id { get; set; }
     
-    [Required]
-    [MaxLength(20)]
     public int Answer { get; set; }
     
-    [Required]
-    [MaxLength(100)]
     public string UserName { get; set; }
-    
-    [Required]
-    [EmailAddress]
+
     public string Email { get; set; }
-    
     
     public EventSlot EventSlot { get; set; }
 }
-
