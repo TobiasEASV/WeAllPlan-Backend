@@ -17,7 +17,7 @@ public class LoginController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<LoggedInUserDto>> Login(LoginUserDto userDto)
+    public async Task<ActionResult<string>> Login(LoginUserDto userDto)
     {
         try
         {

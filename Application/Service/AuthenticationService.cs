@@ -83,18 +83,12 @@ public class AuthenticationService : IAuthenticationService
         throw new Exception(dto.Email + " is already in use.");
     }
 
-    public async Task<LoggedInUserDto> Login(LoginUserDto dto)
+    public async Task<string> Login(LoginUserDto dto)
     {
         var user = await _userRepository.GetUserByEmail(dto.Email);
         if (BCrypt.Net.BCrypt.Verify(dto.Password + user.Salt, user.Password))
         {
-            return new LoggedInUserDto()
-            {
-                Email = user.Email,
-                Name = user.Name,
-                Token = GenerateToken(user),
-                HashId = BCrypt.Net.BCrypt.HashPassword(user.Id.ToString())
-            };
+            return GenerateToken(user);
         }
 
         throw new Exception("Invalid login");
@@ -105,7 +99,11 @@ public class AuthenticationService : IAuthenticationService
         var key = Encoding.UTF8.GetBytes(_appSettings.Secret);
         var tokenDescriptor = new SecurityTokenDescriptor
         {
-            Subject = new ClaimsIdentity(new[] { new Claim("Email", user.Email) }),
+            Subject = new ClaimsIdentity(new[] { 
+                new Claim("Email", user.Email),
+                new Claim("Id", user.Id.ToString()),
+                new Claim("UserName", user.Name)
+            }),
             Expires = DateTime.UtcNow.AddHours(2),
             SigningCredentials =
                 new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)

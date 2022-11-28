@@ -6,6 +6,6 @@ public interface IAuthenticationService
 {
     public Task<string> Register(RegisterUserDto dto);
 
-    public Task<LoggedInUserDto> Login(LoginUserDto dto);
+    public Task<string> Login(LoginUserDto dto);
 
 }
