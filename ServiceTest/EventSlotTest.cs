@@ -5,7 +5,9 @@ using Application.Validators;
 using AutoMapper;
 using Core;
 using FluentValidation;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Moq;
+using Xunit.Abstractions;
 
 namespace ServiceTest;
 
@@ -13,15 +15,17 @@ public class EventSlotTest
 {
     private IMapper _mapper;
     private IValidator<EventSlotDTO> _validator;
-    public EventSlotTest()
+    private ITestOutputHelper _outcomeHelper;
+    public EventSlotTest(ITestOutputHelper testOutputHelper)
     {
         var config = new MapperConfiguration(conf => {
-            conf.CreateMap<EventSlotDTO, EventSlot>(); //RegisterUserDto ==> User - create new user
+            conf.CreateMap<EventSlotDTO, EventSlot>();
             conf.CreateMap<EventSlot,EventSlotDTO>();
         });
         _mapper = config.CreateMapper();
         _validator = new EventSlotValidator();
-        
+        _outcomeHelper = testOutputHelper;
+
     }
     
     
@@ -72,7 +76,7 @@ public class EventSlotTest
         // Arrange
         Mock<IEventSlotRepository> mockRepo = new Mock<IEventSlotRepository>();
 
-        mockRepo.Setup(mockRepo => mockRepo.GetAll()).ReturnsAsync(_mapper.Map<List<EventSlot>>(validEventSlotDTOs));
+        mockRepo.Setup(mockRepo => mockRepo.GetAll()).ReturnsAsync(_mapper.Map<List<EventSlot>>(new List<EventSlotDTO>()));
         IEventSlotService service = new EventSlotService(mockRepo.Object, _mapper, _validator);
         
         // Act
@@ -87,25 +91,52 @@ public class EventSlotTest
     /// </summary>
     [Theory]
     [MemberData(nameof(TestData.InvalidEventSlots), MemberType = typeof(TestData))]
-    public void InvalidCreateEventSlot(List<EventSlotDTO> dtos, string expected)
+    public void InvalidCreateEventSlot(List<EventSlotDTO> dtos)
     {
         // Arrange
         Mock<IEventSlotRepository> mockRepo = new Mock<IEventSlotRepository>();
 
         List<EventSlotDTO> alreadyExists = new List<EventSlotDTO>()
         {
-            validEventSlotDTOs[1]
+           validEventSlotDTOs[1]
         };
 
         mockRepo.Setup(mockRepo => mockRepo.GetAll()).ReturnsAsync(_mapper.Map<List<EventSlot>>(alreadyExists));
         IEventSlotService service = new EventSlotService(mockRepo.Object, _mapper, _validator);
 
-        // Act + Assert
-        ValidationException actual =
-            Assert.ThrowsAsync<ValidationException>(() => service.CreateEventSlot(dtos, dtos[0].Event.Id)).Result;
-        Assert.Equal(expected, actual.Message);
+        // Act 
+        service.CreateEventSlot(dtos, 1);
+        
+        //Assert
+        mockRepo.Verify(repo => repo.CreateEventSlot(It.IsAny<List<EventSlot>>()),Times.Never);
+        
     }
-    
+
+    [Fact]
+    public void ValidUpdateEventSlotTest()
+    {
+        //Arrange
+        Mock<IEventSlotRepository> mockRepo = new Mock<IEventSlotRepository>();
+        mockRepo.Setup(mockRepo => mockRepo.GetAll()).ReturnsAsync(_mapper.Map<List<EventSlot>>(validEventSlotDTOs));
+        
+        IEventSlotService service = new EventSlotService(mockRepo.Object, _mapper, _validator);
+        
+        EventSlotDTO eventSlotDto = validEventSlotDTOs[0];
+        eventSlotDto.StartTime = DateTime.Now;
+        eventSlotDto.EndTime = DateTime.Now.AddDays(20);
+
+        int UserId = 1;
+        List<EventSlotDTO> eventSlotDtos = new List<EventSlotDTO>()
+        {
+            eventSlotDto
+        };
+        //Act
+        service.UpdateEventSlot(eventSlotDtos, UserId);
+        
+        //Arrange
+        mockRepo.Verify( repo => repo.UpdateEvent(It.IsAny<List<EventSlot>>()),Times.Never);
+
+    }
     
     
     
@@ -129,7 +160,7 @@ public class EventSlotTest
                 },
             },
             Id = 1,
-            EndTime = DateTime.Now.AddDays(2),
+            EndTime =DateTime.Parse("20/02/2500 07:22:16"),
             SlotAnswers = new List<SlotAnswer>()
             {
                 new SlotAnswer()
@@ -141,7 +172,7 @@ public class EventSlotTest
                     Answer = 2, Email = "Thomas@yahoo.com", Id = 2, UserName = "ThomasTog"
                 }
             },
-            StartTime = DateTime.Now.AddDays(1)
+            StartTime = DateTime.Parse("18/02/2500 07:22:16")
         },
         new EventSlotDTO()
         {
@@ -158,7 +189,7 @@ public class EventSlotTest
             },
         },
         Id = 1,
-        EndTime = DateTime.Now.AddDays(3),
+        EndTime = DateTime.Parse("08/07/2500 07:22:16"),
         SlotAnswers = new List<SlotAnswer>()
         {
             new SlotAnswer()
@@ -170,7 +201,7 @@ public class EventSlotTest
                 Answer = 1, Email = "Thomas@yahoo.com", Id = 2, UserName = "ThomasTog"
             }
         },
-            StartTime = DateTime.Now.AddDays(2)
+            StartTime = DateTime.Parse("08/06/2500 07:22:16")
         }
     };
 

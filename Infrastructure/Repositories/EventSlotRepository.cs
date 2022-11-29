@@ -26,4 +26,9 @@ public class EventSlotRepository: IEventSlotRepository
     {
         return await _dbContextSqlite.EventSlots.ToListAsync();
     }
+
+    public Task<List<EventSlot>> UpdateEvent(List<EventSlot> eventSlots)
+    {
+        throw new NotImplementedException();
+    }
 }

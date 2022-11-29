@@ -10,6 +10,7 @@ namespace ServiceTest;
 public class TestData
 {
     private IConfigurationProvider _configuration;
+
     //
     //
     //EVENT 
@@ -22,28 +23,27 @@ public class TestData
         {
             new EventDTO()
             {
-                Title="Kæmpe fedt event", 
-                User =new User(), 
+                Title = "Kæmpe fedt event",
+                User = new User(),
                 EventSlots = new List<EventSlot>()
-                
             }
-        }; 
+        };
 
         //2.2 Return with all fields
-        
+
         yield return new Object[]
         {
             new EventDTO()
             {
-                Title= "SIMONS GODE FEST", 
-                User =new User(), 
+                Title = "SIMONS GODE FEST",
+                User = new User(),
                 EventSlots = new List<EventSlot>(),
-                Description ="Mega nice fest. Kom glad.", 
+                Description = "Mega nice fest. Kom glad.",
                 Location = "PÅ SKOLEEEEN"
             }
         };
     }
-    
+
     public static IEnumerable<Object[]> CreateInvalidEventTestData()
     {
         //2.3 Invalid Title, exists, but empty.
@@ -51,12 +51,12 @@ public class TestData
         {
             new EventDTO()
             {
-                Title="", 
-                User = new User(), 
+                Title = "",
+                User = new User(),
                 EventSlots = new List<EventSlot>()
             },
-            new[]{"The event needs a title"}
-        }; 
+            new[] { "The event needs a title" }
+        };
 
         //2.3 Invalid Title, doesnt exist.
         yield return new Object[]
@@ -64,14 +64,14 @@ public class TestData
             new EventDTO()
             {
                 Title = null,
-                User = new User(), 
+                User = new User(),
                 EventSlots = new List<EventSlot>(),
-                Description ="Mega nice fest. Kom glad.", 
+                Description = "Mega nice fest. Kom glad.",
                 Location = "PÅ SKOLEEEEN"
             },
-            new[]{"The event needs a title"}
+            new[] { "The event needs a title" }
         };
-        
+
         //2.3 Invalid User, doesnt exist.
         yield return new Object[]
         {
@@ -80,14 +80,14 @@ public class TestData
                 Title = "ffs",
                 User = null,
                 EventSlots = new List<EventSlot>(),
-                Description ="Mega nice fest. Kom glad.", 
+                Description = "Mega nice fest. Kom glad.",
                 Location = "PÅ SKOLEEEEN"
             },
-            new[]{"Event must have an Event Owner"}
+            new[] { "Event must have an Event Owner" }
         };
     }
 
-    
+
     //
     //
     //SLOT ANSWER
@@ -100,7 +100,7 @@ public class TestData
         {
             new SlotAnswerDTO()
             {
-                Answer = 1,Email = "MyEmail",EventSlot = new EventSlot(),Id=1,UserName = null
+                Answer = 1, Email = "MyEmail", EventSlot = new EventSlot(), Id = 1, UserName = null
             },
             new string("Username cannot be empty")
         };
@@ -108,7 +108,7 @@ public class TestData
         {
             new SlotAnswerDTO()
             {
-                Answer = 6,Email = "MyEmail",EventSlot = new EventSlot(),Id=1,UserName = "Mingus"
+                Answer = 6, Email = "MyEmail", EventSlot = new EventSlot(), Id = 1, UserName = "Mingus"
             },
             new string("Answer has to be no, maybe or yes")
         };
@@ -116,7 +116,7 @@ public class TestData
         {
             new SlotAnswerDTO()
             {
-                Answer = 1,Email = null,EventSlot = new EventSlot(),Id=1,UserName = "Mikkel"
+                Answer = 1, Email = null, EventSlot = new EventSlot(), Id = 1, UserName = "Mikkel"
             },
             new string("E-mail has to be of a correct format")
         };
@@ -140,13 +140,13 @@ public class TestData
             },
             new string("E-mail has to be of a correct format")
         };
-        yield return new object[] {
-            
-        new SlotAnswerDTO()
+        yield return new object[]
+        {
+            new SlotAnswerDTO()
             {
                 Answer = 1, Email = "truemingo@shababab.com", Id = 1, EventSlot = new EventSlot(), UserName = null
             },
-        new string("Username cannot be empty")
+            new string("Username cannot be empty")
         };
         yield return new object[]
         {
@@ -157,8 +157,8 @@ public class TestData
             new string("You can only change your own answers")
         };
     }
-    
-    
+
+
     //
     //
     //EVENT SLOT
@@ -169,69 +169,73 @@ public class TestData
     {
         yield return new object[]
         {
-            new EventSlotDTO()
+            new List<EventSlotDTO>()
             {
-                Confirmed = true,
-                Event = new Event()
+                new EventSlotDTO()
                 {
-                    Description = "BYOB",
-                    Id = 1,
-                    Location = "Denmark",
-                    Title = "Mikkels havefest",
-                    User = new User()
+                    Confirmed = true,
+                    Event = new Event()
                     {
-                        Email = "mikkel@gmail.com", Id = 1, Name = "Mikkel", Password = "123abc", Salt = "321cba"
+                        Description = "BYOB",
+                        Id = 1,
+                        Location = "Denmark",
+                        Title = "Mikkels havefest",
+                        User = new User()
+                        {
+                            Email = "mikkel@gmail.com", Id = 1, Name = "Mikkel", Password = "123abc", Salt = "321cba"
+                        },
                     },
-                },
-                Id = 1,
-                EndTime = DateTime.Now.AddDays(1),
-                SlotAnswers = new List<SlotAnswer>()
-                {
-                    new SlotAnswer()
+                    Id = 4,
+                    EndTime = DateTime.Parse("02/02/2500 07:22:16"),
+                    SlotAnswers = new List<SlotAnswer>()
                     {
-                        Answer = 1, Email = "Anders@hotmail.com", Id = 1, UserName = "AndersAnd"
+                        new SlotAnswer()
+                        {
+                            Answer = 1, Email = "Anders@hotmail.com", Id = 1, UserName = "AndersAnd"
+                        },
+                        new SlotAnswer()
+                        {
+                            Answer = 2, Email = "Thomas@yahoo.com", Id = 2, UserName = "ThomasTog"
+                        }
                     },
-                    new SlotAnswer()
-                    {
-                        Answer = 2, Email = "Thomas@yahoo.com", Id = 2, UserName = "ThomasTog"
-                    }
-                },
-                StartTime = DateTime.Now.AddDays(20)
-            },
-            new string("EventSlot already exists on this event")
+                    StartTime = DateTime.Parse("08/07/2500 07:22:16")
+                }
+            }
         };
         yield return new object[]
         {
-            new EventSlotDTO()
+            new List<EventSlotDTO>()
             {
-                Confirmed = false,
-                Event = new Event()
+                new EventSlotDTO()
                 {
-                    Description = "BYOB",
+                    Confirmed = false,
+                    Event = new Event()
+                    {
+                        Description = "BYOB",
+                        Id = 1,
+                        Location = "Denmark",
+                        Title = "Mikkels havefest",
+                        User = new User()
+                        {
+                            Email = "mikkel@gmail.com", Id = 1, Name = "Mikkel", Password = "123abc", Salt = "321cba"
+                        },
+                    },
                     Id = 1,
-                    Location = "Denmark",
-                    Title = "Mikkels havefest",
-                    User = new User()
+                    EndTime = DateTime.Parse("08/07/2500 07:22:16"),
+                    SlotAnswers = new List<SlotAnswer>()
                     {
-                        Email = "mikkel@gmail.com", Id = 1, Name = "Mikkel", Password = "123abc", Salt = "321cba"
+                        new SlotAnswer()
+                        {
+                            Answer = 0, Email = "Anders@hotmail.com", Id = 1, UserName = "AndersAnd"
+                        },
+                        new SlotAnswer()
+                        {
+                            Answer = 1, Email = "Thomas@yahoo.com", Id = 2, UserName = "ThomasTog"
+                        }
                     },
-                },
-                Id = 1,
-                EndTime = DateTime.Now.AddDays(3),
-                SlotAnswers = new List<SlotAnswer>()
-                {
-                    new SlotAnswer()
-                    {
-                        Answer = 0, Email = "Anders@hotmail.com", Id = 1, UserName = "AndersAnd"
-                    },
-                    new SlotAnswer()
-                    {
-                        Answer = 1, Email = "Thomas@yahoo.com", Id = 2, UserName = "ThomasTog"
-                    }
-                },
-                StartTime = DateTime.Now.AddDays(2)
-            },
-            new string("EventSlot already exists on this event")
+                    StartTime = DateTime.Parse("08/06/2500 07:22:16")
+                }
+            }
         };
     }
 }
