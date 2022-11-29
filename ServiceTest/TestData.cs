@@ -1,4 +1,5 @@
 ﻿using Application;
+using Application.DTO;
 using Application.Interfaces;
 using AutoMapper;
 using Core;
@@ -163,4 +164,74 @@ public class TestData
     //EVENT SLOT
     //
     //
+
+    public static IEnumerable<Object[]> InvalidEventSlots()
+    {
+        yield return new object[]
+        {
+            new EventSlotDTO()
+            {
+                Confirmed = true,
+                Event = new Event()
+                {
+                    Description = "BYOB",
+                    Id = 1,
+                    Location = "Denmark",
+                    Title = "Mikkels havefest",
+                    User = new User()
+                    {
+                        Email = "mikkel@gmail.com", Id = 1, Name = "Mikkel", Password = "123abc", Salt = "321cba"
+                    },
+                },
+                Id = 1,
+                EndTime = DateTime.Now.AddDays(1),
+                SlotAnswers = new List<SlotAnswer>()
+                {
+                    new SlotAnswer()
+                    {
+                        Answer = 1, Email = "Anders@hotmail.com", Id = 1, UserName = "AndersAnd"
+                    },
+                    new SlotAnswer()
+                    {
+                        Answer = 2, Email = "Thomas@yahoo.com", Id = 2, UserName = "ThomasTog"
+                    }
+                },
+                StartTime = DateTime.Now.AddDays(20)
+            },
+            new string("EventSlot already exists on this event")
+        };
+        yield return new object[]
+        {
+            new EventSlotDTO()
+            {
+                Confirmed = false,
+                Event = new Event()
+                {
+                    Description = "BYOB",
+                    Id = 1,
+                    Location = "Denmark",
+                    Title = "Mikkels havefest",
+                    User = new User()
+                    {
+                        Email = "mikkel@gmail.com", Id = 1, Name = "Mikkel", Password = "123abc", Salt = "321cba"
+                    },
+                },
+                Id = 1,
+                EndTime = DateTime.Now.AddDays(3),
+                SlotAnswers = new List<SlotAnswer>()
+                {
+                    new SlotAnswer()
+                    {
+                        Answer = 0, Email = "Anders@hotmail.com", Id = 1, UserName = "AndersAnd"
+                    },
+                    new SlotAnswer()
+                    {
+                        Answer = 1, Email = "Thomas@yahoo.com", Id = 2, UserName = "ThomasTog"
+                    }
+                },
+                StartTime = DateTime.Now.AddDays(2)
+            },
+            new string("EventSlot already exists on this event")
+        };
+    }
 }

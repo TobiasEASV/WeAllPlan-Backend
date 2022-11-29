@@ -43,7 +43,7 @@ public class SlotAnswerRepository : ISlotAnswerRepository
 
     public async void DeleteSlotAnswers(List<SlotAnswer> listToDelete)
     {
-        _dbContextSqlite.RemoveRange(listToDelete);
+        _dbContextSqlite.SlotAnswers.RemoveRange(listToDelete);
         await _dbContextSqlite.SaveChangesAsync();
     }
 }

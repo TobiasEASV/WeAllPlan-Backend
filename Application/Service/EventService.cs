@@ -22,9 +22,8 @@ public class EventService : IEventService
         if(mapper is null)
             throw new NullReferenceException("Mapper is null");
         if (eventValidator is null)
-        {
             throw new NullReferenceException("Validator is null");
-        }
+        
         _repository = repository;
         _mapper = mapper;
         _eventValidator = eventValidator;
