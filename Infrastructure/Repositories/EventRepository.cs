@@ -42,4 +42,9 @@ public class EventRepository : IEventRepository
         _dbContextSqlite.Events.Remove(Event);
         _dbContextSqlite.SaveChanges();
     }
+
+    public User getUser(int userId)
+    {
+       return _dbContextSqlite.Users.Find(userId);
+    }
 }

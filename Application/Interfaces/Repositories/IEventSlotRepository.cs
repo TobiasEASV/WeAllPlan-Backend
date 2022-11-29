@@ -6,5 +6,7 @@ public interface IEventSlotRepository
 {
     void CreateEventSlot(List<EventSlot> validatedEventSlots);
     Task<List<EventSlot>> GetAll();
-    Task<List<EventSlot>> UpdateEvent(List<EventSlot> eventSlots);
+    
+    void UpdateEventSlot(List<EventSlot> isAny);
+    void DeleteEventSlot(List<EventSlot> isAny);
 }

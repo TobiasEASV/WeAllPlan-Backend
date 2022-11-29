@@ -24,7 +24,7 @@ public class TestData
             new EventDTO()
             {
                 Title = "Kæmpe fedt event",
-                User = new User(),
+                UserId =1,
                 EventSlots = new List<EventSlot>()
             }
         };
@@ -36,7 +36,7 @@ public class TestData
             new EventDTO()
             {
                 Title = "SIMONS GODE FEST",
-                User = new User(),
+                UserId = 1,
                 EventSlots = new List<EventSlot>(),
                 Description = "Mega nice fest. Kom glad.",
                 Location = "PÅ SKOLEEEEN"
@@ -52,7 +52,7 @@ public class TestData
             new EventDTO()
             {
                 Title = "",
-                User = new User(),
+                UserId = 1,
                 EventSlots = new List<EventSlot>()
             },
             new[] { "The event needs a title" }
@@ -64,7 +64,7 @@ public class TestData
             new EventDTO()
             {
                 Title = null,
-                User = new User(),
+                UserId = 1,
                 EventSlots = new List<EventSlot>(),
                 Description = "Mega nice fest. Kom glad.",
                 Location = "PÅ SKOLEEEEN"
@@ -78,7 +78,7 @@ public class TestData
             new EventDTO()
             {
                 Title = "ffs",
-                User = null,
+                UserId = -5,
                 EventSlots = new List<EventSlot>(),
                 Description = "Mega nice fest. Kom glad.",
                 Location = "PÅ SKOLEEEEN"
@@ -173,7 +173,7 @@ public class TestData
             {
                 new EventSlotDTO()
                 {
-                    Confirmed = true,
+                    Confirmed = false,
                     Event = new Event()
                     {
                         Description = "BYOB",

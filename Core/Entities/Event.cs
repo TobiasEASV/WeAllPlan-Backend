@@ -18,5 +18,4 @@ public class Event
     public string? Location { get; set; }
     public List<EventSlot>? EventSlots { get; set; }
     
-    
 }

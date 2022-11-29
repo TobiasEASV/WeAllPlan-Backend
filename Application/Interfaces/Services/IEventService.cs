@@ -4,9 +4,9 @@ namespace Application.Interfaces;
 
 public interface IEventService
 {
-    Task<EventDTO> CreateEvent(EventDTO eventDto);
+    Task CreateEvent(EventDTO eventDto);
     Task<EventDTO> GetEvent(int id);
     Task<List<EventDTO>> GetEventsFromUser(int userId);
-    Task<EventDTO> UpdateEvent(EventDTO eventDto, int userId);
+    Task UpdateEvent(EventDTO eventDto, int userId);
     void DeleteEvent(int eventId, int userId);
 }

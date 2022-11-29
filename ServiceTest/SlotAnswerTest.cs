@@ -202,8 +202,8 @@ public class SlotAnswerTest
         ISlotAnswerService service = new SlotAnswerService(mockRepo.Object, _mapper, _validator);
         
         //Act + Assert
-        ValidationException actual = Assert.ThrowsAsync<ValidationException>(() => service.UpdateSlotAnswer(slotAnswerDto, slotAnswerId)).Result;
-        Assert.Equal(expected, actual.Message);
+        Task<ValidationException> actual = Assert.ThrowsAsync<ValidationException>(() => service.UpdateSlotAnswer(slotAnswerDto, slotAnswerId));
+        Assert.Equal(expected, actual.Result.Message);
     }
 
 

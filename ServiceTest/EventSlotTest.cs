@@ -5,7 +5,6 @@ using Application.Validators;
 using AutoMapper;
 using Core;
 using FluentValidation;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Moq;
 using Xunit.Abstractions;
 
@@ -16,19 +15,20 @@ public class EventSlotTest
     private IMapper _mapper;
     private IValidator<EventSlotDTO> _validator;
     private ITestOutputHelper _outcomeHelper;
+
     public EventSlotTest(ITestOutputHelper testOutputHelper)
     {
-        var config = new MapperConfiguration(conf => {
+        var config = new MapperConfiguration(conf =>
+        {
             conf.CreateMap<EventSlotDTO, EventSlot>();
-            conf.CreateMap<EventSlot,EventSlotDTO>();
+            conf.CreateMap<EventSlot, EventSlotDTO>();
         });
         _mapper = config.CreateMapper();
         _validator = new EventSlotValidator();
         _outcomeHelper = testOutputHelper;
-
     }
-    
-    
+
+
     /// <summary>
     /// 1.1
     /// </summary>
@@ -37,16 +37,16 @@ public class EventSlotTest
     {
         // Arrange
         Mock<IEventSlotRepository> mockRepo = new Mock<IEventSlotRepository>();
-      
+
         // Act
-        IEventSlotService service = new EventSlotService(mockRepo.Object,_mapper,_validator);
-        
+        IEventSlotService service = new EventSlotService(mockRepo.Object, _mapper, _validator);
+
 
         // Assert
         Assert.NotNull(service);
         Assert.True(service is EventSlotService);
     }
-    
+
     /// <summary>
     /// 1.2
     /// </summary>
@@ -56,15 +56,17 @@ public class EventSlotTest
         // Arrange
         IEventService service;
         Mock<IEventSlotRepository> mock = new Mock<IEventSlotRepository>();
-        
+
         // Act + Assert
-        NullReferenceException noMock = Assert.Throws<NullReferenceException>(() => new EventSlotService(null, _mapper,_validator ));
-        NullReferenceException noMapper = Assert.Throws<NullReferenceException>(() => new EventSlotService(mock.Object, null,_validator ));
-        NullReferenceException noValidator = Assert.Throws<NullReferenceException>(() => new EventSlotService(mock.Object, _mapper,null ));
+        NullReferenceException noMock =
+            Assert.Throws<NullReferenceException>(() => new EventSlotService(null, _mapper, _validator));
+        NullReferenceException noMapper =
+            Assert.Throws<NullReferenceException>(() => new EventSlotService(mock.Object, null, _validator));
+        NullReferenceException noValidator =
+            Assert.Throws<NullReferenceException>(() => new EventSlotService(mock.Object, _mapper, null));
         Assert.Equal("Repository is null", noMock.Message);
         Assert.Equal("Mapper is null", noMapper.Message);
         Assert.Equal("Validator is null", noValidator.Message);
-        
     }
 
     /// <summary>
@@ -76,16 +78,17 @@ public class EventSlotTest
         // Arrange
         Mock<IEventSlotRepository> mockRepo = new Mock<IEventSlotRepository>();
 
-        mockRepo.Setup(mockRepo => mockRepo.GetAll()).ReturnsAsync(_mapper.Map<List<EventSlot>>(new List<EventSlotDTO>()));
+        mockRepo.Setup(mockRepo => mockRepo.GetAll())
+            .ReturnsAsync(_mapper.Map<List<EventSlot>>(new List<EventSlotDTO>()));
         IEventSlotService service = new EventSlotService(mockRepo.Object, _mapper, _validator);
-        
+
         // Act
         service.CreateEventSlot(validEventSlotDTOs, 1);
 
         // Assert
         mockRepo.Verify(repo => repo.CreateEventSlot(It.IsAny<List<EventSlot>>()), Times.Once);
     }
-    
+
     /// <summary>
     /// 2.2
     /// </summary>
@@ -98,7 +101,7 @@ public class EventSlotTest
 
         List<EventSlotDTO> alreadyExists = new List<EventSlotDTO>()
         {
-           validEventSlotDTOs[1]
+            validEventSlotDTOs[1]
         };
 
         mockRepo.Setup(mockRepo => mockRepo.GetAll()).ReturnsAsync(_mapper.Map<List<EventSlot>>(alreadyExists));
@@ -106,23 +109,66 @@ public class EventSlotTest
 
         // Act 
         service.CreateEventSlot(dtos, 1);
-        
+
         //Assert
-        mockRepo.Verify(repo => repo.CreateEventSlot(It.IsAny<List<EventSlot>>()),Times.Never);
-        
+        mockRepo.Verify(repo => repo.CreateEventSlot(It.IsAny<List<EventSlot>>()), Times.Never);
     }
 
+    /// <summary>
+    /// 3.1
+    /// </summary>
+    [Fact]
+    public void GetAllEventSlotsFromEventID()
+    {
+        //Arrange
+        Mock<IEventSlotRepository> mockRepo = new Mock<IEventSlotRepository>();
+        mockRepo.Setup(mockRepo => mockRepo.GetAll()).ReturnsAsync(_mapper.Map<List<EventSlot>>(validEventSlotDTOs));
+
+        int EventId = 1;
+
+        IEventSlotService service = new EventSlotService(mockRepo.Object, _mapper, _validator);
+        //Act
+        List<EventSlotDTO> eventSlotDtos = service.GetEventSlots(EventId).Result;
+
+        //Assert
+        mockRepo.Verify(repo => repo.GetAll(), Times.Once);
+    }
+
+    /// <summary>
+    /// 3.2
+    /// </summary>
+    [Fact]
+    public void GetAllEventSlotsFromEventIDWithNoEventSlots()
+    {
+        //Arrange
+        Mock<IEventSlotRepository> mockRepo = new Mock<IEventSlotRepository>();
+        mockRepo.Setup(mockRepo => mockRepo.GetAll()).ReturnsAsync(_mapper.Map<List<EventSlot>>(validEventSlotDTOs));
+
+        int EventId = 2;
+
+        IEventSlotService service = new EventSlotService(mockRepo.Object, _mapper, _validator);
+        //Act
+        List<EventSlotDTO> eventSlotDtos = service.GetEventSlots(EventId).Result;
+
+        //Assert
+        mockRepo.Verify(repo => repo.GetAll(), Times.Once);
+    }
+
+    /// <summary>
+    /// 4.1
+    /// </summary>
     [Fact]
     public void ValidUpdateEventSlotTest()
     {
         //Arrange
         Mock<IEventSlotRepository> mockRepo = new Mock<IEventSlotRepository>();
         mockRepo.Setup(mockRepo => mockRepo.GetAll()).ReturnsAsync(_mapper.Map<List<EventSlot>>(validEventSlotDTOs));
-        
+
+
         IEventSlotService service = new EventSlotService(mockRepo.Object, _mapper, _validator);
-        
+
         EventSlotDTO eventSlotDto = validEventSlotDTOs[0];
-        eventSlotDto.StartTime = DateTime.Now;
+        eventSlotDto.StartTime = DateTime.Now.AddDays(2);
         eventSlotDto.EndTime = DateTime.Now.AddDays(20);
 
         int UserId = 1;
@@ -132,16 +178,93 @@ public class EventSlotTest
         };
         //Act
         service.UpdateEventSlot(eventSlotDtos, UserId);
-        
-        //Arrange
-        mockRepo.Verify( repo => repo.UpdateEvent(It.IsAny<List<EventSlot>>()),Times.Never);
 
+        //Arrange
+        mockRepo.Verify(repo => repo.UpdateEventSlot(It.IsAny<List<EventSlot>>()), Times.Once);
+    }
+
+    /// <summary>
+    /// 4.2-4.4
+    /// </summary>
+    [Fact]
+    public void InvalidUpdateEventSlotTest()
+    {
+        //Arrange
+        Mock<IEventSlotRepository> mockRepo = new Mock<IEventSlotRepository>();
+        mockRepo.Setup(mockRepo => mockRepo.GetAll()).ReturnsAsync(_mapper.Map<List<EventSlot>>(validEventSlotDTOs));
+
+
+        IEventSlotService service = new EventSlotService(mockRepo.Object, _mapper, _validator);
+
+        EventSlotDTO eventSlotDto = validEventSlotDTOs[0];
+        eventSlotDto.StartTime = DateTime.Now.AddHours(2);
+        eventSlotDto.EndTime = DateTime.Now.AddDays(-5); //Error
+
+        EventSlotDTO eventSlotDto1 = validEventSlotDTOs[0];
+        eventSlotDto1.StartTime = DateTime.Now; //Error
+        eventSlotDto1.EndTime = DateTime.Now.AddDays(5);
+
+        int UserId = 1;
+        List<EventSlotDTO> eventSlotDtos = new List<EventSlotDTO>()
+        {
+            eventSlotDto, eventSlotDto1
+        };
+        //Act
+        service.UpdateEventSlot(eventSlotDtos, UserId);
+
+        //Arrange
+        mockRepo.Verify(repo => repo.UpdateEventSlot(It.IsAny<List<EventSlot>>()), Times.Never);
+    }
+
+    /// <summary>
+    /// 5.1
+    /// </summary>
+
+    [Fact]
+    public void ValidDeleteEventSlotTest()
+    {
+        //Arrange
+        Mock<IEventSlotRepository> mockRepo = new Mock<IEventSlotRepository>();
+        mockRepo.Setup(mockRepo => mockRepo.GetAll()).ReturnsAsync(_mapper.Map<List<EventSlot>>(validEventSlotDTOs));
+        List<EventSlotDTO> listToDelete = new List<EventSlotDTO>()
+        {
+            validEventSlotDTOs[1]
+        };
+        int userId = 1;
+
+        IEventSlotService service = new EventSlotService(mockRepo.Object, _mapper, _validator);
+        //Act
+        service.DeleteEventSlots(listToDelete, userId);
+
+        //Assert
+        mockRepo.Verify(repo => repo.DeleteEventSlot(It.IsAny<List<EventSlot>>()), Times.Once);
     }
     
-    
-    
+    /// <summary>
+    /// 5.2
+    /// </summary>
+    [Fact]
+    public void InvalidDeleteEventSlotTest()
+    {
+        //Arrange
+        Mock<IEventSlotRepository> mockRepo = new Mock<IEventSlotRepository>();
+        mockRepo.Setup(mockRepo => mockRepo.GetAll()).ReturnsAsync(_mapper.Map<List<EventSlot>>(validEventSlotDTOs));
+        List<EventSlotDTO> listToDelete = new List<EventSlotDTO>()
+        {
+            validEventSlotDTOs[1]
+        };
+        int userId = 5;
+
+        IEventSlotService service = new EventSlotService(mockRepo.Object, _mapper, _validator);
+
+        string expected = "You do not own this Event.";
+        //Act + Assert
+        ValidationException actual = Assert.Throws<ValidationException>(() => service.DeleteEventSlots(listToDelete,userId));
+        Assert.Equal(expected,actual.Message);
+    }
+
     // DATA
-    
+
     //Valid List<EventSlot>
     private List<EventSlotDTO> validEventSlotDTOs = new List<EventSlotDTO>()
     {
@@ -160,7 +283,7 @@ public class EventSlotTest
                 },
             },
             Id = 1,
-            EndTime =DateTime.Parse("20/02/2500 07:22:16"),
+            EndTime = DateTime.Parse("20/02/2500 07:22:16"),
             SlotAnswers = new List<SlotAnswer>()
             {
                 new SlotAnswer()
@@ -176,34 +299,32 @@ public class EventSlotTest
         },
         new EventSlotDTO()
         {
-        Confirmed = false,
-        Event = new Event()
-        {
-            Description = "BYOB",
+            Confirmed = false,
+            Event = new Event()
+            {
+                Description = "BYOB",
+                Id = 1,
+                Location = "Denmark",
+                Title = "Mikkels havefest",
+                User = new User()
+                {
+                    Email = "mikkel@gmail.com", Id = 1, Name = "Mikkel", Password = "123abc", Salt = "321cba"
+                },
+            },
             Id = 1,
-            Location = "Denmark",
-            Title = "Mikkels havefest",
-            User = new User()
+            EndTime = DateTime.Parse("08/07/2500 07:22:16"),
+            SlotAnswers = new List<SlotAnswer>()
             {
-                Email = "mikkel@gmail.com", Id = 1, Name = "Mikkel", Password = "123abc", Salt = "321cba"
+                new SlotAnswer()
+                {
+                    Answer = 0, Email = "Anders@hotmail.com", Id = 1, UserName = "AndersAnd"
+                },
+                new SlotAnswer()
+                {
+                    Answer = 1, Email = "Thomas@yahoo.com", Id = 2, UserName = "ThomasTog"
+                }
             },
-        },
-        Id = 1,
-        EndTime = DateTime.Parse("08/07/2500 07:22:16"),
-        SlotAnswers = new List<SlotAnswer>()
-        {
-            new SlotAnswer()
-            {
-                Answer = 0, Email = "Anders@hotmail.com", Id = 1, UserName = "AndersAnd"
-            },
-            new SlotAnswer()
-            {
-                Answer = 1, Email = "Thomas@yahoo.com", Id = 2, UserName = "ThomasTog"
-            }
-        },
             StartTime = DateTime.Parse("08/06/2500 07:22:16")
         }
     };
-
-
 }

@@ -27,8 +27,16 @@ public class EventSlotRepository: IEventSlotRepository
         return await _dbContextSqlite.EventSlots.ToListAsync();
     }
 
-    public Task<List<EventSlot>> UpdateEvent(List<EventSlot> eventSlots)
+    public async void UpdateEventSlot(List<EventSlot> updateList)
     {
-        throw new NotImplementedException();
+        _dbContextSqlite.EventSlots.AttachRange(updateList);
+        await _dbContextSqlite.SaveChangesAsync();
+
+    }
+
+    public async void DeleteEventSlot(List<EventSlot> eventSlotList)
+    {
+        _dbContextSqlite.EventSlots.RemoveRange(eventSlotList);
+        await _dbContextSqlite.SaveChangesAsync();
     }
 }

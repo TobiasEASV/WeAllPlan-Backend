@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Security.Authentication;
+using Application.DTO;
 using Application.Interfaces;
 using AutoMapper;
 using Core;
@@ -29,7 +30,7 @@ public class EventService : IEventService
         _eventValidator = eventValidator;
     }
 
-    public async Task<EventDTO> CreateEvent(EventDTO eventDto)
+    public async Task CreateEvent(EventDTO eventDto)
     {
         var validation = _eventValidator.Validate(eventDto);
         if (!validation.IsValid)
@@ -37,9 +38,9 @@ public class EventService : IEventService
             throw new ValidationException(validation.ToString());
         }
         Event testEvent = _mapper.Map<Event>(eventDto); // Map the DTO to an actual Object.
-        Event RepoEvent = await _repository.CreateEvent(testEvent); // Get the actual object from the DB
-        EventDTO eventDTO = _mapper.Map<EventDTO>(RepoEvent); // Map the actual object to a DTO and send it back
-        return eventDTO ;
+        testEvent.User = setUserFromId(eventDto.UserId);
+        await _repository.CreateEvent(testEvent);
+        
     }
 
     public async Task<EventDTO> GetEvent(int id)
@@ -49,31 +50,42 @@ public class EventService : IEventService
         {
             throw new NullReferenceException("Event doesn't exist");
         }
-        return await Task.Run(() => _mapper.Map<EventDTO>(Event));
+
+        EventDTO eventDto = _mapper.Map<EventDTO>(Event);
+        eventDto.UserId = Event.User.Id;
+        return await Task.Run(() => eventDto);
     }
 
     public async Task<List<EventDTO>> GetEventsFromUser(int userId)
     {
         List<Event> eventTasks =  _repository.GetAll().Result.FindAll(e => e.User.Id.Equals(userId));
-        
-        
-        return await Task.Run(() => _mapper.Map<List<EventDTO>>(eventTasks));
+
+        List<EventDTO> listDtos = _mapper.Map<List<EventDTO>>(eventTasks);
+        if (eventTasks.Count == 0)
+        {
+            return await Task.Run(() => new List<EventDTO>(){});
+        }
+        foreach (var dto in listDtos)
+        {
+            dto.UserId = eventTasks[0].User.Id;
+        }
+        return await Task.Run(() => listDtos);
     }
 
-    public Task<EventDTO> UpdateEvent(EventDTO eventDto, int userId)
+    public async Task UpdateEvent(EventDTO eventDto, int userId)
     {
-        ValidationResult validationResult = _eventValidator.Validate(eventDto);
+        ValidationResult validationResult = await _eventValidator.ValidateAsync(eventDto);
         if (!validationResult.IsValid)
         {
             throw new ValidationException(validationResult.ToString());
         }
 
-        if (eventDto.User.Id != userId)
+        if (eventDto.UserId != userId)
         {
             throw new AuthenticationException("Wrong User");
         }
-        Event Event = _repository.UpdateEvent(_mapper.Map<Event>(eventDto)).Result;
-        return Task.Run( () => _mapper.Map<EventDTO>(Event));
+        await _repository.UpdateEvent(_mapper.Map<Event>(eventDto));
+        
     }
 
     public void DeleteEvent(int eventId, int userId)
@@ -90,4 +102,11 @@ public class EventService : IEventService
         }
         _repository.Delete(eventToDelete);
     }
+
+    public User setUserFromId(int userId)
+    {
+        return _repository.getUser(userId);
+    }
+
+    
 }

@@ -60,7 +60,7 @@ public class SlotAnswerService : ISlotAnswerService
         return await Task.Run(() => _mapper.Map<List<SlotAnswerDTO>>(slotAnswers));
     }
 
-    public Task<SlotAnswerDTO> UpdateSlotAnswer(SlotAnswerDTO slotAnswerDto, int slotAnswerId)
+    public async Task UpdateSlotAnswer(SlotAnswerDTO slotAnswerDto, int slotAnswerId)
     {
         var validation = _validator.Validate(slotAnswerDto);
         if (slotAnswerId != slotAnswerDto.Id)
@@ -76,8 +76,8 @@ public class SlotAnswerService : ISlotAnswerService
         {
             throw new ValidationException("E-mail has to be of a correct format");
         }
-        SlotAnswer slotAnswer = _slotAnswerRepository.UpdateSlotAnswer(_mapper.Map<SlotAnswer>(slotAnswerDto)).Result;
-        return Task.Run( () => _mapper.Map<SlotAnswerDTO>(slotAnswer));
+        await _slotAnswerRepository.UpdateSlotAnswer(_mapper.Map<SlotAnswer>(slotAnswerDto));
+      
     }
 
     public void DeleteSlotAnswers(int eventId, string email, List<SlotAnswerDTO> slotAnswerDtos)

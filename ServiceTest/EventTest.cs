@@ -1,5 +1,6 @@
 using System.Security.Authentication;
 using Application;
+using Application.DTO;
 using Application.Interfaces;
 using AutoMapper;
 using Core;
@@ -14,9 +15,9 @@ public class EventTest
     
     private IMapper _mapper;
     private IValidator<EventDTO> _validator;
-    private ITestOutputHelper _testOutputHelper;
+    
 
-    public EventTest(ITestOutputHelper testOutputHelper)
+    public EventTest()
     {
         
         var config = new MapperConfiguration(conf => {
@@ -25,7 +26,6 @@ public class EventTest
         });
         _mapper = config.CreateMapper();
         _validator = new EventValidator();
-        _testOutputHelper = testOutputHelper;
     }
     
     /// <summary>
@@ -102,8 +102,8 @@ public class EventTest
         IEventService service = new EventService(mockRepo.Object, _mapper,_validator);
 
         //Act + Assert
-        ValidationException validationException = Assert.ThrowsAsync<ValidationException>(() => service.CreateEvent(eventDto)).Result;
-        Assert.Equal(expected.First(), validationException.Message);
+        Task<ValidationException> validationException = Assert.ThrowsAsync<ValidationException>(() => service.CreateEvent(eventDto));
+        Assert.Equal(expected.First(), validationException.Result.Message);
         mockRepo.Verify( repo => repo.CreateEvent(It.IsAny<Event>()), Times.Never);
     }
 
@@ -118,7 +118,7 @@ public class EventTest
 
         Mock<IEventRepository> mockRepo = new Mock<IEventRepository>();
 
-        mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(_mapper.Map<List<Event>>(mockEvents));
+        mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(mockEvents);
         
         IEventService service = new EventService(mockRepo.Object, _mapper, _validator);
 
@@ -143,19 +143,18 @@ public class EventTest
             new EventDTO()
             {
                 Title = "eventTest", Id = 1, Description = "its so fun", Location = "India",
-                User = new User()
-                    { Id = 1, Name = "Peter", Email = "Min@email.com", Password = "hest", Salt = "HjemmeFest" }
+                UserId = 1
             },
             new EventDTO()
             {
                 Title = "anotherEvent", Id = 4, Description = "its also fun", Location = "Russia",
-                User = new User()
-                    { Id = 1, Name = "Peter", Email = "Min@email.com", Password = "hest", Salt = "HjemmeFest" }
+                UserId = 1
             },
         };
         Mock<IEventRepository> mockRepo = new Mock<IEventRepository>();
 
-        mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(_mapper.Map<List<Event>>(mockEvents));
+        mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(mockEvents);
+        mockRepo.Setup(mockRepo => mockRepo.getUser(UserId)).Returns(userIdOne);
         
         IEventService service = new EventService(mockRepo.Object, _mapper, _validator);
 
@@ -178,7 +177,7 @@ public class EventTest
 
         Mock<IEventRepository> mockRepo = new Mock<IEventRepository>();
 
-        mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(_mapper.Map<List<Event>>(mockEvents));
+        mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(mockEvents);
         
         IEventService service = new EventService(mockRepo.Object, _mapper, _validator);
 
@@ -201,7 +200,7 @@ public class EventTest
         
         Mock<IEventRepository> mockRepo = new Mock<IEventRepository>();
 
-        mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(_mapper.Map<List<Event>>(mockEvents));
+        mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(mockEvents);
         
         IEventService service = new EventService(mockRepo.Object, _mapper, _validator);
 
@@ -221,6 +220,14 @@ public class EventTest
     public async Task UpdateValidEventTest()
     {
         // Arrange
+        EventDTO eventDTO = new EventDTO()
+        {
+            Id = 1,
+            Location = "Tyskland",
+            Title = "shabuah",
+            Description = "kom gerne og vær med",
+            UserId = 1
+        };
         int id = 1;
         string title = "shabuah";
         int userId = 1;
@@ -229,29 +236,22 @@ public class EventTest
 
         Mock<IEventRepository> mockRepo = new Mock<IEventRepository>();
 
-        mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(_mapper.Map<List<Event>>(mockEvents));
+        mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(mockEvents);
         
-        EventDTO eventDTO = new EventDTO();
-        
-        mockRepo.Setup(repo => repo.UpdateEvent(It.IsAny<Event>())).Callback<Event>((Event) =>
-        {
-            eventDTO.Id = id;
-            eventDTO.Description = description;
-            eventDTO.Title = title;
-            eventDTO.Location = location;
-            eventDTO.User = new User() { Id = userId };
-        });
+       
+
+        mockRepo.Setup(repo => repo.getUser(userId)).Returns(userIdOne);
         
         IEventService service = new EventService(mockRepo.Object, _mapper, _validator);
 
-        EventDTO eventdto = service.GetEvent(id).Result;
+        //EventDTO eventdto = service.GetEvent(id).Result;
         
         // Act
-        await service.UpdateEvent(eventdto, userId);
+         await service.UpdateEvent(eventDTO, userId);
         
         // Assert
         mockRepo.Verify(repo => repo.UpdateEvent(It.IsAny<Event>()), Times.Once);
-        mockRepo.Verify(repo => repo.GetAll(), Times.Once);
+        
     }
     
     /// <summary>
@@ -262,7 +262,7 @@ public class EventTest
     {
         Mock<IEventRepository> mockRepo = new Mock<IEventRepository>();
 
-        mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(_mapper.Map<List<Event>>(mockEvents));
+        mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(mockEvents);
         IEventService service = new EventService(mockRepo.Object, _mapper, _validator);
 
         EventDTO eventdto = service.GetEvent(1).Result;
@@ -272,7 +272,7 @@ public class EventTest
         
         // Act + Assert
         ValidationException validationException =
-            Assert.ThrowsAsync<ValidationException>(() => service.UpdateEvent(eventdto,eventdto.User.Id)).Result;
+            Assert.ThrowsAsync<ValidationException>(() => service.UpdateEvent(eventdto,eventdto.UserId)).Result;
         Assert.Equal(expected,validationException.Message);
 
     }
@@ -285,7 +285,7 @@ public class EventTest
     {
         Mock<IEventRepository> mockRepo = new Mock<IEventRepository>();
 
-        mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(_mapper.Map<List<Event>>(mockEvents));
+        mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(mockEvents);
         IEventService service = new EventService(mockRepo.Object, _mapper, _validator);
 
         EventDTO eventdto = service.GetEvent(1).Result;
@@ -329,7 +329,7 @@ public class EventTest
     {
         //Assert
         Mock<IEventRepository> mockRepo = new Mock<IEventRepository>();
-        mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(_mapper.Map<List<Event>>(mockEvents));
+        mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(mockEvents);
         
         IEventService service = new EventService(mockRepo.Object, _mapper,_validator);
         int eventId = 1;
@@ -345,14 +345,23 @@ public class EventTest
     
     
     //Test Data
-     List<EventDTO> mockEvents = new()
+     List<Event> mockEvents = new()
     {
-        new EventDTO()
-            { Title = "eventTest", Id = 1, Description = "its so fun", Location = "India", User = new User(){Id=1, Name = "Peter", Email = "Min@email.com",Password = "hest",Salt = "HjemmeFest"} },
-        new EventDTO()
-            { Title = "anotherEvent", Id = 4, Description = "its also fun", Location = "Russia", User = new User(){Id=1, Name = "Peter", Email = "Min@email.com",Password = "hest",Salt = "HjemmeFest" }}, 
-        new EventDTO()
-                {Title = "A THIRD EVENT", Id = 3, Description = "its also fun", Location = "Money Land", User = new User(){Id=3, Name = "Hans", Email = "Hans@email.com",Password = "MegetKortAdgangsordErBrugtHer",Salt = "UdeFest"}}
+        new Event()
+            { Title = "eventTest", Id = 1, Description = "its so fun", Location = "India", User= userIdOne },
+        new Event()
+            { Title = "anotherEvent", Id = 4, Description = "its also fun", Location = "Russia", User= userIdOne}, 
+        new Event()
+                {Title = "A THIRD EVENT", Id = 3, Description = "its also fun", Location = "Money Land", User=userIdThree}
             };
-    
+
+     static User userIdOne = new User()
+     {
+         Email = "Mig@Hotmail.com", Id = 1, Name = "Mikkel", Password = "PASSS", Salt = "SAAALT"
+     };
+    static private User userIdThree = new User()
+     {
+         Email = "dig@Hotmail.com", Id = 3, Name = "Mikkeline", Password = "PASSssap", Salt = "SAAALT"
+     };
+
 }
