@@ -1,5 +1,6 @@
 ﻿using Application;
 using Application.Interfaces;
+using Core;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 
@@ -34,5 +35,120 @@ public class EventController : ControllerBase
             return StatusCode(500, e.Message);
         }
     }
-    
+
+    [HttpGet]
+    [Route("TestGetEvent")]
+    public async Task<ActionResult<EventDTO>> TestGetEvent()
+    {
+        return await Task.Run(() =>
+            Ok(new EventDTO()
+            {
+                Title = "testEvent",
+                Description = "Dette er noget test data",
+                Location = "Esbjerg ESAV Skole",
+                User = new User()
+                {
+                    Id = 110000000,
+                    Email = "Tobias@Rasmussen.gmail.dk",
+                    Name = "Tobias Rasmussen",
+                    Password = "HashPassword",
+                    Salt = "SaltPassword"
+                },
+                EventSlots = new List<EventSlot>()
+                {
+                    new EventSlot()
+                    {
+                        Id = 110000000,
+                        Confirmed = false,
+                        Event = new Event()
+                        {
+                            Title = "testEvent",
+                            Description = "Dette er noget test data",
+                            Location = "Esbjerg ESAV Skole",
+                            User = new User()
+                            {
+                                Id = 110000000,
+                                Email = "Tobias@Rasmussen.gmail.dk",
+                                Name = "Tobias Rasmussen",
+                                Password = "HashPassword",
+                                Salt = "SaltPassword"
+                            },
+                            EventSlots = new List<EventSlot>()
+                        },
+                        StartTime = new DateTime().AddDays(2),
+                        SlotAnswers = new List<SlotAnswer>(),
+                        EndTime = new DateTime().AddHours(5)
+                    },
+                    new EventSlot()
+                    {
+                        Id = 120000000,
+                        Confirmed = false,
+                        Event = new Event()
+                        {
+                            Title = "testEvent",
+                            Description = "Dette er noget test data",
+                            Location = "Esbjerg ESAV Skole",
+                            User = new User()
+                            {
+                                Id = 110000000,
+                                Email = "Tobias@Rasmussen.gmail.dk",
+                                Name = "Tobias Rasmussen",
+                                Password = "HashPassword",
+                                Salt = "SaltPassword"
+                            },
+                            EventSlots = new List<EventSlot>()
+                        },
+                        StartTime = new DateTime().AddDays(10),
+                        SlotAnswers = new List<SlotAnswer>(),
+                        EndTime = new DateTime().AddHours(5)
+                    },
+                    new EventSlot()
+                    {
+                        Id = 130000000,
+                        Confirmed = false,
+                        Event = new Event()
+                        {
+                            Title = "testEvent",
+                            Description = "Dette er noget test data",
+                            Location = "Esbjerg ESAV Skole",
+                            User = new User()
+                            {
+                                Id = 110000000,
+                                Email = "Tobias@Rasmussen.gmail.dk",
+                                Name = "Tobias Rasmussen",
+                                Password = "HashPassword",
+                                Salt = "SaltPassword"
+                            },
+                            EventSlots = new List<EventSlot>()
+                        },
+                        StartTime = new DateTime().AddDays(7),
+                        SlotAnswers = new List<SlotAnswer>(),
+                        EndTime = new DateTime().AddHours(5)
+                    },
+                    new EventSlot()
+                    {
+                        Id = 140000000,
+                        Confirmed = false,
+                        Event = new Event()
+                        {
+                            Title = "testEvent",
+                            Description = "Dette er noget test data",
+                            Location = "Esbjerg ESAV Skole",
+                            User = new User()
+                            {
+                                Id = 110000000,
+                                Email = "Tobias@Rasmussen.gmail.dk",
+                                Name = "Tobias Rasmussen",
+                                Password = "HashPassword",
+                                Salt = "SaltPassword"
+                            },
+                            EventSlots = new List<EventSlot>()
+                        },
+                        StartTime = new DateTime().AddDays(3),
+                        SlotAnswers = new List<SlotAnswer>(),
+                        EndTime = new DateTime().AddHours(5)
+                    }
+                },
+            }));
+    }
 }
