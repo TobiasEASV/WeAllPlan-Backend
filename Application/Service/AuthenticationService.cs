@@ -88,26 +88,40 @@ public class AuthenticationService : IAuthenticationService
         var user = await _userRepository.GetUserByEmail(dto.Email);
         if (BCrypt.Net.BCrypt.Verify(dto.Password + user.Salt, user.Password))
         {
-            return GenerateToken(user);
+            return GenerateToken(user, dto.KeepMeLoggedIn);
         }
 
         throw new Exception("Invalid login");
     }
 
-    public string GenerateToken(User user)
+    public string GenerateToken(User user, bool KeepMeLoggedIn)
     {
+
+        var ExpireDate = new DateTime();
+        
+        if (KeepMeLoggedIn)
+        {
+            ExpireDate = DateTime.Now.AddYears(25);
+        }
+        else
+        {
+            ExpireDate = DateTime.Now.AddHours(2);
+        }
+        
         var key = Encoding.UTF8.GetBytes(_appSettings.Secret);
-        var tokenDescriptor = new SecurityTokenDescriptor
+        var tokenDescriptor = new SecurityTokenDescriptor();
+        tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(new[] { 
                 new Claim("Email", user.Email),
                 new Claim("Id", user.Id.ToString()),
                 new Claim("UserName", user.Name)
             }),
-            Expires = DateTime.UtcNow.AddHours(2),
+            Expires = ExpireDate,
             SigningCredentials =
                 new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
         };
+
         var tokenHandler = new JwtSecurityTokenHandler();
         return tokenHandler.WriteToken(tokenHandler.CreateToken(tokenDescriptor));
     }
