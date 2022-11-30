@@ -24,7 +24,7 @@ public class EventRepository : IEventRepository
 
     public async Task<List<Event>> GetAll()
     {
-        return await _dbContextSqlite.Events.ToListAsync();
+        return await _dbContextSqlite.Events.Include(e => e.User).ToListAsync();
     }
 
     public async Task<Event> UpdateEvent(Event Event)

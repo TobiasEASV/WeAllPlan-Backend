@@ -5,7 +5,7 @@ namespace Application.Interfaces;
 
 public interface IEventSlotService
 {
-    void CreateEventSlot(List<EventSlotDTO> eventSlotDtos, int eventId);
+    Task CreateEventSlot(List<EventSlotDTO> eventSlotDtos, int eventId);
 
     void UpdateEventSlot(List<EventSlotDTO> eventSlotDto, int userId);
     Task<List<EventSlotDTO>> GetEventSlots(int eventId);

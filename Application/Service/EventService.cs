@@ -107,6 +107,4 @@ public class EventService : IEventService
     {
         return _repository.getUser(userId);
     }
-
-    
 }
