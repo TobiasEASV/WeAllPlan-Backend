@@ -1,4 +1,5 @@
 ﻿using Application;
+using Application.Helpers;
 using Application.Interfaces;
 using Core;
 using FluentValidation;
@@ -11,10 +12,12 @@ namespace API.Controllers;
 public class EventController : ControllerBase
 {
     private IEventService _eventService;
+    private EncryptionService _encryptionService;
 
-    public EventController(IEventService eventService)
+    public EventController(IEventService eventService, EncryptionService encryptionService)
     {
         _eventService = eventService;
+        _encryptionService = encryptionService;
     }
 
     [HttpPost]
@@ -37,118 +40,27 @@ public class EventController : ControllerBase
     }
 
     [HttpGet]
-    [Route("TestGetEvent")]
-    public async Task<ActionResult<EventDTO>> TestGetEvent()
+    [Route("GetEventFromInviteLink")]
+    public async Task<ActionResult<EventDTO>> GetEventFromInviteLink(string EnctyptedEventId)
     {
-        return await Task.Run(() =>
-            Ok(new EventDTO()
-            {
-                Title = "testEvent",
-                Description = "Dette er noget test data",
-                Location = "Esbjerg ESAV Skole",
-                User = new User()
-                {
-                    Id = 110000000,
-                    Email = "Tobias@Rasmussen.gmail.dk",
-                    Name = "Tobias Rasmussen",
-                    Password = "HashPassword",
-                    Salt = "SaltPassword"
-                },
-                EventSlots = new List<EventSlot>()
-                {
-                    new EventSlot()
-                    {
-                        Id = 110000000,
-                        Confirmed = false,
-                        Event = new Event()
-                        {
-                            Title = "testEvent",
-                            Description = "Dette er noget test data",
-                            Location = "Esbjerg ESAV Skole",
-                            User = new User()
-                            {
-                                Id = 110000000,
-                                Email = "Tobias@Rasmussen.gmail.dk",
-                                Name = "Tobias Rasmussen",
-                                Password = "HashPassword",
-                                Salt = "SaltPassword"
-                            },
-                            EventSlots = new List<EventSlot>()
-                        },
-                        StartTime = new DateTime().AddDays(2),
-                        SlotAnswers = new List<SlotAnswer>(),
-                        EndTime = new DateTime().AddHours(5)
-                    },
-                    new EventSlot()
-                    {
-                        Id = 120000000,
-                        Confirmed = false,
-                        Event = new Event()
-                        {
-                            Title = "testEvent",
-                            Description = "Dette er noget test data",
-                            Location = "Esbjerg ESAV Skole",
-                            User = new User()
-                            {
-                                Id = 110000000,
-                                Email = "Tobias@Rasmussen.gmail.dk",
-                                Name = "Tobias Rasmussen",
-                                Password = "HashPassword",
-                                Salt = "SaltPassword"
-                            },
-                            EventSlots = new List<EventSlot>()
-                        },
-                        StartTime = new DateTime().AddDays(10),
-                        SlotAnswers = new List<SlotAnswer>(),
-                        EndTime = new DateTime().AddHours(5)
-                    },
-                    new EventSlot()
-                    {
-                        Id = 130000000,
-                        Confirmed = false,
-                        Event = new Event()
-                        {
-                            Title = "testEvent",
-                            Description = "Dette er noget test data",
-                            Location = "Esbjerg ESAV Skole",
-                            User = new User()
-                            {
-                                Id = 110000000,
-                                Email = "Tobias@Rasmussen.gmail.dk",
-                                Name = "Tobias Rasmussen",
-                                Password = "HashPassword",
-                                Salt = "SaltPassword"
-                            },
-                            EventSlots = new List<EventSlot>()
-                        },
-                        StartTime = new DateTime().AddDays(7),
-                        SlotAnswers = new List<SlotAnswer>(),
-                        EndTime = new DateTime().AddHours(5)
-                    },
-                    new EventSlot()
-                    {
-                        Id = 140000000,
-                        Confirmed = false,
-                        Event = new Event()
-                        {
-                            Title = "testEvent",
-                            Description = "Dette er noget test data",
-                            Location = "Esbjerg ESAV Skole",
-                            User = new User()
-                            {
-                                Id = 110000000,
-                                Email = "Tobias@Rasmussen.gmail.dk",
-                                Name = "Tobias Rasmussen",
-                                Password = "HashPassword",
-                                Salt = "SaltPassword"
-                            },
-                            EventSlots = new List<EventSlot>()
-                        },
-                        StartTime = new DateTime().AddDays(3),
-                        SlotAnswers = new List<SlotAnswer>(),
-                        EndTime = new DateTime().AddHours(5)
-                    }
-                },
-            }));
+        try
+        {
+            string DecryptedEventId = _encryptionService.DecryptMessage(EnctyptedEventId);
+
+            Console.WriteLine(DecryptedEventId);
+            EventDTO eventDto = await _eventService.GetEvent(Int32.Parse(DecryptedEventId));
+            return Ok(eventDto);
+        }
+        catch (Exception e)
+        {
+            return StatusCode(400, "Invalid invite link.");
+        }
+    }
+
+    [HttpGet]
+    [Route("GenerateInviteLink")]
+    public ActionResult<string> GenerateInviteLink(string EventId)
+    {
+        return Ok(_encryptionService.EncryptMessage(EventId));
     }
 }
