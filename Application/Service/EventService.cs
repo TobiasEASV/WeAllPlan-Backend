@@ -45,7 +45,7 @@ public class EventService : IEventService
 
     public async Task<EventDTO> GetEvent(int id)
     {
-        Event Event = _repository.GetAll().Result.Find(Event => Event.Id.Equals(id));
+        Event Event = _repository.GetEventById(id).Result;
         if (Event ==null)
         {
             throw new NullReferenceException("Event doesn't exist");
@@ -58,7 +58,7 @@ public class EventService : IEventService
 
     public async Task<List<EventDTO>> GetEventsFromUser(int userId)
     {
-        List<Event> eventTasks =  _repository.GetAll().Result.FindAll(e => e.User.Id.Equals(userId));
+        List<Event> eventTasks =  _repository.GetEventByUserId(userId).Result;
 
         List<EventDTO> listDtos = _mapper.Map<List<EventDTO>>(eventTasks);
         if (eventTasks.Count == 0)
@@ -84,7 +84,10 @@ public class EventService : IEventService
         {
             throw new AuthenticationException("Wrong User");
         }
-        await _repository.UpdateEvent(_mapper.Map<Event>(eventDto));
+
+        Event testEvent = _mapper.Map<Event>(eventDto);
+        
+        await _repository.UpdateEvent(testEvent, userId);
         
     }
 

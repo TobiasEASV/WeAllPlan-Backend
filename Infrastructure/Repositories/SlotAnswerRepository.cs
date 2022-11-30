@@ -26,7 +26,7 @@ public class SlotAnswerRepository : ISlotAnswerRepository
 
     public async Task<List<SlotAnswer>> GetAll()
     {
-        return await _dbContextSqlite.SlotAnswers.ToListAsync();
+        return await _dbContextSqlite.SlotAnswers.Include( s =>s.EventSlot).ToListAsync();
     }
 
     public async Task<SlotAnswer> UpdateSlotAnswer(SlotAnswer slotAnswer)
@@ -45,5 +45,10 @@ public class SlotAnswerRepository : ISlotAnswerRepository
     {
         _dbContextSqlite.SlotAnswers.RemoveRange(listToDelete);
         await _dbContextSqlite.SaveChangesAsync();
+    }
+
+    public async Task<EventSlot> getEventSlot(int eventSlotId)
+    {
+        return await _dbContextSqlite.EventSlots.FindAsync(eventSlotId);
     }
 }

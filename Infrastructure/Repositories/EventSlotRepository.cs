@@ -2,7 +2,7 @@
 using Core;
 using Infrastructure.DB;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
+
 
 namespace Infrastructure;
 
@@ -24,7 +24,10 @@ public class EventSlotRepository: IEventSlotRepository
 
     public async Task<List<EventSlot>> GetAll()
     {
-        return await _dbContextSqlite.EventSlots.ToListAsync();
+        return await _dbContextSqlite.EventSlots
+            .Include( u=> u.Event)
+            .Include(u =>u.SlotAnswers)
+            .ToListAsync();
     }
 
     public async void UpdateEventSlot(List<EventSlot> updateList)
@@ -38,5 +41,10 @@ public class EventSlotRepository: IEventSlotRepository
     {
         _dbContextSqlite.EventSlots.RemoveRange(eventSlotList);
         await _dbContextSqlite.SaveChangesAsync();
+    }
+
+    public async Task<Event> getEventFromId(int eventId)
+    {
+        return await _dbContextSqlite.Events.FindAsync(eventId);
     }
 }

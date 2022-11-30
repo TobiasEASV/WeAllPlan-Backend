@@ -122,7 +122,7 @@ public class EventSlotTest
     {
         //Arrange
         Mock<IEventSlotRepository> mockRepo = new Mock<IEventSlotRepository>();
-        mockRepo.Setup(mockRepo => mockRepo.GetAll()).ReturnsAsync(_mapper.Map<List<EventSlot>>(validEventSlotDTOs));
+        mockRepo.Setup(mockRepo => mockRepo.GetAll()).ReturnsAsync(validEventSlot);
 
         int EventId = 1;
 
@@ -142,7 +142,7 @@ public class EventSlotTest
     {
         //Arrange
         Mock<IEventSlotRepository> mockRepo = new Mock<IEventSlotRepository>();
-        mockRepo.Setup(mockRepo => mockRepo.GetAll()).ReturnsAsync(_mapper.Map<List<EventSlot>>(validEventSlotDTOs));
+        mockRepo.Setup(mockRepo => mockRepo.GetAll()).ReturnsAsync(validEventSlot);
 
         int EventId = 2;
 
@@ -162,7 +162,7 @@ public class EventSlotTest
     {
         //Arrange
         Mock<IEventSlotRepository> mockRepo = new Mock<IEventSlotRepository>();
-        mockRepo.Setup(mockRepo => mockRepo.GetAll()).ReturnsAsync(_mapper.Map<List<EventSlot>>(validEventSlotDTOs));
+        mockRepo.Setup(mockRepo => mockRepo.GetAll()).ReturnsAsync(validEventSlot);
 
 
         IEventSlotService service = new EventSlotService(mockRepo.Object, _mapper, _validator);
@@ -191,7 +191,7 @@ public class EventSlotTest
     {
         //Arrange
         Mock<IEventSlotRepository> mockRepo = new Mock<IEventSlotRepository>();
-        mockRepo.Setup(mockRepo => mockRepo.GetAll()).ReturnsAsync(_mapper.Map<List<EventSlot>>(validEventSlotDTOs));
+        mockRepo.Setup(mockRepo => mockRepo.GetAll()).ReturnsAsync(validEventSlot);
 
 
         IEventSlotService service = new EventSlotService(mockRepo.Object, _mapper, _validator);
@@ -225,7 +225,8 @@ public class EventSlotTest
     {
         //Arrange
         Mock<IEventSlotRepository> mockRepo = new Mock<IEventSlotRepository>();
-        mockRepo.Setup(mockRepo => mockRepo.GetAll()).ReturnsAsync(_mapper.Map<List<EventSlot>>(validEventSlotDTOs));
+        mockRepo.Setup(mockRepo => mockRepo.GetAll()).ReturnsAsync(validEventSlot);
+        mockRepo.Setup(mockRepo => mockRepo.getEventFromId(It.IsAny<int>())).ReturnsAsync(eventIdOne);
         List<EventSlotDTO> listToDelete = new List<EventSlotDTO>()
         {
             validEventSlotDTOs[1]
@@ -248,7 +249,8 @@ public class EventSlotTest
     {
         //Arrange
         Mock<IEventSlotRepository> mockRepo = new Mock<IEventSlotRepository>();
-        mockRepo.Setup(mockRepo => mockRepo.GetAll()).ReturnsAsync(_mapper.Map<List<EventSlot>>(validEventSlotDTOs));
+        mockRepo.Setup(mockRepo => mockRepo.GetAll()).ReturnsAsync(validEventSlot);
+        mockRepo.Setup(mockRepo => mockRepo.getEventFromId(It.IsAny<int>())).ReturnsAsync(eventIdOne);
         List<EventSlotDTO> listToDelete = new List<EventSlotDTO>()
         {
             validEventSlotDTOs[1]
@@ -270,18 +272,8 @@ public class EventSlotTest
     {
         new EventSlotDTO()
         {
-            Confirmed = true,
-            Event = new Event()
-            {
-                Description = "BYOB",
-                Id = 1,
-                Location = "Denmark",
-                Title = "Mikkels havefest",
-                User = new User()
-                {
-                    Email = "mikkel@gmail.com", Id = 1, Name = "Mikkel", Password = "123abc", Salt = "321cba"
-                },
-            },
+            Confirmed = false,
+            EventId =1,
             Id = 1,
             EndTime = DateTime.Parse("20/02/2500 07:22:16"),
             SlotAnswers = new List<SlotAnswer>()
@@ -300,17 +292,7 @@ public class EventSlotTest
         new EventSlotDTO()
         {
             Confirmed = false,
-            Event = new Event()
-            {
-                Description = "BYOB",
-                Id = 1,
-                Location = "Denmark",
-                Title = "Mikkels havefest",
-                User = new User()
-                {
-                    Email = "mikkel@gmail.com", Id = 1, Name = "Mikkel", Password = "123abc", Salt = "321cba"
-                },
-            },
+            EventId = 1,
             Id = 1,
             EndTime = DateTime.Parse("08/07/2500 07:22:16"),
             SlotAnswers = new List<SlotAnswer>()
@@ -326,5 +308,61 @@ public class EventSlotTest
             },
             StartTime = DateTime.Parse("08/06/2500 07:22:16")
         }
+    };
+    
+    //EventSlots
+    private List<EventSlot> validEventSlot = new List<EventSlot>()
+    {
+        new EventSlot()
+        {
+            Confirmed = false,
+            Event = eventIdOne,
+            Id = 1,
+            EndTime = DateTime.Parse("20/02/2500 07:22:16"),
+            SlotAnswers = new List<SlotAnswer>()
+            {
+                new SlotAnswer()
+                {
+                    Answer = 1, Email = "Anders@hotmail.com", Id = 1, UserName = "AndersAnd"
+                },
+                new SlotAnswer()
+                {
+                    Answer = 2, Email = "Thomas@yahoo.com", Id = 2, UserName = "ThomasTog"
+                }
+            },
+            StartTime = DateTime.Parse("18/02/2500 07:22:16")
+        },
+        new EventSlot()
+        {
+            Confirmed = false,
+            Event = eventIdOne,
+            Id = 1,
+            EndTime = DateTime.Parse("08/07/2500 07:22:16"),
+            SlotAnswers = new List<SlotAnswer>()
+            {
+                new SlotAnswer()
+                {
+                    Answer = 0, Email = "Anders@hotmail.com", Id = 1, UserName = "AndersAnd"
+                },
+                new SlotAnswer()
+                {
+                    Answer = 1, Email = "Thomas@yahoo.com", Id = 2, UserName = "ThomasTog"
+                }
+            },
+            StartTime = DateTime.Parse("08/06/2500 07:22:16")
+        }
+    };
+    
+    //Events
+    public static Event eventIdOne = new Event()
+    {
+        Description = "BYOB",
+        Id = 1,
+        Location = "Denmark",
+        Title = "Mikkels havefest",
+        User = new User()
+        {
+            Email = "mikkel@gmail.com", Id = 1, Name = "Mikkel", Password = "123abc", Salt = "321cba"
+        },
     };
 }

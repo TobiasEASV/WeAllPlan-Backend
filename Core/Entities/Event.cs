@@ -12,8 +12,7 @@ public class Event
     public string Title { get; set; }
     [Required]
     public User User { get; set; }
-    
-    
+
     public string? Description { get; set; }
     public string? Location { get; set; }
     public List<EventSlot>? EventSlots { get; set; }

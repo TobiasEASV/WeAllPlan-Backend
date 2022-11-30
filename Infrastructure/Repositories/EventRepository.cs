@@ -27,7 +27,7 @@ public class EventRepository : IEventRepository
         return await _dbContextSqlite.Events.Include(e => e.User).ToListAsync();
     }
 
-    public async Task<Event> UpdateEvent(Event Event)
+    public async Task<Event> UpdateEvent(Event Event, int userId)
     {
         await Task.Run(() => _dbContextSqlite.Events.Attach(Event));
         _dbContextSqlite.Entry(Event).Property(e => e.Title).IsModified = true;
@@ -46,5 +46,15 @@ public class EventRepository : IEventRepository
     public User getUser(int userId)
     {
        return _dbContextSqlite.Users.Find(userId);
+    }
+
+    public async Task<Event> GetEventById(int id)
+    {
+        return await _dbContextSqlite.Events.Include(e => e.User).SingleAsync<Event>( e=> e.Id == id);
+    }
+
+    public async Task<List<Event>> GetEventByUserId(int userId)
+    {
+        return await _dbContextSqlite.Events.Include(e => e.User).Where(e => e.User.Id == userId).ToListAsync();
     }
 }

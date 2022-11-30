@@ -12,5 +12,5 @@ public class SlotAnswerDTO
 
     public string Email { get; set; }
     
-    public EventSlot EventSlot { get; set; }
+    public int EventSlotId { get; set; }
 }

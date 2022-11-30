@@ -100,7 +100,7 @@ public class TestData
         {
             new SlotAnswerDTO()
             {
-                Answer = 1, Email = "MyEmail", EventSlot = new EventSlot(), Id = 1, UserName = null
+                Answer = 1, Email = "MyEmail", EventSlotId = 1, Id = 1, UserName = null
             },
             new string("Username cannot be empty")
         };
@@ -108,7 +108,7 @@ public class TestData
         {
             new SlotAnswerDTO()
             {
-                Answer = 6, Email = "MyEmail", EventSlot = new EventSlot(), Id = 1, UserName = "Mingus"
+                Answer = 6, Email = "MyEmail", EventSlotId = 1, Id = 1, UserName = "Mingus"
             },
             new string("Answer has to be no, maybe or yes")
         };
@@ -116,7 +116,7 @@ public class TestData
         {
             new SlotAnswerDTO()
             {
-                Answer = 1, Email = null, EventSlot = new EventSlot(), Id = 1, UserName = "Mikkel"
+                Answer = 1, Email = null, EventSlotId = 1, Id = 1, UserName = "Mikkel"
             },
             new string("E-mail has to be of a correct format")
         };
@@ -128,7 +128,7 @@ public class TestData
         {
             new SlotAnswerDTO()
             {
-                Answer = 5, Email = "truemingo@shababab.com", Id = 1, EventSlot = new EventSlot(), UserName = "mingo"
+                Answer = 5, Email = "truemingo@shababab.com", Id = 1, EventSlotId = 1, UserName = "mingo"
             },
             new string("Answer has to be no, maybe or yes")
         };
@@ -136,7 +136,7 @@ public class TestData
         {
             new SlotAnswerDTO()
             {
-                Answer = 1, Email = null, Id = 1, EventSlot = new EventSlot(), UserName = "mingo"
+                Answer = 1, Email = null, Id = 1, EventSlotId = 1, UserName = "mingo"
             },
             new string("E-mail has to be of a correct format")
         };
@@ -144,7 +144,7 @@ public class TestData
         {
             new SlotAnswerDTO()
             {
-                Answer = 1, Email = "truemingo@shababab.com", Id = 1, EventSlot = new EventSlot(), UserName = null
+                Answer = 1, Email = "truemingo@shababab.com", Id = 1, EventSlotId =1, UserName = null
             },
             new string("Username cannot be empty")
         };
@@ -152,7 +152,7 @@ public class TestData
         {
             new SlotAnswerDTO()
             {
-                Answer = 1, Email = "truemingo@shababab.com", Id = 2, EventSlot = new EventSlot(), UserName = "mingo"
+                Answer = 1, Email = "truemingo@shababab.com", Id = 2, EventSlotId = 1, UserName = "mingo"
             },
             new string("You can only change your own answers")
         };
@@ -174,17 +174,7 @@ public class TestData
                 new EventSlotDTO()
                 {
                     Confirmed = false,
-                    Event = new Event()
-                    {
-                        Description = "BYOB",
-                        Id = 1,
-                        Location = "Denmark",
-                        Title = "Mikkels havefest",
-                        User = new User()
-                        {
-                            Email = "mikkel@gmail.com", Id = 1, Name = "Mikkel", Password = "123abc", Salt = "321cba"
-                        },
-                    },
+                    EventId = 1,
                     Id = 4,
                     EndTime = DateTime.Parse("02/02/2500 07:22:16"),
                     SlotAnswers = new List<SlotAnswer>()
@@ -209,24 +199,14 @@ public class TestData
                 new EventSlotDTO()
                 {
                     Confirmed = false,
-                    Event = new Event()
-                    {
-                        Description = "BYOB",
-                        Id = 1,
-                        Location = "Denmark",
-                        Title = "Mikkels havefest",
-                        User = new User()
-                        {
-                            Email = "mikkel@gmail.com", Id = 1, Name = "Mikkel", Password = "123abc", Salt = "321cba"
-                        },
-                    },
+                    EventId = 1,
                     Id = 1,
                     EndTime = DateTime.Parse("08/07/2500 07:22:16"),
                     SlotAnswers = new List<SlotAnswer>()
                     {
                         new SlotAnswer()
                         {
-                            Answer = 0, Email = "Anders@hotmail.com", Id = 1, UserName = "AndersAnd"
+                            Answer = 0, Email = "Anders@hotmail.com", Id = 1, UserName = "AndersAnd",
                         },
                         new SlotAnswer()
                         {

@@ -118,7 +118,7 @@ public class EventTest
 
         Mock<IEventRepository> mockRepo = new Mock<IEventRepository>();
 
-        mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(mockEvents);
+        mockRepo.Setup(repo => repo.GetEventById(id)).ReturnsAsync(mockEvents[0]);
         
         IEventService service = new EventService(mockRepo.Object, _mapper, _validator);
 
@@ -153,7 +153,7 @@ public class EventTest
         };
         Mock<IEventRepository> mockRepo = new Mock<IEventRepository>();
 
-        mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(mockEvents);
+        mockRepo.Setup(repo => repo.GetEventByUserId(UserId)).ReturnsAsync(mockEventsFromUserId);
         mockRepo.Setup(mockRepo => mockRepo.getUser(UserId)).Returns(userIdOne);
         
         IEventService service = new EventService(mockRepo.Object, _mapper, _validator);
@@ -177,7 +177,7 @@ public class EventTest
 
         Mock<IEventRepository> mockRepo = new Mock<IEventRepository>();
 
-        mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(mockEvents);
+        mockRepo.Setup(repo => repo.GetEventByUserId(2)).ReturnsAsync(new List<Event>(){});
         
         IEventService service = new EventService(mockRepo.Object, _mapper, _validator);
 
@@ -250,7 +250,7 @@ public class EventTest
          await service.UpdateEvent(eventDTO, userId);
         
         // Assert
-        mockRepo.Verify(repo => repo.UpdateEvent(It.IsAny<Event>()), Times.Once);
+        mockRepo.Verify(repo => repo.UpdateEvent(It.IsAny<Event>(), userId), Times.Once);
         
     }
     
@@ -262,7 +262,7 @@ public class EventTest
     {
         Mock<IEventRepository> mockRepo = new Mock<IEventRepository>();
 
-        mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(mockEvents);
+        mockRepo.Setup(repo => repo.GetEventById(1)).ReturnsAsync(mockEvents[0]);
         IEventService service = new EventService(mockRepo.Object, _mapper, _validator);
 
         EventDTO eventdto = service.GetEvent(1).Result;
@@ -285,7 +285,7 @@ public class EventTest
     {
         Mock<IEventRepository> mockRepo = new Mock<IEventRepository>();
 
-        mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(mockEvents);
+        mockRepo.Setup(repo => repo.GetEventById(1)).ReturnsAsync(mockEvents[0]);
         IEventService service = new EventService(mockRepo.Object, _mapper, _validator);
 
         EventDTO eventdto = service.GetEvent(1).Result;
@@ -354,6 +354,14 @@ public class EventTest
         new Event()
                 {Title = "A THIRD EVENT", Id = 3, Description = "its also fun", Location = "Money Land", User=userIdThree}
             };
+     
+    List<Event> mockEventsFromUserId = new()
+    {
+        new Event()
+            { Title = "eventTest", Id = 1, Description = "its so fun", Location = "India", User= userIdOne },
+        new Event()
+            { Title = "anotherEvent", Id = 4, Description = "its also fun", Location = "Russia", User= userIdOne}
+    };
 
      static User userIdOne = new User()
      {

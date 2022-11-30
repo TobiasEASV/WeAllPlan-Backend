@@ -76,7 +76,7 @@ public class SlotAnswerTest
 
         SlotAnswerDTO answerDTO = new SlotAnswerDTO()
         {
-            Answer = 1, Email = "MinEmail@ok.dk", EventSlot = new EventSlot(), UserName = "Carol"
+            Answer = 1, Email = "MinEmail@ok.dk", EventSlotId = 1, UserName = "Carol"
         };
 
         ISlotAnswerService slotAnswerService = new SlotAnswerService(mock.Object, _mapper, _validator);
@@ -170,7 +170,7 @@ public class SlotAnswerTest
         
         ISlotAnswerService service = new SlotAnswerService(mockRepo.Object, _mapper, _validator);
 
-        SlotAnswerDTO slotAnswerDto = fakeRepo[0];
+        SlotAnswerDTO slotAnswerDto = fakeRepoDtos[0];
         slotAnswerDto.Answer = 1;
 
         //Act
@@ -222,11 +222,11 @@ public class SlotAnswerTest
         {
             new SlotAnswerDTO()
             {
-                Answer = 0, Email = "mingus@yo.com", Id = 1, EventSlot = eventslot1, UserName = "mingyo"
+                Answer = 0, Email = "mingus@yo.com", Id = 1, EventSlotId = 1, UserName = "mingyo"
             }
         };
         
-        mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(_mapper.Map<List<SlotAnswer>>(fakeRepo));
+        mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(fakeRepo);
 
         ISlotAnswerService service = new SlotAnswerService(mockRepo.Object, _mapper, _validator);
 
@@ -250,10 +250,10 @@ public class SlotAnswerTest
         string mail = "mi@yo.com";
         List<SlotAnswerDTO> listToDelete = new List<SlotAnswerDTO>()
         {
-            fakeRepo[1]
+            fakeRepoDtos[1]
         };
         
-        mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(_mapper.Map<List<SlotAnswer>>(fakeRepo));
+        mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(fakeRepo);
 
         ISlotAnswerService service = new SlotAnswerService(mockRepo.Object, _mapper, _validator);
 
@@ -292,30 +292,60 @@ public class SlotAnswerTest
     
     
     //The expected list for GetSlotAnswers.
-    List<SlotAnswerDTO> expectedGetSlotAnswers = new List<SlotAnswerDTO>()
+    List<SlotAnswerDTO> expectedGetSlotAnswersDtos = new List<SlotAnswerDTO>()
     {
         new SlotAnswerDTO()
         {
-            Answer = 0, Email = "mingus@yo.com", Id = 1, EventSlot = eventslot1, UserName = "mingyo"
+            Answer = 0, Email = "mingus@yo.com", Id = 1, EventSlotId = 1, UserName = "mingyo"
         },
         new SlotAnswerDTO()
+        {
+            Answer = 1, Email = "mingyo@hotmail.com", Id = 2, EventSlotId = 1, UserName = "youstolemyname"
+        }
+    };
+    
+    //The expected list for GetSlotAnswers.
+    List<SlotAnswer> expectedGetSlotAnswers = new List<SlotAnswer>()
+    {
+        new SlotAnswer()
+        {
+            Answer = 0, Email = "mingus@yo.com", Id = 1, EventSlot = eventslot1, UserName = "mingyo"
+        },
+        new SlotAnswer()
         {
             Answer = 1, Email = "mingyo@hotmail.com", Id = 2, EventSlot = eventslot1, UserName = "youstolemyname"
         }
     };
     
     //Base List
-    List<SlotAnswerDTO> fakeRepo = new List<SlotAnswerDTO>()
+    List<SlotAnswerDTO> fakeRepoDtos = new List<SlotAnswerDTO>()
     {
         new SlotAnswerDTO()
         {
-            Answer = 0, Email = "mingus@yo.com", Id = 1, EventSlot = eventslot1, UserName = "mingyo"
+            Answer = 0, Email = "mingus@yo.com", Id = 1, EventSlotId = 1, UserName = "mingyo"
         },
         new SlotAnswerDTO()
         {
-            Answer = 1, Email = "mingyo@hotmail.com", Id = 2, EventSlot = eventslot1, UserName = "youstolemyname"
+            Answer = 1, Email = "mingyo@hotmail.com", Id = 2, EventSlotId = 1, UserName = "youstolemyname"
         },
         new SlotAnswerDTO()
+        {
+            Answer = 1, Email = "fakeMing@yo.com", Id = 3, EventSlotId = 2, UserName = "mingfaker"
+        }
+    };
+    
+    //Base List
+    List<SlotAnswer> fakeRepo = new List<SlotAnswer>()
+    {
+        new SlotAnswer()
+        {
+            Answer = 0, Email = "mingus@yo.com", Id = 1, EventSlot = eventslot1, UserName = "mingyo"
+        },
+        new SlotAnswer()
+        {
+            Answer = 1, Email = "mingyo@hotmail.com", Id = 2, EventSlot = eventslot1, UserName = "youstolemyname"
+        },
+        new SlotAnswer()
         {
             Answer = 1, Email = "fakeMing@yo.com", Id = 3, EventSlot = eventslot2, UserName = "mingfaker"
         }

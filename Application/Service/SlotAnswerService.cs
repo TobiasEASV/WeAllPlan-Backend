@@ -48,6 +48,7 @@ public class SlotAnswerService : ISlotAnswerService
             throw new ValidationException("E-mail has to be of a correct format");
         }
         SlotAnswer slotAnswer = _mapper.Map<SlotAnswer>(answerDto); // Map the DTO to an actual Object.
+        setEventSlot(slotAnswer, answerDto.EventSlotId);
         await _slotAnswerRepository.CreateSlotAnswer(slotAnswer); // Get the actual object from the DB
     }
 
@@ -99,5 +100,10 @@ public class SlotAnswerService : ISlotAnswerService
             }
         }
         _slotAnswerRepository.DeleteSlotAnswers(listToDelete);
+    }
+
+    public  void setEventSlot(SlotAnswer slotAnswer, int eventSlotId)
+    {
+        slotAnswer.EventSlot =_slotAnswerRepository.getEventSlot(eventSlotId).Result;
     }
 }

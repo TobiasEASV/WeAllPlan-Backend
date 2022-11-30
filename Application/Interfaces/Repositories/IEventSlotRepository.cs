@@ -9,4 +9,5 @@ public interface IEventSlotRepository
     
     void UpdateEventSlot(List<EventSlot> isAny);
     void DeleteEventSlot(List<EventSlot> isAny);
+    Task<Event> getEventFromId(int eventId);
 }
