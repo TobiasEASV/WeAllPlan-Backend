@@ -26,7 +26,7 @@ public class SlotAnswerRepository : ISlotAnswerRepository
 
     public async Task<List<SlotAnswer>> GetAll()
     {
-        return await _dbContextSqlite.SlotAnswers.Include( s =>s.EventSlot).ToListAsync();
+        return await _dbContextSqlite.SlotAnswers.Include( s =>s.EventSlot.Event.User).ToListAsync();
     }
 
     public async Task<SlotAnswer> UpdateSlotAnswer(SlotAnswer slotAnswer)
@@ -36,7 +36,6 @@ public class SlotAnswerRepository : ISlotAnswerRepository
         _dbContextSqlite.Entry(slotAnswer).Property(s => s.Email).IsModified = false;
         _dbContextSqlite.Entry(slotAnswer).Property(s => s.Id).IsModified = false;
         _dbContextSqlite.Entry(slotAnswer).Property(s => s.UserName).IsModified = false;
-        _dbContextSqlite.Entry(slotAnswer).Property(s => s.EventSlot).IsModified = false;
         await _dbContextSqlite.SaveChangesAsync();
         return slotAnswer;
     }

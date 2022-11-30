@@ -132,7 +132,9 @@ public class EventSlotService : IEventSlotService
             {
                 throw new ValidationException("You do not own this Event.");
             }
+            
         }
+        
         _repository.DeleteEventSlot(_mapper.Map<List<EventSlot>>(listToDelete));
     }
 

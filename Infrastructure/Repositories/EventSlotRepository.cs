@@ -24,15 +24,23 @@ public class EventSlotRepository: IEventSlotRepository
 
     public async Task<List<EventSlot>> GetAll()
     {
-        return await _dbContextSqlite.EventSlots
-            .Include( u=> u.Event)
+        return await _dbContextSqlite.EventSlots.AsNoTracking()
+            .Include( u=> u.Event.User)
             .Include(u =>u.SlotAnswers)
             .ToListAsync();
     }
 
     public async void UpdateEventSlot(List<EventSlot> updateList)
     {
-        _dbContextSqlite.EventSlots.AttachRange(updateList);
+        foreach (var eventSlot in updateList)
+        {
+            _dbContextSqlite.EventSlots.Attach(eventSlot);
+            _dbContextSqlite.Entry(eventSlot).Property(e => e.Confirmed).IsModified = true;
+            _dbContextSqlite.Entry(eventSlot).Property(e => e.Id).IsModified = false;
+            _dbContextSqlite.Entry(eventSlot).Property(e => e.EndTime).IsModified = true;
+            _dbContextSqlite.Entry(eventSlot).Property(e => e.StartTime).IsModified = true;
+        }
+        
         await _dbContextSqlite.SaveChangesAsync();
 
     }
@@ -45,6 +53,6 @@ public class EventSlotRepository: IEventSlotRepository
 
     public async Task<Event> getEventFromId(int eventId)
     {
-        return await _dbContextSqlite.Events.FindAsync(eventId);
+        return await _dbContextSqlite.Events.Include(e =>e.User).FirstAsync(e => e.Id == eventId);
     }
 }
