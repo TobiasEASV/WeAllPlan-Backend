@@ -10,6 +10,7 @@ namespace Infrastructure;
 public class EventRepository : IEventRepository
 {
     private DBContextSqlite _dbContextSqlite;
+    
     public EventRepository(DBContextSqlite dbContextSqlite)
     {
         _dbContextSqlite = dbContextSqlite;
@@ -23,16 +24,16 @@ public class EventRepository : IEventRepository
 
     public async Task<List<Event>> GetAll()
     {
-        return await _dbContextSqlite.Events.ToListAsync();
+        return await _dbContextSqlite.Events.Include(e => e.User).ToListAsync();
     }
 
-    public async Task<Event> UpdateEvent(Event Event)
+    public async Task<Event> UpdateEvent(Event Event, int userId)
     {
-        await Task.Run(() => _dbContextSqlite.Attach(Event));
+        await Task.Run(() => _dbContextSqlite.Events.Attach(Event));
         _dbContextSqlite.Entry(Event).Property(e => e.Title).IsModified = true;
         _dbContextSqlite.Entry(Event).Property(e => e.Description).IsModified = true;
         _dbContextSqlite.Entry(Event).Property(e => e.Location).IsModified = true;
-        _dbContextSqlite.SaveChanges();
+        await _dbContextSqlite.SaveChangesAsync();
         return Event;
     }
 
@@ -40,5 +41,20 @@ public class EventRepository : IEventRepository
     {
         _dbContextSqlite.Events.Remove(Event);
         _dbContextSqlite.SaveChanges();
+    }
+
+    public User getUser(int userId)
+    {
+       return _dbContextSqlite.Users.Find(userId);
+    }
+
+    public async Task<Event> GetEventById(int id)
+    {
+        return await _dbContextSqlite.Events.Include(e => e.User).SingleAsync<Event>( e=> e.Id == id);
+    }
+
+    public async Task<List<Event>> GetEventByUserId(int userId)
+    {
+        return await _dbContextSqlite.Events.Include(e => e.User).Where(e => e.User.Id == userId).ToListAsync();
     }
 }

@@ -22,6 +22,7 @@ public class AuthenticationService : IAuthenticationService
     private readonly IUserRepository _userRepository;
     private readonly AppSettings _appSettings;
     private readonly IValidator<RegisterUserDto> _userValidator;
+    private readonly EmailValidator _emailValidator;
 
     public AuthenticationService(IUserRepository userRepository, IOptions<AppSettings> appSettings,
         IValidator<RegisterUserDto> userValidator)
@@ -39,6 +40,7 @@ public class AuthenticationService : IAuthenticationService
         _appSettings = appSettings.Value;
         _userRepository = userRepository;
         _userValidator = userValidator;
+        _emailValidator = new EmailValidator();
     }
 
 
@@ -56,7 +58,7 @@ public class AuthenticationService : IAuthenticationService
             throw new ValidationException(Validation.ToString());
         }
 
-        if (!IsValidEmail(dto.Email))
+        if (!_emailValidator.IsValidEmail(dto.Email))
         {
             throw new ValidationException("invalid email, email must follow pattern John.doe@example.com");
         }
@@ -124,49 +126,5 @@ public class AuthenticationService : IAuthenticationService
 
         var tokenHandler = new JwtSecurityTokenHandler();
         return tokenHandler.WriteToken(tokenHandler.CreateToken(tokenDescriptor));
-    }
-
-    private bool IsValidEmail(string email)
-    {
-        if (string.IsNullOrWhiteSpace(email))
-            return false;
-
-        try
-        {
-            // Normalize the domain
-            email = Regex.Replace(email, @"(@)(.+)$", DomainMapper,
-                RegexOptions.None, TimeSpan.FromMilliseconds(200));
-
-            // Examines the domain part of the email and normalizes it.
-            string DomainMapper(Match match)
-            {
-                // Use IdnMapping class to convert Unicode domain names.
-                var idn = new IdnMapping();
-
-                // Pull out and process domain name (throws ArgumentException on invalid)
-                string domainName = idn.GetAscii(match.Groups[2].Value);
-
-                return match.Groups[1].Value + domainName;
-            }
-        }
-        catch (RegexMatchTimeoutException e)
-        {
-            return false;
-        }
-        catch (ArgumentException e)
-        {
-            return false;
-        }
-
-        try
-        {
-            return Regex.IsMatch(email,
-                @"^[^@\s]+@[^@\s]+\.[^@\s]+$",
-                RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250));
-        }
-        catch (RegexMatchTimeoutException)
-        {
-            return false;
-        }
     }
 }

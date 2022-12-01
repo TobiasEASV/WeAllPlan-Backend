@@ -6,7 +6,10 @@ public interface IEventRepository
 {
     Task<Event> CreateEvent(Event testEvent);
     Task<List<Event>> GetAll();
-    Task<Event> UpdateEvent(Event Event);
+    Task<Event> UpdateEvent(Event Event, int userId);
     void Delete(Event Event);
-    
+
+    User getUser(int userId);
+    Task<Event> GetEventById(int id);
+    Task<List<Event>> GetEventByUserId(int userId);
 }

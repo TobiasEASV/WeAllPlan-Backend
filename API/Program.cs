@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json.Serialization;
 using Application;
+using Application.DTO;
 using AutoMapper;
 using Core;
 using FluentValidation;
@@ -25,6 +26,8 @@ builder.Services.AddSwaggerGen();
 
 var mapper = new MapperConfiguration(config =>
 {
+    config.CreateMap<EventSlotDTO, EventSlot>();
+    config.CreateMap<EventSlot, EventSlotDTO>();
     config.CreateMap<EventDTO, Event>();
     config.CreateMap<Event,EventDTO>();
     config.CreateMap<SlotAnswerDTO, SlotAnswer>();
