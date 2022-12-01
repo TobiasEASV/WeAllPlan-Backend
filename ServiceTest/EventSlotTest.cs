@@ -1,4 +1,5 @@
-﻿using Application;
+﻿using System.Globalization;
+using Application;
 using Application.DTO;
 using Application.Interfaces;
 using Application.Validators;
@@ -275,7 +276,7 @@ public class EventSlotTest
             Confirmed = false,
             EventId =1,
             Id = 1,
-            EndTime = DateTime.Parse("20/02/2500 07:22:16"),
+            EndTime = DateTime.Parse("08/07/2030 07:22:16"),
             SlotAnswers = new List<SlotAnswer>()
             {
                 new SlotAnswer()
@@ -287,14 +288,14 @@ public class EventSlotTest
                     Answer = 2, Email = "Thomas@yahoo.com", Id = 2, UserName = "ThomasTog"
                 }
             },
-            StartTime = DateTime.Parse("18/02/2500 07:22:16")
+            StartTime = DateTime.Parse("01/02/2029 07:22:16")
         },
         new EventSlotDTO()
         {
             Confirmed = false,
             EventId = 1,
             Id = 1,
-            EndTime = DateTime.Parse("08/07/2500 07:22:16"),
+            EndTime = DateTime.Parse("08/07/2030 07:22:16"),
             SlotAnswers = new List<SlotAnswer>()
             {
                 new SlotAnswer()
@@ -306,7 +307,7 @@ public class EventSlotTest
                     Answer = 1, Email = "Thomas@yahoo.com", Id = 2, UserName = "ThomasTog"
                 }
             },
-            StartTime = DateTime.Parse("08/06/2500 07:22:16")
+            StartTime = DateTime.Parse("08/06/2029 07:22:16")
         }
     };
     
@@ -318,7 +319,7 @@ public class EventSlotTest
             Confirmed = false,
             Event = eventIdOne,
             Id = 1,
-            EndTime = DateTime.Parse("20/02/2500 07:22:16"),
+            EndTime = DateTime.Parse("02/02/2030 07:22:16"),
             SlotAnswers = new List<SlotAnswer>()
             {
                 new SlotAnswer()
@@ -330,14 +331,14 @@ public class EventSlotTest
                     Answer = 2, Email = "Thomas@yahoo.com", Id = 2, UserName = "ThomasTog"
                 }
             },
-            StartTime = DateTime.Parse("18/02/2500 07:22:16")
+            StartTime = DateTime.Parse("01/02/2029 07:22:16")
         },
         new EventSlot()
         {
             Confirmed = false,
             Event = eventIdOne,
             Id = 1,
-            EndTime = DateTime.Parse("08/07/2500 07:22:16"),
+            EndTime = DateTime.Parse("08/07/2030 07:22:16"),
             SlotAnswers = new List<SlotAnswer>()
             {
                 new SlotAnswer()
@@ -349,7 +350,7 @@ public class EventSlotTest
                     Answer = 1, Email = "Thomas@yahoo.com", Id = 2, UserName = "ThomasTog"
                 }
             },
-            StartTime = DateTime.Parse("08/06/2500 07:22:16")
+            StartTime = DateTime.Parse("08/06/2029 07:22:16")
         }
     };
     

@@ -1,4 +1,5 @@
-﻿using Application;
+﻿using System.Globalization;
+using Application;
 using Application.DTO;
 using Application.Interfaces;
 using AutoMapper;
@@ -176,7 +177,7 @@ public class TestData
                     Confirmed = false,
                     EventId = 1,
                     Id = 4,
-                    EndTime = DateTime.Parse("02/02/2500 07:22:16"),
+                    EndTime = DateTime.Parse("08/07/2030 07:22:16"),
                     SlotAnswers = new List<SlotAnswer>()
                     {
                         new SlotAnswer()
@@ -188,7 +189,7 @@ public class TestData
                             Answer = 2, Email = "Thomas@yahoo.com", Id = 2, UserName = "ThomasTog"
                         }
                     },
-                    StartTime = DateTime.Parse("08/07/2500 07:22:16")
+                    StartTime = DateTime.Parse("08/07/2031 07:22:16")
                 }
             }
         };
@@ -201,7 +202,7 @@ public class TestData
                     Confirmed = false,
                     EventId = 1,
                     Id = 1,
-                    EndTime = DateTime.Parse("08/07/2500 07:22:16"),
+                    EndTime = DateTime.Parse("08/07/2030 07:22:16"),
                     SlotAnswers = new List<SlotAnswer>()
                     {
                         new SlotAnswer()
@@ -213,7 +214,7 @@ public class TestData
                             Answer = 1, Email = "Thomas@yahoo.com", Id = 2, UserName = "ThomasTog"
                         }
                     },
-                    StartTime = DateTime.Parse("08/06/2500 07:22:16")
+                    StartTime = DateTime.Parse("08/06/2030 07:22:16")
                 }
             }
         };

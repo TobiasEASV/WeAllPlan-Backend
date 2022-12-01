@@ -1,9 +1,8 @@
-﻿using System.Security.Authentication;
+using System.Security.Authentication;
 using Application;
 using Application.Helpers;
 
 using Application.Interfaces;
-using Core;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,7 +16,6 @@ public class EventController : ControllerBase
     private EncryptionService _encryptionService;
 
     public EventController(IEventService eventService, EncryptionService encryptionService)
-
     {
         _eventService = eventService;
         _encryptionService = encryptionService;
@@ -60,7 +58,7 @@ public class EventController : ControllerBase
             return StatusCode(500, e.Message);
         }
     }
-    
+
     [HttpGet]
     [Route("GetEventsFromUser/{id}")]
     public async Task<IActionResult> GetEventsFromUser([FromRoute] int id, int userId)
@@ -129,7 +127,9 @@ public class EventController : ControllerBase
         {
             return StatusCode(500, e.Message);
         }
+
     }
+
     [Route("GetEventFromInviteLink")]
     public async Task<ActionResult<EventDTO>> GetEventFromInviteLink(string EnctyptedEventId)
     {
@@ -154,4 +154,5 @@ public class EventController : ControllerBase
         return Ok(_encryptionService.EncryptMessage(EventId));
 
     }
+    
 }
