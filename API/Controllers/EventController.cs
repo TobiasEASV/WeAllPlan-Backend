@@ -130,6 +130,7 @@ public class EventController : ControllerBase
 
     }
 
+    [HttpGet]
     [Route("GetEventFromInviteLink")]
     public async Task<ActionResult<EventDTO>> GetEventFromInviteLink(string EnctyptedEventId)
     {

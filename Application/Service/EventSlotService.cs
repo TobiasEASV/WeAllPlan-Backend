@@ -52,7 +52,11 @@ public class EventSlotService : IEventSlotService
                                                &&
                                                 (eventSlotDto.EndTime <= eventSlotsDb.EndTime.AddMinutes(5) || eventSlotDto.EndTime >= eventSlotsDb.EndTime.AddMinutes(-5))))
                     {
-                        createDTOs.Add(eventSlotDto);
+                        if (!createDTOs.Contains(eventSlotDto))
+                        {
+                            createDTOs.Add(eventSlotDto);
+                        }
+                        
                     }
                 }
             }
@@ -115,7 +119,7 @@ public class EventSlotService : IEventSlotService
 
     public async Task<List<EventSlotDTO>> GetEventSlots(int eventId)
     {
-        List<EventSlot> eventSlots = _repository.GetAll().Result.FindAll(e => e.Id == eventId);
+        List<EventSlot> eventSlots = _repository.GetAll().Result.FindAll(e => e.Event.Id == eventId);
         return await Task.Run( () =>_mapper.Map<List<EventSlotDTO>>(eventSlots));
     }
     
