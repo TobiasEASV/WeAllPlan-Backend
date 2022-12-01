@@ -50,6 +50,7 @@ public class AuthenticationTest
         // Act
         IAuthenticationService authService = new AuthenticationService(_mockRepo.Object, _mockAppSetting.Object, _validator);
         DateTime ex = DateTime.Now.AddDays(200);
+        Console.WriteLine(ex.ToString());
         // Assert
         Assert.NotNull(authService);
         Assert.True(authService is IAuthenticationService);
