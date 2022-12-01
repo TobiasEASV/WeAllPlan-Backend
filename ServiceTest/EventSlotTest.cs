@@ -275,7 +275,7 @@ public class EventSlotTest
             Confirmed = false,
             EventId =1,
             Id = 1,
-            EndTime = DateTime.Parse("20/02/2500 07:22:16"),
+            EndTime = DateTime.Parse("02/02/2500 07:22:16"),
             SlotAnswers = new List<SlotAnswer>()
             {
                 new SlotAnswer()
@@ -287,7 +287,7 @@ public class EventSlotTest
                     Answer = 2, Email = "Thomas@yahoo.com", Id = 2, UserName = "ThomasTog"
                 }
             },
-            StartTime = DateTime.Parse("18/02/2500 07:22:16")
+            StartTime = DateTime.Parse("01/02/2500 07:22:16")
         },
         new EventSlotDTO()
         {
@@ -318,7 +318,7 @@ public class EventSlotTest
             Confirmed = false,
             Event = eventIdOne,
             Id = 1,
-            EndTime = DateTime.Parse("20/02/2500 07:22:16"),
+            EndTime = DateTime.Parse("02/02/2500 07:22:16"),
             SlotAnswers = new List<SlotAnswer>()
             {
                 new SlotAnswer()
@@ -330,7 +330,7 @@ public class EventSlotTest
                     Answer = 2, Email = "Thomas@yahoo.com", Id = 2, UserName = "ThomasTog"
                 }
             },
-            StartTime = DateTime.Parse("18/02/2500 07:22:16")
+            StartTime = DateTime.Parse("01/02/2500 07:22:16")
         },
         new EventSlot()
         {
