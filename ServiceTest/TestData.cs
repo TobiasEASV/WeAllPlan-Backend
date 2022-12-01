@@ -177,7 +177,7 @@ public class TestData
                     Confirmed = false,
                     EventId = 1,
                     Id = 4,
-                    EndTime = DateTime.ParseExact("02/02/2500 07:22:16", "dd/MM/yyyy", CultureInfo.CurrentCulture),
+                    EndTime = DateTime.Parse("08/07/2499 07:22:16"),
                     SlotAnswers = new List<SlotAnswer>()
                     {
                         new SlotAnswer()

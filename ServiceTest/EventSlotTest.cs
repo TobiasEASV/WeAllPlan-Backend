@@ -276,7 +276,7 @@ public class EventSlotTest
             Confirmed = false,
             EventId =1,
             Id = 1,
-            EndTime = DateTime.ParseExact("02/02/2500 07:22:16", "dd/MM/yyyy", CultureInfo.CurrentCulture),
+            EndTime = DateTime.Parse("08/07/2499 07:22:16"),
             SlotAnswers = new List<SlotAnswer>()
             {
                 new SlotAnswer()
@@ -288,7 +288,7 @@ public class EventSlotTest
                     Answer = 2, Email = "Thomas@yahoo.com", Id = 2, UserName = "ThomasTog"
                 }
             },
-            StartTime = DateTime.Parse("01/02/2500 07:22:16")
+            StartTime = DateTime.Parse("01/02/2499 07:22:16")
         },
         new EventSlotDTO()
         {
