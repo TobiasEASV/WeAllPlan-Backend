@@ -48,8 +48,9 @@ public class EventSlotService : IEventSlotService
                 foreach (var eventSlotsDb in allEventSlots)
                 {
                     var validation = await _validator.ValidateAsync(eventSlotDto);
-                    if (validation.IsValid || (eventSlotDto.StartTime != eventSlotsDb.StartTime &&
-                                                eventSlotDto.EndTime != eventSlotsDb.EndTime))
+                    if (validation.IsValid || ((eventSlotDto.StartTime <= eventSlotsDb.StartTime.AddMinutes(5) || eventSlotDto.StartTime >= eventSlotsDb.StartTime.AddMinutes(-5)) 
+                                               &&
+                                                (eventSlotDto.EndTime <= eventSlotsDb.EndTime.AddMinutes(5) || eventSlotDto.EndTime >= eventSlotsDb.EndTime.AddMinutes(-5))))
                     {
                         createDTOs.Add(eventSlotDto);
                     }

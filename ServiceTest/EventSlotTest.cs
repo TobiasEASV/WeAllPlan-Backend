@@ -80,7 +80,7 @@ public class EventSlotTest
         Mock<IEventSlotRepository> mockRepo = new Mock<IEventSlotRepository>();
 
         mockRepo.Setup(mockRepo => mockRepo.GetAll())
-            .ReturnsAsync(_mapper.Map<List<EventSlot>>(new List<EventSlotDTO>()));
+            .ReturnsAsync((new List<EventSlot>()));
         IEventSlotService service = new EventSlotService(mockRepo.Object, _mapper, _validator);
 
         // Act
@@ -276,7 +276,7 @@ public class EventSlotTest
             Confirmed = false,
             EventId =1,
             Id = 1,
-            EndTime = DateTime.Parse("08/07/2030 07:22:16"),
+            EndTime = DateTime.Now.AddDays(1),
             SlotAnswers = new List<SlotAnswer>()
             {
                 new SlotAnswer()
@@ -288,14 +288,14 @@ public class EventSlotTest
                     Answer = 2, Email = "Thomas@yahoo.com", Id = 2, UserName = "ThomasTog"
                 }
             },
-            StartTime = DateTime.Parse("01/02/2029 07:22:16")
+            StartTime = DateTime.Now.AddMinutes(22)
         },
         new EventSlotDTO()
         {
             Confirmed = false,
             EventId = 1,
             Id = 1,
-            EndTime = DateTime.Parse("08/07/2030 07:22:16"),
+            EndTime = DateTime.Now.AddDays(1),
             SlotAnswers = new List<SlotAnswer>()
             {
                 new SlotAnswer()
@@ -307,7 +307,7 @@ public class EventSlotTest
                     Answer = 1, Email = "Thomas@yahoo.com", Id = 2, UserName = "ThomasTog"
                 }
             },
-            StartTime = DateTime.Parse("08/06/2029 07:22:16")
+            StartTime = DateTime.Now.AddMinutes(22)
         }
     };
     
@@ -319,7 +319,7 @@ public class EventSlotTest
             Confirmed = false,
             Event = eventIdOne,
             Id = 1,
-            EndTime = DateTime.Parse("02/02/2030 07:22:16"),
+            EndTime = DateTime.Now.AddDays(2),
             SlotAnswers = new List<SlotAnswer>()
             {
                 new SlotAnswer()
@@ -331,14 +331,14 @@ public class EventSlotTest
                     Answer = 2, Email = "Thomas@yahoo.com", Id = 2, UserName = "ThomasTog"
                 }
             },
-            StartTime = DateTime.Parse("01/02/2029 07:22:16")
+            StartTime = DateTime.Now.AddMinutes(22)
         },
         new EventSlot()
         {
             Confirmed = false,
             Event = eventIdOne,
             Id = 1,
-            EndTime = DateTime.Parse("08/07/2030 07:22:16"),
+            EndTime = DateTime.Now.AddDays(2),
             SlotAnswers = new List<SlotAnswer>()
             {
                 new SlotAnswer()
@@ -350,7 +350,7 @@ public class EventSlotTest
                     Answer = 1, Email = "Thomas@yahoo.com", Id = 2, UserName = "ThomasTog"
                 }
             },
-            StartTime = DateTime.Parse("08/06/2029 07:22:16")
+            StartTime = DateTime.Now.AddMinutes(22)
         }
     };
     
