@@ -129,7 +129,7 @@ public class EventController : ControllerBase
         {
             return StatusCode(500, e.Message);
         }
-
+    }
     [Route("GetEventFromInviteLink")]
     public async Task<ActionResult<EventDTO>> GetEventFromInviteLink(string EnctyptedEventId)
     {
