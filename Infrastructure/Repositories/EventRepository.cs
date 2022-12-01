@@ -50,7 +50,7 @@ public class EventRepository : IEventRepository
 
     public async Task<Event> GetEventById(int id)
     {
-        return await _dbContextSqlite.Events.Include(e => e.User).SingleAsync<Event>( e=> e.Id == id);
+        return await _dbContextSqlite.Events.Include(e => e.User).Include(e => e.EventSlots).SingleAsync<Event>( e=> e.Id == id);
     }
 
     public async Task<List<Event>> GetEventByUserId(int userId)
