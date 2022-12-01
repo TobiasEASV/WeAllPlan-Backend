@@ -1,4 +1,5 @@
-﻿using Application;
+﻿using System.Globalization;
+using Application;
 using Application.DTO;
 using Application.Interfaces;
 using Application.Validators;
@@ -275,7 +276,7 @@ public class EventSlotTest
             Confirmed = false,
             EventId =1,
             Id = 1,
-            EndTime = DateTime.Parse("02/02/2500 07:22:16"),
+            EndTime = DateTime.ParseExact("02/02/2500 07:22:16", "dd/MM/yyyy", CultureInfo.CurrentCulture),
             SlotAnswers = new List<SlotAnswer>()
             {
                 new SlotAnswer()

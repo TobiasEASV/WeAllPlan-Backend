@@ -1,4 +1,5 @@
-﻿using Application;
+﻿using System.Globalization;
+using Application;
 using Application.DTO;
 using Application.Interfaces;
 using AutoMapper;
@@ -176,7 +177,7 @@ public class TestData
                     Confirmed = false,
                     EventId = 1,
                     Id = 4,
-                    EndTime = DateTime.Parse("02/02/2500 07:22:16"),
+                    EndTime = DateTime.ParseExact("02/02/2500 07:22:16", "dd/MM/yyyy", CultureInfo.CurrentCulture),
                     SlotAnswers = new List<SlotAnswer>()
                     {
                         new SlotAnswer()
