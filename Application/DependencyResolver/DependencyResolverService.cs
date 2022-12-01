@@ -1,5 +1,6 @@
 
-﻿using Application.Interfaces;
+﻿using Application.Helpers;
+ using Application.Interfaces;
  using Core.Interfaces;
  using FluentValidation;
 
@@ -17,6 +18,7 @@ public static class DependencyResolverService
         services.AddScoped<ISlotAnswerService, SlotAnswerService>();       
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<IEventSlotService, EventSlotService>();
+        services.AddScoped<EncryptionService>();
 
     }
 }
