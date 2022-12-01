@@ -60,16 +60,15 @@ public class EventController : ControllerBase
     }
 
     [HttpGet]
-    [Route("GetEventsFromUser/{id}")]
-    public async Task<IActionResult> GetEventsFromUser([FromRoute] int id, int userId)
+    [Route("GetEventsFromUser")]
+    public async Task<IActionResult> GetEventsFromUser(string userId)
     {
         try
         {
-            if (id == userId)
-            {
-                var x = await _eventService.GetEventsFromUser(userId);
+                
+                var x = await _eventService.GetEventsFromUser(int.Parse(userId));
                 return Ok(x);
-            }
+           
         }
         catch (NullReferenceException e)
         {
