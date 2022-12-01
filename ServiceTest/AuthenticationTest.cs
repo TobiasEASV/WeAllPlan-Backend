@@ -49,7 +49,7 @@ public class AuthenticationTest
         // Arrange
         // Act
         IAuthenticationService authService = new AuthenticationService(_mockRepo.Object, _mockAppSetting.Object, _validator);
-        DateTime ex = DateTime.Parse("20/02/2020 17:22:13");
+        DateTime ex = DateTime.Parse("02/02/2020 17:22:13");
         Console.WriteLine(ex.ToString());
         // Assert
         Assert.NotNull(authService);
