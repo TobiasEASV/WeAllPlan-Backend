@@ -106,5 +106,198 @@ public class SlotAnswerTest
             Assert.ThrowsAsync<ValidationException>(() => service.CreateSlotAnswer(slotAnswerDto)).Result;
         Assert.Equal(expected, actual.Message);
     }
+    
+    /// <summary>
+    /// 3.1
+    /// </summary>
+    [Fact]
+    public void GetValidSlotAnswersTest()
+    {
+        //Arrange
+        int eventSlotId = 1;
+
+        Mock<ISlotAnswerRepository> mock = new Mock<ISlotAnswerRepository>();
+        mock.Setup(repo => repo.GetAll()).ReturnsAsync(_mapper.Map<List<SlotAnswer>>(fakeRepo));
+        ISlotAnswerService service = new SlotAnswerService(mock.Object, _mapper, _validator);
+        
+        // Act
+
+        List<SlotAnswerDTO> actual = service.GetSlotAnswer(eventSlotId).Result;
+
+        // Assert
+        Assert.True(expectedGetSlotAnswers[0].Id == actual[0].Id && expectedGetSlotAnswers[1].Id == actual[1].Id);
+        Assert.Equal(expectedGetSlotAnswers.Count, actual.Count);
+    }
+    
+    /// <summary>
+    /// 3.2
+    /// </summary>
+    [Fact]
+    public void GetEmptySlotAnswersTest()
+    {
+        //Arrange
+        int eventSlotId = 3;
+
+        Mock<ISlotAnswerRepository> mock = new Mock<ISlotAnswerRepository>();
+        mock.Setup(repo => repo.GetAll()).ReturnsAsync(_mapper.Map<List<SlotAnswer>>(fakeRepo));
+        ISlotAnswerService service = new SlotAnswerService(mock.Object, _mapper, _validator);
+        
+        // Act
+
+        List<SlotAnswerDTO> actual = service.GetSlotAnswer(eventSlotId).Result;
+
+        // Assert
+        Assert.Empty(actual);
+    }
+
+    /// <summary>
+    /// 4.1
+    /// </summary>
+    [Fact]
+    public void ValidUpdateOnSlotAnswerTest()
+    {
+        //Arrange
+        Mock<ISlotAnswerRepository> mockRepo = new Mock<ISlotAnswerRepository>();
+
+        mockRepo.Setup(repository => repository.GetAll()).ReturnsAsync(_mapper.Map<List<SlotAnswer>>(fakeRepo));
+        mockRepo.Setup(repository => repository.UpdateSlotAnswer(It.IsAny<SlotAnswer>())).Callback<SlotAnswer>(
+            (SlotAnswer) =>
+            {
+                
+            });
+        
+        ISlotAnswerService service = new SlotAnswerService(mockRepo.Object, _mapper, _validator);
+
+        SlotAnswerDTO slotAnswerDto = fakeRepoDtos[0];
+        slotAnswerDto.Answer = 1;
+
+        //Act
+
+        service.UpdateSlotAnswer(slotAnswerDto, slotAnswerDto.Id);
+
+        //Assert
+        mockRepo.Verify(repo => repo.UpdateSlotAnswer(It.IsAny<SlotAnswer>()), Times.Once);
+    }
+    
+    ///
+    /// 4.2 - 4.3 is not created.
+    /// 
+
+
+    /// <summary>
+    /// 4.4 - 4.7
+    /// </summary>
+    [Theory]
+    [MemberData(nameof(TestData.InvalidUpdateOnSlotAnswer), MemberType = typeof(TestData))]
+    public void InvalidUpdateOnSlotAnswerTest(SlotAnswerDTO slotAnswerDto, string expected)
+    
+    {
+        //Arrange
+        Mock<ISlotAnswerRepository> mockRepo = new Mock<ISlotAnswerRepository>();
+
+        int slotAnswerId = 1;
+
+        ISlotAnswerService service = new SlotAnswerService(mockRepo.Object, _mapper, _validator);
+        
+        //Act + Assert
+        Task<ValidationException> actual = Assert.ThrowsAsync<ValidationException>(() => service.UpdateSlotAnswer(slotAnswerDto, slotAnswerId));
+        Assert.Equal(expected, actual.Result.Message);
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    //_____________________________________________________________________________________________
+    
+     // Data
+    //Event Slots
+    static EventSlot eventslot1 = new EventSlot()
+        { Id = 1, StartTime = DateTime.Now.AddDays(1), EndTime = DateTime.Now.AddDays(2), Event = new Event()
+        {
+            Id = 1, 
+            User = new User()
+            {
+                Email = "mingus@yo.com", Id = 1, Name = "mikkel", Password = "123sværtatgætte", Salt = "yolo"
+            }, 
+            Title = "kurts Havefest"
+        }};
+   
+    
+    static EventSlot eventslot2 = new EventSlot()
+    { Id = 2, StartTime = DateTime.Now.AddDays(2), EndTime = DateTime.Now.AddDays(2), Event = new Event()
+    {   
+        Id = 2, 
+        User = new User()
+        {
+            Email = "Myemail@yo.com", Id = 2, Name = "mikkel", Password = "123sværtatgætte", Salt = "yolo"
+        }, 
+        Title = "kurts Fest"
+    }};
+    
+    
+    //The expected list for GetSlotAnswers.
+    List<SlotAnswerDTO> expectedGetSlotAnswersDtos = new List<SlotAnswerDTO>()
+    {
+        new SlotAnswerDTO()
+        {
+            Answer = 0, Email = "mingus@yo.com", Id = 1, EventSlotId = 1, UserName = "mingyo"
+        },
+        new SlotAnswerDTO()
+        {
+            Answer = 1, Email = "mingyo@hotmail.com", Id = 2, EventSlotId = 1, UserName = "youstolemyname"
+        }
+    };
+    
+    //The expected list for GetSlotAnswers.
+    List<SlotAnswer> expectedGetSlotAnswers = new List<SlotAnswer>()
+    {
+        new SlotAnswer()
+        {
+            Answer = 0, Email = "mingus@yo.com", Id = 1, EventSlot = eventslot1, UserName = "mingyo"
+        },
+        new SlotAnswer()
+        {
+            Answer = 1, Email = "mingyo@hotmail.com", Id = 2, EventSlot = eventslot1, UserName = "youstolemyname"
+        }
+    };
+    
+    //Base List
+    List<SlotAnswerDTO> fakeRepoDtos = new List<SlotAnswerDTO>()
+    {
+        new SlotAnswerDTO()
+        {
+            Answer = 0, Email = "mingus@yo.com", Id = 1, EventSlotId = 1, UserName = "mingyo"
+        },
+        new SlotAnswerDTO()
+        {
+            Answer = 1, Email = "mingyo@hotmail.com", Id = 2, EventSlotId = 1, UserName = "youstolemyname"
+        },
+        new SlotAnswerDTO()
+        {
+            Answer = 1, Email = "fakeMing@yo.com", Id = 3, EventSlotId = 2, UserName = "mingfaker"
+        }
+    };
+    
+    //Base List
+    List<SlotAnswer> fakeRepo = new List<SlotAnswer>()
+    {
+        new SlotAnswer()
+        {
+            Answer = 0, Email = "mingus@yo.com", Id = 1, EventSlot = eventslot1, UserName = "mingyo"
+        },
+        new SlotAnswer()
+        {
+            Answer = 1, Email = "mingyo@hotmail.com", Id = 2, EventSlot = eventslot1, UserName = "youstolemyname"
+        },
+        new SlotAnswer()
+        {
+            Answer = 1, Email = "fakeMing@yo.com", Id = 3, EventSlot = eventslot2, UserName = "mingfaker"
+        }
+    };
 
 }
