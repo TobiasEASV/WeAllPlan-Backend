@@ -184,25 +184,7 @@ public class SlotAnswerTest
     /// 
 
 
-    /// <summary>
-    /// 4.4 - 4.7
-    /// </summary>
-    [Theory]
-    [MemberData(nameof(TestData.InvalidUpdateOnSlotAnswer), MemberType = typeof(TestData))]
-    public void InvalidUpdateOnSlotAnswerTest(SlotAnswerDTO slotAnswerDto, string expected)
     
-    {
-        //Arrange
-        Mock<ISlotAnswerRepository> mockRepo = new Mock<ISlotAnswerRepository>();
-
-        int slotAnswerId = 1;
-
-        ISlotAnswerService service = new SlotAnswerService(mockRepo.Object, _mapper, _validator);
-        
-        //Act + Assert
-        Task<ValidationException> actual = Assert.ThrowsAsync<ValidationException>(() => service.UpdateSlotAnswer(slotAnswerDto, slotAnswerId));
-        Assert.Equal(expected, actual.Result.Message);
-    }
     
     
     
