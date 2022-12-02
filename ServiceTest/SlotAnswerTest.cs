@@ -92,7 +92,7 @@ public class SlotAnswerTest
     /// </summary>
     [Theory]
     [MemberData(nameof(TestData.InvalidCreateSlotAnswer), MemberType = typeof(TestData))]
-    public void InvalidCreateSlotAnswerTest(SlotAnswerDTO slotAnswerDto, string expected)
+    public void InvalidCreateSlotAnswerTest(SlotAnswerDTO slotAnswerDto, string[] expected)
 
     {
 
@@ -104,7 +104,7 @@ public class SlotAnswerTest
         //Act + Assert
         ValidationException actual =
             Assert.ThrowsAsync<ValidationException>(() => service.CreateSlotAnswer(slotAnswerDto)).Result;
-        Assert.Equal(expected, actual.Message);
+        Assert.Equal(expected[0], actual.Message);
     }
     
     /// <summary>
@@ -184,7 +184,25 @@ public class SlotAnswerTest
     /// 
 
 
+    /// <summary>
+    /// 4.4 - 4.7
+    /// </summary>
+    [Theory]
+    [MemberData(nameof(TestData.InvalidUpdateOnSlotAnswer), MemberType = typeof(TestData))]
+    public void InvalidUpdateOnSlotAnswerTest(SlotAnswerDTO slotAnswerDto, string[] expected)
     
+    {
+        //Arrange
+        Mock<ISlotAnswerRepository> mockRepo = new Mock<ISlotAnswerRepository>();
+
+        int slotAnswerId = 1;
+
+        ISlotAnswerService service = new SlotAnswerService(mockRepo.Object, _mapper, _validator);
+        
+        //Act + Assert
+        Task<ValidationException> actual = Assert.ThrowsAsync<ValidationException>(() => service.UpdateSlotAnswer(slotAnswerDto, slotAnswerId));
+        Assert.Equal(expected[0], actual.Result.Message);
+    }
     
     
     
