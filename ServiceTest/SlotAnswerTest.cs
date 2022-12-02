@@ -63,4 +63,28 @@ public class SlotAnswerTest
         Assert.Equal(expectedMapper, noMapper.Message);
         Assert.Equal(expectedValidator, noValidator.Message);
     }
+    
+    /// <summary>
+    /// 2.1
+    /// </summary>
+    [Fact]
+    public void ValidCreateSlotAnswerTest()
+    {
+        //Assert
+        Mock<ISlotAnswerRepository> mock = new Mock<ISlotAnswerRepository>();
+
+        SlotAnswerDTO answerDTO = new SlotAnswerDTO()
+        {
+            Answer = 1, Email = "MinEmail@ok.dk", EventSlotId = 1, UserName = "Carol"
+        };
+
+        ISlotAnswerService slotAnswerService = new SlotAnswerService(mock.Object, _mapper, _validator);
+        
+        //Act
+        slotAnswerService.CreateSlotAnswer(answerDTO);
+
+        //Assert
+        mock.Verify(repo => repo.CreateSlotAnswer(It.IsAny<SlotAnswer>()),Times.Once());
+    }
+
 }
