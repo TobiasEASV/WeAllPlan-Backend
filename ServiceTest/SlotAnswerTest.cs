@@ -86,5 +86,25 @@ public class SlotAnswerTest
         //Assert
         mock.Verify(repo => repo.CreateSlotAnswer(It.IsAny<SlotAnswer>()),Times.Once());
     }
+    
+    /// <summary>
+    /// 2.2-2.3
+    /// </summary>
+    [Theory]
+    [MemberData(nameof(TestData.InvalidCreateSlotAnswer), MemberType = typeof(TestData))]
+    public void InvalidCreateSlotAnswerTest(SlotAnswerDTO slotAnswerDto, string expected)
+
+    {
+
+        //Arrange
+        Mock<ISlotAnswerRepository> mock = new Mock<ISlotAnswerRepository>();
+
+        ISlotAnswerService service = new SlotAnswerService(mock.Object, _mapper, _validator);
+
+        //Act + Assert
+        ValidationException actual =
+            Assert.ThrowsAsync<ValidationException>(() => service.CreateSlotAnswer(slotAnswerDto)).Result;
+        Assert.Equal(expected, actual.Message);
+    }
 
 }
