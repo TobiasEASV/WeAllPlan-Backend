@@ -26,7 +26,7 @@ public class SlotAnswerTest
     }
     
     /// <summary>
-    /// 1.2
+    /// 1.1
     /// </summary>
     [Fact]
     public void ValidSlotAnswerServiceCreationTest()
@@ -40,5 +40,27 @@ public class SlotAnswerTest
         Assert.NotNull(slotAnswerService);
         Assert.True(slotAnswerService is SlotAnswerService);
         
+    }
+    
+    /// <summary>
+    /// 1.2
+    /// </summary>
+    [Fact]
+    public void InvalidSlotAnswerServiceCreationTest()
+    {
+        //Arrange 
+        Mock<ISlotAnswerRepository> mock = new Mock<ISlotAnswerRepository>();
+
+        string expectedRepo = "Repository is null";
+        string expectedMapper = "Mapper is null";
+        string expectedValidator = "Validator is null";
+        
+        //Act + Assert
+        NullReferenceException noMock = Assert.Throws<NullReferenceException>(() => new SlotAnswerService(null, _mapper, _validator));
+        NullReferenceException noMapper = Assert.Throws<NullReferenceException>(() => new SlotAnswerService(mock.Object, null, _validator));
+        NullReferenceException noValidator = Assert.Throws<NullReferenceException>(() => new SlotAnswerService(mock.Object, _mapper, null));
+        Assert.Equal(expectedRepo, noMock.Message);
+        Assert.Equal(expectedMapper, noMapper.Message);
+        Assert.Equal(expectedValidator, noValidator.Message);
     }
 }
