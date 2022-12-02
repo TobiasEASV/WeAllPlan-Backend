@@ -104,7 +104,7 @@ public class SlotAnswerTest
         //Act + Assert
         ValidationException actual =
             Assert.ThrowsAsync<ValidationException>(() => service.CreateSlotAnswer(slotAnswerDto)).Result;
-        Assert.Equal(expected[0], actual.Message);
+        Assert.Equal(expected.First(), actual.Message);
     }
     
     /// <summary>
@@ -213,11 +213,18 @@ public class SlotAnswerTest
     
     
     //_____________________________________________________________________________________________
+
+    private static DateTime Today()
+    {
+        return new DateTime(2022, 10, 2, 2, 0, 0);
+    }
+    
+    
     
      // Data
     //Event Slots
     static EventSlot eventslot1 = new EventSlot()
-        { Id = 1, StartTime = DateTime.Now.AddDays(1), EndTime = DateTime.Now.AddDays(2), Event = new Event()
+        { Id = 1, StartTime = Today(), EndTime = Today().AddDays(1), Event = new Event()
         {
             Id = 1, 
             User = new User()
@@ -229,7 +236,7 @@ public class SlotAnswerTest
    
     
     static EventSlot eventslot2 = new EventSlot()
-    { Id = 2, StartTime = DateTime.Now.AddDays(2), EndTime = DateTime.Now.AddDays(2), Event = new Event()
+    { Id = 2, StartTime = Today(), EndTime = Today(), Event = new Event()
     {   
         Id = 2, 
         User = new User()
