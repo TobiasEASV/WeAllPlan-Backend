@@ -37,7 +37,7 @@ public class EventSlotService : IEventSlotService
         _validator = validator;
     }
 
-    public async Task CreateEventSlot(List<EventSlotDTO> eventSlotDtos, int eventId)
+   public async Task CreateEventSlot(List<EventSlotDTO> eventSlotDtos, int eventId)
     {
         List<EventSlot> allEventSlots = _repository.GetAll().Result.FindAll(e => e.Event.Id == eventId);
         List<EventSlotDTO> createDTOs = new List<EventSlotDTO>();
