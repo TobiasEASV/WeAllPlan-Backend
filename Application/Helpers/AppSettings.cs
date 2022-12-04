@@ -7,4 +7,6 @@ public class AppSettings
     public string Key { get; set; }
 
     public string Iv { get; set; }
+    
+    public string GoogleClientId { get; set; }
 }

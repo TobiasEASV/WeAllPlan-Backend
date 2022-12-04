@@ -11,6 +11,7 @@ using Core;
 using Core.Interfaces;
 using FluentValidation;
 using FluentValidation.Results;
+using Google.Apis.Auth;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using ValidationException = System.ComponentModel.DataAnnotations.ValidationException;
@@ -94,6 +95,45 @@ public class AuthenticationService : IAuthenticationService
         }
 
         throw new Exception("Invalid login");
+    }
+
+    public async Task<string> LogInWithGoogle(string credential)
+    {
+        var settings = new GoogleJsonWebSignature.ValidationSettings()
+        {
+            Audience = new List<string> { this._appSettings.GoogleClientId}
+        };
+
+        try
+        {
+            var payload = await GoogleJsonWebSignature.ValidateAsync(credential, settings);
+
+            try
+            {
+                // User already exist in DB
+                User user = await _userRepository.GetUserByEmail(payload.Email);
+                return GenerateToken(user, false);
+            }
+            catch (KeyNotFoundException) // User does not exist in DB (first time logging in with google)
+            {
+                var user = new User
+                {
+                    Email = payload.Email,
+                    Name = payload.Name,
+                    Salt = "N/A",
+                    Password = BCrypt.Net.BCrypt.HashPassword("N/A" + "N/A")
+                };
+
+                await _userRepository.CreateNewUser(user); // Insert user into the DB
+                user = await _userRepository.GetUserByEmail(payload.Email); // Fetch user from DM with ID
+                return GenerateToken(user, false);
+            }
+        }
+        catch (InvalidJwtException) // Google credentials could not be validated.
+        {
+            throw new Exception("Invalid google login");
+        }
+        
     }
 
     public string GenerateToken(User user, bool KeepMeLoggedIn)
