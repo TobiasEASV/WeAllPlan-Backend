@@ -5,6 +5,7 @@ using Application.Interfaces;
 using AutoMapper;
 using Core;
 using Moq;
+using ServiceTest.Helpers;
 
 namespace ServiceTest;
 
@@ -178,7 +179,7 @@ public class TestData
                     Confirmed = false,
                     EventId = 1,
                     Id = 4,
-                    EndTime = DateTime.Now,
+                    EndTime = NewDate.Today(),
                     SlotAnswers = new List<SlotAnswer>()
                     {
                         new SlotAnswer()
@@ -190,7 +191,7 @@ public class TestData
                             Answer = 2, Email = "Thomas@yahoo.com", Id = 2, UserName = "ThomasTog"
                         }
                     },
-                    StartTime = DateTime.Now.AddMinutes(16)
+                    StartTime = NewDate.Today().AddMinutes(16)
                 }
             }
         };
@@ -203,7 +204,7 @@ public class TestData
                     Confirmed = false,
                     EventId = 1,
                     Id = 1,
-                    EndTime = DateTime.Now.AddDays(2),
+                    EndTime = NewDate.Today(),
                     SlotAnswers = new List<SlotAnswer>()
                     {
                         new SlotAnswer()
@@ -215,7 +216,7 @@ public class TestData
                             Answer = 1, Email = "Thomas@yahoo.com", Id = 2, UserName = "ThomasTog"
                         }
                     },
-                    StartTime = DateTime.Now.AddMinutes(16)
+                    StartTime = NewDate.Today().AddMinutes(16)
                 }
             }
         };
