@@ -7,6 +7,7 @@ using Infrastructure;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Moq;
+using ServiceTest.Helpers;
 
 namespace ServiceTest;
 
@@ -205,26 +206,76 @@ public class SlotAnswerTest
     }
     
     
+    /// <summary>
+    /// 5.1
+    /// </summary>
+    [Fact]
+    public void ValidDeletionOfSlotAnswerTest()
+    {
+        // Arrange
+        Mock<ISlotAnswerRepository> mockRepo = new Mock<ISlotAnswerRepository>();
+        int eventId = 1;
+        string mail = "mingus@yo.com";
+        
+        List<SlotAnswerDTO> listToDelete = new List<SlotAnswerDTO>()
+        {
+            new SlotAnswerDTO()
+            {
+                Answer = 0, Email = "mingus@yo.com", Id = 1, EventSlotId = 1, UserName = "mingyo"
+            }
+        };
+        
+        mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(fakeRepo);
+
+        ISlotAnswerService service = new SlotAnswerService(mockRepo.Object, _mapper, _validator);
+
+        // Act
+
+        service.DeleteSlotAnswers(eventId, mail, listToDelete);
+        
+        // Assert
+        mockRepo.Verify(repo => repo.DeleteSlotAnswers(It.IsAny<List<SlotAnswer>>()), Times.Once);
+    }
     
-    
-    
+    /// <summary>
+    /// 5.2
+    /// </summary>
+    [Fact]
+    public void InvalidDeletionOfSlotAnswerTest()
+    {
+        // Arrange
+        Mock<ISlotAnswerRepository> mockRepo = new Mock<ISlotAnswerRepository>();
+        int eventId = 1;
+        string mail = "mi@yo.com";
+        List<SlotAnswerDTO> listToDelete = new List<SlotAnswerDTO>()
+        {
+            fakeRepoDtos[1]
+        };
+        
+        mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(fakeRepo);
+
+        ISlotAnswerService service = new SlotAnswerService(mockRepo.Object, _mapper, _validator);
+
+        string expected = "You do not have permission to delete these answers";
+
+        // Act + Assert
+        ValidationException actual =
+            Assert.Throws<ValidationException>(() => service.DeleteSlotAnswers(eventId, mail, listToDelete));
+        Assert.Equal(expected, actual.Message);
+    }
     
     
     
     
     //_____________________________________________________________________________________________
 
-    private static DateTime Today()
-    {
-        return new DateTime(2022, 10, 2, 2, 0, 0);
-    }
     
-    
+  
     
      // Data
     //Event Slots
     static EventSlot eventslot1 = new EventSlot()
-        { Id = 1, StartTime = Today(), EndTime = Today().AddDays(1), Event = new Event()
+        { Id = 1, StartTime = NewDate.Today(), EndTime = NewDate.Today().AddDays(1), Event = new Event()
         {
             Id = 1, 
             User = new User()
@@ -236,7 +287,7 @@ public class SlotAnswerTest
    
     
     static EventSlot eventslot2 = new EventSlot()
-    { Id = 2, StartTime = Today(), EndTime = Today(), Event = new Event()
+    { Id = 2, StartTime = NewDate.Today(), EndTime = NewDate.Today(), Event = new Event()
     {   
         Id = 2, 
         User = new User()
