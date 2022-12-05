@@ -60,16 +60,15 @@ public class EventController : ControllerBase
     }
 
     [HttpGet]
-    [Route("GetEventsFromUser/{id}")]
-    public async Task<IActionResult> GetEventsFromUser([FromRoute] int id, int userId)
+    [Route("GetEventsFromUser")]
+    public async Task<IActionResult> GetEventsFromUser(string userId)
     {
         try
         {
-            if (id == userId)
-            {
-                var x = await _eventService.GetEventsFromUser(userId);
+            
+                var x = await _eventService.GetEventsFromUser(int.Parse(userId));
                 return Ok(x);
-            }
+           
         }
         catch (NullReferenceException e)
         {
@@ -79,8 +78,6 @@ public class EventController : ControllerBase
         {
             return StatusCode(500, e.Message);
         }
-
-        return BadRequest("You dont have access to this Event");
     }
 
     [HttpPut]
@@ -108,11 +105,11 @@ public class EventController : ControllerBase
 
     [HttpDelete]
     [Route("DeleteEvent")]
-    public IActionResult DeleteEvent(int eventId, int userId)
+    public IActionResult DeleteEvent(string eventId, string userId)
     {
         try
         {
-            _eventService.DeleteEvent(eventId, eventId);
+            _eventService.DeleteEvent(int.Parse(eventId), int.Parse(eventId));
             return Ok();
         }
         catch (NullReferenceException e)
