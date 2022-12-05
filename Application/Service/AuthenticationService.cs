@@ -144,15 +144,15 @@ public class AuthenticationService : IAuthenticationService
     public string GenerateToken(User user, bool KeepMeLoggedIn)
     {
 
-        var ExpireDate = new DateTime();
+        DateTime ExpireDate;
         
         if (KeepMeLoggedIn)
         {
-            ExpireDate = DateTime.Now.AddYears(25);
+            ExpireDate = DateTime.UtcNow.AddYears(25);
         }
         else
         {
-            ExpireDate = DateTime.Now.AddHours(2);
+            ExpireDate = DateTime.UtcNow.AddHours(2);
         }
         
         var key = Encoding.UTF8.GetBytes(_appSettings.Secret);
@@ -164,6 +164,7 @@ public class AuthenticationService : IAuthenticationService
                 new Claim("Id", user.Id.ToString()),
                 new Claim("UserName", user.Name)
             }),
+            
             Expires = ExpireDate,
             SigningCredentials =
                 new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
