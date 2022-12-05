@@ -2,6 +2,7 @@
 using Application.DTO;
 using Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace API.Controllers;
 
@@ -27,6 +28,22 @@ public class LoginController : ControllerBase
         {
             return BadRequest(e.Message);
         }
+    }
+    
+
+    [HttpPost]
+    [Route("LoginWithGoogle")]
+    public async Task<ActionResult<string>> LoginWithGoogle([FromBody]CredentialDTO dto)
+    {
+        try
+        {
+            return  Ok(await _authenticationService.LogInWithGoogle(dto.credential));
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+        
     }
     
     
