@@ -140,6 +140,7 @@ public class EventController : ControllerBase
 
             Console.WriteLine(DecryptedEventId);
             EventDTO eventDto = await _eventService.GetEvent(Int32.Parse(DecryptedEventId));
+            Console.WriteLine("Tobias");
             return Ok(eventDto);
         }
         catch (Exception e)
