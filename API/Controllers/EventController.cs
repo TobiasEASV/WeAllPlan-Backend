@@ -146,6 +146,14 @@ public class EventController : ControllerBase
         {
             return StatusCode(400, "Invalid invite link.");
         }
+    } 
+    
+    [HttpGet]
+    [Route("GetEventToAnswer")]
+    public async Task<ActionResult<EventDTO>> GetEventToAnswer(string EventId)
+    {
+        EventDTO eventDto = await _eventService.GetEvent(Int32.Parse(EventId));
+        return Ok(eventDto);
     }
 
     [HttpGet]
