@@ -25,6 +25,7 @@ public class EventController : ControllerBase
     [Route("CreateEvent")]
     public async Task<IActionResult> CreateEvent(EventDTO eventDto)
     {
+        
         try
         {
             await _eventService.CreateEvent(eventDto);
@@ -129,13 +130,11 @@ public class EventController : ControllerBase
 
     [HttpGet]
     [Route("GetEventFromInviteLink")]
-    public async Task<ActionResult<EventDTO>> GetEventFromInviteLink(string EnctyptedEventId)
+    public async Task<ActionResult<EventDTO>> GetEventFromInviteLink(string EncryptedEventId)
     {
         try
         {
-            string DecryptedEventId = _encryptionService.DecryptMessage(EnctyptedEventId);
-
-            Console.WriteLine(DecryptedEventId);
+            string DecryptedEventId = _encryptionService.DecryptMessage(EncryptedEventId);
             EventDTO eventDto = await _eventService.GetEvent(Int32.Parse(DecryptedEventId));
             return Ok(eventDto);
         }
@@ -157,7 +156,9 @@ public class EventController : ControllerBase
     [Route("GenerateInviteLink")]
     public ActionResult<string> GenerateInviteLink(string EventId)
     {
-        return Ok(_encryptionService.EncryptMessage(EventId));
+        var test = _encryptionService.EncryptMessage(EventId);
+        Console.WriteLine(test);
+        return Ok(test);
 
     }
     
