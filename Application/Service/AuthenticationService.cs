@@ -116,17 +116,7 @@ public class AuthenticationService : IAuthenticationService
             }
             catch (KeyNotFoundException) // User does not exist in DB (first time logging in with google)
             {
-                var user = new User
-                {
-                    Email = payload.Email,
-                    Name = payload.Name,
-                    Salt = "N/A",
-                    Password = BCrypt.Net.BCrypt.HashPassword("N/A" + "N/A")
-                };
-
-                await _userRepository.CreateNewUser(user); // Insert user into the DB
-                user = await _userRepository.GetUserByEmail(payload.Email); // Fetch user from DM with ID
-                return GenerateToken(user, false);
+                return registerGoogleAccount(payload).Result;
             }
         }
         catch (InvalidJwtException) // Google credentials could not be validated.
@@ -134,6 +124,21 @@ public class AuthenticationService : IAuthenticationService
             throw new Exception("Invalid google login");
         }
         
+    }
+
+    private async Task<string> registerGoogleAccount(GoogleJsonWebSignature.Payload payload)
+    {
+        var user = new User
+        {
+            Email = payload.Email,
+            Name = payload.Name,
+            Salt = "N/A",
+            Password = BCrypt.Net.BCrypt.HashPassword("N/A" + "N/A")
+        };
+
+        await _userRepository.CreateNewUser(user); // Insert user into the DB
+        user = await _userRepository.GetUserByEmail(payload.Email); // Fetch user from DM with ID
+        return GenerateToken(user, false);
     }
 
     public string GenerateToken(User user, bool KeepMeLoggedIn)
