@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Application.DTO;
 using Application.Interfaces;
+using Core;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
