@@ -17,7 +17,15 @@ public class EventRepository : IEventRepository
     }
     public async Task<Event> CreateEvent(Event anEvent)
     {
+        List<EventSlot> eventSlots = new List<EventSlot>();
         EntityEntry<Event> x = await _dbContextSqlite.Events.AddAsync(anEvent);
+        foreach (var eventSlot in anEvent.EventSlots)
+        {
+            eventSlot.Event = x.Entity;
+            eventSlots.Add(eventSlot);
+        }
+
+        await _dbContextSqlite.EventSlots.AddRangeAsync(eventSlots);
         await _dbContextSqlite.SaveChangesAsync();
         return x.Entity;
     }
