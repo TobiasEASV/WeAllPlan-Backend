@@ -4,7 +4,7 @@ namespace Application.Interfaces;
 
 public interface ISlotAnswerRepository
 {
-    Task<SlotAnswer> CreateSlotAnswer(SlotAnswer slotAnswer);
+    Task CreateSlotAnswer(List<SlotAnswer> slotAnswer);
     Task<List<SlotAnswer>> GetAll();
     Task<SlotAnswer> UpdateSlotAnswer(SlotAnswer slotAnswer);
     void DeleteSlotAnswers(List<SlotAnswer> listToDelete);
