@@ -63,18 +63,8 @@ public class EventService : IEventService
 
     public async Task<List<EventDTO>> GetEventsFromUser(int userId)
     {
-        List<Event> eventTasks =  _repository.GetEventByUserId(userId).Result;
-
-        List<EventDTO> listDtos = _mapper.Map<List<EventDTO>>(eventTasks);
-        if (eventTasks.Count == 0)
-        {
-            return await Task.Run(() => new List<EventDTO>(){});
-        }
-        foreach (var dto in listDtos)
-        {
-            dto.UserId = eventTasks[0].User.Id;
-        }
-        return await Task.Run(() => listDtos);
+        return await Task.Run(() => _mapper.Map<List<EventDTO>>(_repository.GetEventByUserId(userId).Result));
+      
     }
 
     public async Task UpdateEvent(EventDTO eventDto, int userId)

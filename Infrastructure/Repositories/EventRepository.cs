@@ -59,6 +59,7 @@ public class EventRepository : IEventRepository
 
     public async Task<List<Event>> GetEventByUserId(int userId)
     {
+        Console.WriteLine(userId);
         return await _dbContextSqlite.Events.Include(e => e.User).Where(e => e.User.Id == userId).ToListAsync();
     }
 }

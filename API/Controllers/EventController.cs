@@ -4,6 +4,7 @@ using Application.DTO;
 using Application.Helpers;
 using Application.Interfaces;
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -22,6 +23,7 @@ public class EventController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize]
     [Route("CreateEvent")]
     public async Task<IActionResult> CreateEvent(CRUDEventDTO eventDto)
     {
@@ -41,13 +43,14 @@ public class EventController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize]
     [Route("GetEvent")]
-    public async Task<IActionResult> GetEvent(string eventId)
+    public async Task<ActionResult<EventDTO>> GetEvent(string eventId)
     {
         try
         {
-            var x = await _eventService.GetEvent(int.Parse(eventId));
-            return Ok(x);
+            EventDTO Event = await _eventService.GetEvent(int.Parse(eventId));
+            return Ok(Event);
         }
         catch (NullReferenceException e)
         {
@@ -60,13 +63,14 @@ public class EventController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize]
     [Route("GetEventsFromUser")]
-    public async Task<IActionResult> GetEventsFromUser(string userId)
+    public async Task<ActionResult<List<EventDTO>>> GetEventsFromUser(string userId)
     {
         try
         {
-            var x = await _eventService.GetEventsFromUser(int.Parse(userId));
-            return Ok(x);
+            List<EventDTO> events = await _eventService.GetEventsFromUser(int.Parse(userId));
+            return Ok(events);
         }
         catch (NullReferenceException e)
         {
@@ -79,6 +83,7 @@ public class EventController : ControllerBase
     }
 
     [HttpPut]
+    [Authorize]
     [Route("UpdateEvent")]
     public async Task<IActionResult> UpdateEvent(EventDTO eventDto, int userId)
     {
@@ -102,6 +107,7 @@ public class EventController : ControllerBase
     }
 
     [HttpDelete]
+    [Authorize]
     [Route("DeleteEvent")]
     public IActionResult DeleteEvent(string eventId, string userId)
     {
@@ -125,6 +131,7 @@ public class EventController : ControllerBase
     }
 
     [HttpGet]
+    [AllowAnonymous]
     [Route("GetEventFromInviteLink")]
     public async Task<ActionResult<EventDTO>> GetEventFromInviteLink(string EncryptedEventId)
     {
@@ -143,6 +150,7 @@ public class EventController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize]
     [Route("GetEventToAnswer")]
     public async Task<ActionResult<EventDTO>> GetEventToAnswer(string EventId)
     {
@@ -151,6 +159,7 @@ public class EventController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize]
     [Route("GenerateInviteLink")]
     public ActionResult<string> GenerateInviteLink(string EventId)
     {
