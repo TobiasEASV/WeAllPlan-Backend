@@ -1,7 +1,7 @@
 using System.Security.Authentication;
 using Application;
+using Application.DTO;
 using Application.Helpers;
-
 using Application.Interfaces;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
@@ -23,9 +23,8 @@ public class EventController : ControllerBase
 
     [HttpPost]
     [Route("CreateEvent")]
-    public async Task<IActionResult> CreateEvent(EventDTO eventDto)
+    public async Task<IActionResult> CreateEvent(CRUDEventDTO eventDto)
     {
-        
         try
         {
             await _eventService.CreateEvent(eventDto);
@@ -66,10 +65,8 @@ public class EventController : ControllerBase
     {
         try
         {
-            
-                var x = await _eventService.GetEventsFromUser(int.Parse(userId));
-                return Ok(x);
-           
+            var x = await _eventService.GetEventsFromUser(int.Parse(userId));
+            return Ok(x);
         }
         catch (NullReferenceException e)
         {
@@ -110,7 +107,7 @@ public class EventController : ControllerBase
     {
         try
         {
-            _eventService.DeleteEvent(int.Parse(eventId), int.Parse(eventId));
+            _eventService.DeleteEvent(int.Parse(eventId), int.Parse(userId));
             return Ok();
         }
         catch (NullReferenceException e)
@@ -125,25 +122,26 @@ public class EventController : ControllerBase
         {
             return StatusCode(500, e.Message);
         }
-
     }
 
     [HttpGet]
     [Route("GetEventFromInviteLink")]
     public async Task<ActionResult<EventDTO>> GetEventFromInviteLink(string EncryptedEventId)
     {
+        Console.WriteLine(EncryptedEventId);
         try
         {
-            string DecryptedEventId = _encryptionService.DecryptMessage(EncryptedEventId);
+            string DecryptedEventId = _encryptionService.DecryptMessage(EncryptedEventId + "==");
             EventDTO eventDto = await _eventService.GetEvent(Int32.Parse(DecryptedEventId));
+            Console.WriteLine(eventDto.Title);
             return Ok(eventDto);
         }
         catch (Exception e)
         {
             return StatusCode(400, "Invalid invite link.");
         }
-    } 
-    
+    }
+
     [HttpGet]
     [Route("GetEventToAnswer")]
     public async Task<ActionResult<EventDTO>> GetEventToAnswer(string EventId)
@@ -156,10 +154,10 @@ public class EventController : ControllerBase
     [Route("GenerateInviteLink")]
     public ActionResult<string> GenerateInviteLink(string EventId)
     {
-        var test = _encryptionService.EncryptMessage(EventId);
-        Console.WriteLine(test);
-        return Ok(test);
+        string generateInviteLink = _encryptionService.EncryptMessage(EventId);
 
+        string inviteLink = generateInviteLink.Remove(generateInviteLink.Length - 2);
+
+        return Ok(inviteLink);
     }
-    
 }

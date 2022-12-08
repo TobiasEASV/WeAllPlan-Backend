@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Security.Authentication;
 using Application.DTO;
+using Application.Helpers;
 using Application.Interfaces;
 using AutoMapper;
 using Core;
@@ -14,9 +15,11 @@ public class EventService : IEventService
 {
     private IEventRepository _repository;
     private IMapper _mapper;
-    private IValidator<EventDTO> _eventValidator ;
+    private IValidator<EventDTO> _eventValidator;
+    private IValidator<CRUDEventDTO> _createEventValidator;
+    private CreateEventMapper _createEventMapper = new CreateEventMapper();
 
-    public EventService(IEventRepository repository, IMapper mapper, IValidator<EventDTO> eventValidator)
+    public EventService(IEventRepository repository, IMapper mapper, IValidator<EventDTO> eventValidator, IValidator<CRUDEventDTO> createEventValidator)
     {
         if (repository is null)
             throw new NullReferenceException("Repository is null");
@@ -28,17 +31,19 @@ public class EventService : IEventService
         _repository = repository;
         _mapper = mapper;
         _eventValidator = eventValidator;
+        _createEventValidator = createEventValidator;
     }
 
-    public async Task CreateEvent(EventDTO eventDto)
+    public async Task CreateEvent(CRUDEventDTO eventDto)
     {
-        var validation = _eventValidator.Validate(eventDto);
+        var validation = _createEventValidator.Validate(eventDto);
         if (!validation.IsValid)
         {
             throw new ValidationException(validation.ToString());
         }
-        Event testEvent = _mapper.Map<Event>(eventDto); // Map the DTO to an actual Object.
-        testEvent.User = setUserFromId(eventDto.UserId);
+
+        Event testEvent = _createEventMapper.CrudEventDtoToEvent(eventDto); // Map the DTO to an actual Object.
+        testEvent.User = setUserFromId(eventDto.OwnerId);
         await _repository.CreateEvent(testEvent);
         
     }
@@ -103,6 +108,7 @@ public class EventService : IEventService
         {
             throw new AuthenticationException("You do not own this Event");
         }
+
         _repository.Delete(eventToDelete);
     }
 

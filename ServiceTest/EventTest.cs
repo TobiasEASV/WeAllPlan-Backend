@@ -2,6 +2,7 @@ using System.Security.Authentication;
 using Application;
 using Application.DTO;
 using Application.Interfaces;
+using Application.Validators;
 using AutoMapper;
 using Core;
 using FluentValidation;
@@ -15,7 +16,8 @@ public class EventTest
     
     private IMapper _mapper;
     private IValidator<EventDTO> _validator;
-    
+    private IValidator<CRUDEventDTO> _createEventValidator;
+
 
     public EventTest()
     {
@@ -26,6 +28,8 @@ public class EventTest
         });
         _mapper = config.CreateMapper();
         _validator = new EventValidator();
+        _createEventValidator = new CreateEventValidator();
+
     }
     
     /// <summary>
@@ -38,7 +42,7 @@ public class EventTest
         Mock<IEventRepository> mockRepo = new Mock<IEventRepository>();
       
         // Act
-        IEventService service = new EventService(mockRepo.Object,_mapper,_validator);
+        IEventService service = new EventService(mockRepo.Object,_mapper,_validator, _createEventValidator);
         
 
         // Assert
@@ -57,9 +61,9 @@ public class EventTest
         Mock<IEventRepository> mock = new Mock<IEventRepository>();
         
         // Act + Assert
-        NullReferenceException noMock = Assert.Throws<NullReferenceException>(() => new EventService(null, _mapper,_validator ));
-        NullReferenceException noMapper = Assert.Throws<NullReferenceException>(() => new EventService(mock.Object, null,_validator ));
-        NullReferenceException noValidator = Assert.Throws<NullReferenceException>(() => new EventService(mock.Object, _mapper,null ));
+        NullReferenceException noMock = Assert.Throws<NullReferenceException>(() => new EventService(null, _mapper,_validator, _createEventValidator ));
+        NullReferenceException noMapper = Assert.Throws<NullReferenceException>(() => new EventService(mock.Object, null,_validator, _createEventValidator ));
+        NullReferenceException noValidator = Assert.Throws<NullReferenceException>(() => new EventService(mock.Object, _mapper,null, _createEventValidator ));
         Assert.Equal("Repository is null", noMock.Message);
         Assert.Equal("Mapper is null", noMapper.Message);
         Assert.Equal("Validator is null", noValidator.Message);
@@ -72,12 +76,12 @@ public class EventTest
     /// <param name="eventDto"></param>
     [Theory]
     [MemberData(nameof(TestData.CreateValidEventTestData), MemberType = typeof(TestData))]
-    public void ValidEventCreationTest(EventDTO eventDto)
+    public void ValidEventCreationTest(CRUDEventDTO eventDto)
     {
         // Arrange
         Mock<IEventRepository> mockRepo = new Mock<IEventRepository>();
         
-        IEventService service = new EventService(mockRepo.Object, _mapper,_validator);
+        IEventService service = new EventService(mockRepo.Object, _mapper,_validator, _createEventValidator);
         
         //Act
         service.CreateEvent(eventDto);
@@ -94,12 +98,12 @@ public class EventTest
     /// <param name="expected"></param>
     [Theory]
     [MemberData(nameof(TestData.CreateInvalidEventTestData), MemberType = typeof(TestData))]
-    public void InvalidEventCreationTest(EventDTO eventDto, string[] expected)
+    public void InvalidEventCreationTest(CRUDEventDTO eventDto, string[] expected)
     {
         // Arrange
         Mock<IEventRepository> mockRepo = new Mock<IEventRepository>();
 
-        IEventService service = new EventService(mockRepo.Object, _mapper,_validator);
+        IEventService service = new EventService(mockRepo.Object, _mapper,_validator, _createEventValidator);
 
         //Act + Assert
         Task<ValidationException> validationException = Assert.ThrowsAsync<ValidationException>(() => service.CreateEvent(eventDto));
@@ -120,7 +124,7 @@ public class EventTest
 
         mockRepo.Setup(repo => repo.GetEventById(id)).ReturnsAsync(mockEvents[0]);
         
-        IEventService service = new EventService(mockRepo.Object, _mapper, _validator);
+        IEventService service = new EventService(mockRepo.Object, _mapper, _validator, _createEventValidator);
 
         // Act
         EventDTO eventDto = service.GetEvent(id).Result;
@@ -156,7 +160,7 @@ public class EventTest
         mockRepo.Setup(repo => repo.GetEventByUserId(UserId)).ReturnsAsync(mockEventsFromUserId);
         mockRepo.Setup(mockRepo => mockRepo.getUser(UserId)).Returns(userIdOne);
         
-        IEventService service = new EventService(mockRepo.Object, _mapper, _validator);
+        IEventService service = new EventService(mockRepo.Object, _mapper, _validator, _createEventValidator);
 
         // Act
         List<EventDTO> eventDtos = service.GetEventsFromUser(UserId).Result;
@@ -179,7 +183,7 @@ public class EventTest
 
         mockRepo.Setup(repo => repo.GetEventByUserId(2)).ReturnsAsync(new List<Event>(){});
         
-        IEventService service = new EventService(mockRepo.Object, _mapper, _validator);
+        IEventService service = new EventService(mockRepo.Object, _mapper, _validator, _createEventValidator);
 
         // Act
         List<EventDTO> eventDtos = service.GetEventsFromUser(UserId).Result;
@@ -202,7 +206,7 @@ public class EventTest
 
         mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(mockEvents);
         
-        IEventService service = new EventService(mockRepo.Object, _mapper, _validator);
+        IEventService service = new EventService(mockRepo.Object, _mapper, _validator, _createEventValidator);
 
         // Act
         NullReferenceException nullReferenceException =
@@ -242,7 +246,7 @@ public class EventTest
 
         mockRepo.Setup(repo => repo.getUser(userId)).Returns(userIdOne);
         
-        IEventService service = new EventService(mockRepo.Object, _mapper, _validator);
+        IEventService service = new EventService(mockRepo.Object, _mapper, _validator, _createEventValidator);
 
         //EventDTO eventdto = service.GetEvent(id).Result;
         
@@ -263,7 +267,7 @@ public class EventTest
         Mock<IEventRepository> mockRepo = new Mock<IEventRepository>();
 
         mockRepo.Setup(repo => repo.GetEventById(1)).ReturnsAsync(mockEvents[0]);
-        IEventService service = new EventService(mockRepo.Object, _mapper, _validator);
+        IEventService service = new EventService(mockRepo.Object, _mapper, _validator, _createEventValidator);
 
         EventDTO eventdto = service.GetEvent(1).Result;
         eventdto.Title = null;
@@ -286,7 +290,7 @@ public class EventTest
         Mock<IEventRepository> mockRepo = new Mock<IEventRepository>();
 
         mockRepo.Setup(repo => repo.GetEventById(1)).ReturnsAsync(mockEvents[0]);
-        IEventService service = new EventService(mockRepo.Object, _mapper, _validator);
+        IEventService service = new EventService(mockRepo.Object, _mapper, _validator, _createEventValidator);
 
         EventDTO eventdto = service.GetEvent(1).Result;
         
@@ -310,7 +314,7 @@ public class EventTest
         Mock<IEventRepository> mockRepo = new Mock<IEventRepository>();
         mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(_mapper.Map<List<Event>>(mockEvents));
         
-        IEventService service = new EventService(mockRepo.Object, _mapper,_validator);
+        IEventService service = new EventService(mockRepo.Object, _mapper,_validator, _createEventValidator);
         int eventId = 1;
         int userId = 1;
 
@@ -331,7 +335,7 @@ public class EventTest
         Mock<IEventRepository> mockRepo = new Mock<IEventRepository>();
         mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(mockEvents);
         
-        IEventService service = new EventService(mockRepo.Object, _mapper,_validator);
+        IEventService service = new EventService(mockRepo.Object, _mapper,_validator, _createEventValidator);
         int eventId = 1;
         int userId = 5;
 
