@@ -99,6 +99,8 @@ public class EventService : IEventService
     public void DeleteEvent(int eventId, int userId)
     {
         Event eventToDelete= _repository.GetAll().Result.Find(Event => Event.Id == eventId);
+        Console.WriteLine("user id = " + userId);
+        Console.WriteLine("event.user.id = " + eventToDelete.User.Id);
         if (eventToDelete == null)
         {
             throw new NullReferenceException("Event does not exist");
@@ -108,6 +110,7 @@ public class EventService : IEventService
         {
             throw new AuthenticationException("You do not own this Event");
         }
+
         _repository.Delete(eventToDelete);
     }
 
