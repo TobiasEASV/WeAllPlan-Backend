@@ -42,11 +42,11 @@ public class EventController : ControllerBase
 
     [HttpGet]
     [Route("GetEvent")]
-    public async Task<IActionResult> GetEvent(int eventId)
+    public async Task<IActionResult> GetEvent(string eventId)
     {
         try
         {
-            var x = await _eventService.GetEvent(eventId);
+            var x = await _eventService.GetEvent(int.Parse(eventId));
             return Ok(x);
         }
         catch (NullReferenceException e)

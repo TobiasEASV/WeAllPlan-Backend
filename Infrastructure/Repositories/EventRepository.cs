@@ -10,11 +10,12 @@ namespace Infrastructure;
 public class EventRepository : IEventRepository
 {
     private DBContextSqlite _dbContextSqlite;
-    
+
     public EventRepository(DBContextSqlite dbContextSqlite)
     {
         _dbContextSqlite = dbContextSqlite;
     }
+
     public async Task<Event> CreateEvent(Event anEvent)
     {
         EntityEntry<Event> x = await _dbContextSqlite.Events.AddAsync(anEvent);
@@ -45,12 +46,15 @@ public class EventRepository : IEventRepository
 
     public User getUser(int userId)
     {
-       return _dbContextSqlite.Users.Find(userId);
+        return _dbContextSqlite.Users.Find(userId);
     }
 
     public async Task<Event> GetEventById(int id)
     {
-        return await _dbContextSqlite.Events.Include(e => e.User).Include(e => e.EventSlots).SingleAsync<Event>( e=> e.Id == id);
+        return await _dbContextSqlite.Events.Include(e => e.User)
+            .Include(e => e.EventSlots)
+            .ThenInclude(e => e.SlotAnswers)
+            .SingleAsync<Event>(e => e.Id == id);
     }
 
     public async Task<List<Event>> GetEventByUserId(int userId)
