@@ -1,7 +1,7 @@
 using System.Security.Authentication;
 using Application;
+using Application.DTO;
 using Application.Helpers;
-
 using Application.Interfaces;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
@@ -23,9 +23,8 @@ public class EventController : ControllerBase
 
     [HttpPost]
     [Route("CreateEvent")]
-    public async Task<IActionResult> CreateEvent(EventDTO eventDto)
+    public async Task<IActionResult> CreateEvent(CRUDEventDTO eventDto)
     {
-        
         try
         {
             await _eventService.CreateEvent(eventDto);
@@ -66,10 +65,8 @@ public class EventController : ControllerBase
     {
         try
         {
-            
-                var x = await _eventService.GetEventsFromUser(int.Parse(userId));
-                return Ok(x);
-           
+            var x = await _eventService.GetEventsFromUser(int.Parse(userId));
+            return Ok(x);
         }
         catch (NullReferenceException e)
         {
@@ -125,7 +122,6 @@ public class EventController : ControllerBase
         {
             return StatusCode(500, e.Message);
         }
-
     }
 
     [HttpGet]
@@ -142,8 +138,8 @@ public class EventController : ControllerBase
         {
             return StatusCode(400, "Invalid invite link.");
         }
-    } 
-    
+    }
+
     [HttpGet]
     [Route("GetEventToAnswer")]
     public async Task<ActionResult<EventDTO>> GetEventToAnswer(string EventId)
@@ -159,7 +155,5 @@ public class EventController : ControllerBase
         var test = _encryptionService.EncryptMessage(EventId);
         Console.WriteLine(test);
         return Ok(test);
-
     }
-    
 }

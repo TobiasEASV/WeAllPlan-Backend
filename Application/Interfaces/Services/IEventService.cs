@@ -1,10 +1,10 @@
-﻿using Core;
+﻿using Application.DTO;
 
 namespace Application.Interfaces;
 
 public interface IEventService
 {
-    Task CreateEvent(EventDTO eventDto);
+    Task CreateEvent(CRUDEventDTO eventDto);
     Task<EventDTO> GetEvent(int id);
     Task<List<EventDTO>> GetEventsFromUser(int userId);
     Task UpdateEvent(EventDTO eventDto, int userId);

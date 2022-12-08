@@ -23,11 +23,11 @@ public class TestData
         //2.1 Some fields filled out
         yield return new Object[]
         {
-            new EventDTO()
+            new CRUDEventDTO()
             {
                 Title = "Kæmpe fedt event",
-                UserId =1,
-                EventSlots = new List<EventSlot>()
+                OwnerId = 1,
+                TimeSlots = new List<TimeSlotDTO>()
             }
         };
 
@@ -35,11 +35,11 @@ public class TestData
 
         yield return new Object[]
         {
-            new EventDTO()
+            new CRUDEventDTO()
             {
                 Title = "SIMONS GODE FEST",
-                UserId = 1,
-                EventSlots = new List<EventSlot>(),
+                OwnerId = 1,
+                TimeSlots = new List<TimeSlotDTO>(),
                 Description = "Mega nice fest. Kom glad.",
                 Location = "PÅ SKOLEEEEN"
             }
@@ -51,11 +51,11 @@ public class TestData
         //2.3 Invalid Title, exists, but empty.
         yield return new Object[]
         {
-            new EventDTO()
+            new CRUDEventDTO()
             {
                 Title = "",
-                UserId = 1,
-                EventSlots = new List<EventSlot>()
+                OwnerId = 1,
+                TimeSlots = new List<TimeSlotDTO>()
             },
             new[] { "The event needs a title" }
         };
@@ -63,11 +63,11 @@ public class TestData
         //2.3 Invalid Title, doesnt exist.
         yield return new Object[]
         {
-            new EventDTO()
+            new CRUDEventDTO()
             {
                 Title = null,
-                UserId = 1,
-                EventSlots = new List<EventSlot>(),
+                OwnerId = 1,
+                TimeSlots = new List<TimeSlotDTO>(),
                 Description = "Mega nice fest. Kom glad.",
                 Location = "PÅ SKOLEEEEN"
             },
@@ -77,11 +77,11 @@ public class TestData
         //2.3 Invalid User, doesnt exist.
         yield return new Object[]
         {
-            new EventDTO()
+            new CRUDEventDTO()
             {
                 Title = "ffs",
-                UserId = -5,
-                EventSlots = new List<EventSlot>(),
+                OwnerId = -5,
+                TimeSlots = new List<TimeSlotDTO>(),
                 Description = "Mega nice fest. Kom glad.",
                 Location = "PÅ SKOLEEEEN"
             },
