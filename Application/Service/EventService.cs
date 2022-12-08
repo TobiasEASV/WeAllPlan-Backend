@@ -108,6 +108,7 @@ public class EventService : IEventService
         {
             throw new AuthenticationException("You do not own this Event");
         }
+
         _repository.Delete(eventToDelete);
     }
 

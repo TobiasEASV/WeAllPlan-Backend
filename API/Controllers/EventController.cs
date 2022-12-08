@@ -107,7 +107,7 @@ public class EventController : ControllerBase
     {
         try
         {
-            _eventService.DeleteEvent(int.Parse(eventId), int.Parse(eventId));
+            _eventService.DeleteEvent(int.Parse(eventId), int.Parse(userId));
             return Ok();
         }
         catch (NullReferenceException e)
