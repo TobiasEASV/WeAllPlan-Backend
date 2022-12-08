@@ -128,10 +128,12 @@ public class EventController : ControllerBase
     [Route("GetEventFromInviteLink")]
     public async Task<ActionResult<EventDTO>> GetEventFromInviteLink(string EncryptedEventId)
     {
+        Console.WriteLine(EncryptedEventId);
         try
         {
-            string DecryptedEventId = _encryptionService.DecryptMessage(EncryptedEventId);
+            string DecryptedEventId = _encryptionService.DecryptMessage(EncryptedEventId + "==");
             EventDTO eventDto = await _eventService.GetEvent(Int32.Parse(DecryptedEventId));
+            Console.WriteLine(eventDto.Title);
             return Ok(eventDto);
         }
         catch (Exception e)
@@ -152,8 +154,10 @@ public class EventController : ControllerBase
     [Route("GenerateInviteLink")]
     public ActionResult<string> GenerateInviteLink(string EventId)
     {
-        var test = _encryptionService.EncryptMessage(EventId);
-        Console.WriteLine(test);
-        return Ok(test);
+        string generateInviteLink = _encryptionService.EncryptMessage(EventId);
+
+        string inviteLink = generateInviteLink.Remove(generateInviteLink.Length - 2);
+
+        return Ok(inviteLink);
     }
 }
