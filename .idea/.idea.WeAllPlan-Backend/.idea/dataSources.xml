@@ -4,8 +4,8 @@
     <data-source source="LOCAL" name="sqlite" uuid="bf37413e-aca3-4c1a-909f-2dd24f9287e6">
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
-      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>      
-      <jdbc-url>jdbc:sqlite:C:\Users\tobia\Documents\Skole\Backend\sqlite.db</jdbc-url>
+      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
+      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/../sqlite.db</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
       <libraries>
         <library>

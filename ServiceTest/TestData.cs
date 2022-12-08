@@ -100,26 +100,26 @@ public class TestData
     {
         yield return new object[]
         {
-            new SlotAnswerDTO()
+            new List<SlotAnswerDTO>()
             {
-                Answer = 1, Email = "MyEmail", EventSlotId = 1, Id = 1, UserName = null
+                new SlotAnswerDTO(){Answer = 1, Email = "MyEmail", EventSlotId = 1, Id = 1, UserName = null}
             },
             new[]{"Username cannot be empty"}
         };
         yield return new object[]
         {
-            new SlotAnswerDTO()
+            new List<SlotAnswerDTO>()
             {
-                Answer = 6, Email = "MyEmail", EventSlotId = 1, Id = 1, UserName = "Mingus"
+                new SlotAnswerDTO(){Answer = 6, Email = "MyEmail", EventSlotId = 1, Id = 1, UserName = "Mingus"}
             },
             new[]{"Answer has to be no, maybe or yes"}
            
         };
         yield return new object[]
         {
-            new SlotAnswerDTO()
+            new List<SlotAnswerDTO>()
             {
-                Answer = 1, Email = null, EventSlotId = 1, Id = 1, UserName = "Mikkel"
+               new SlotAnswerDTO(){ Answer = 1, Email = null, EventSlotId = 1, Id = 1, UserName = "Mikkel"}
             },
             new[]{"E-mail has to be of a correct format"}
         };

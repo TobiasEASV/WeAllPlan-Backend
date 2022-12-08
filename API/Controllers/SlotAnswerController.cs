@@ -19,7 +19,7 @@ public class SlotAnswerController : Controller
 
     [HttpPost]
     [Route("CreateSlotAnswer")]
-    public async Task<IActionResult> CreateSlotAnswer(SlotAnswerDTO answerDto)
+    public async Task<IActionResult> CreateSlotAnswer(List<SlotAnswerDTO> answerDto)
     {
         try
         {

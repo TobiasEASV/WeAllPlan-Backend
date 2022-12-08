@@ -17,11 +17,11 @@ public class SlotAnswerRepository : ISlotAnswerRepository
         _dbContextSqlite = dbContextSqlite;
     }
 
-    public async Task<SlotAnswer> CreateSlotAnswer(SlotAnswer slotAnswer)
+    public async Task CreateSlotAnswer(List<SlotAnswer> slotAnswer)
     {
-        EntityEntry<SlotAnswer> x = await _dbContextSqlite.SlotAnswers.AddAsync(slotAnswer);
+        await _dbContextSqlite.SlotAnswers.AddRangeAsync(slotAnswer);
         await _dbContextSqlite.SaveChangesAsync();
-        return x.Entity;
+       
     }
 
     public async Task<List<SlotAnswer>> GetAll()

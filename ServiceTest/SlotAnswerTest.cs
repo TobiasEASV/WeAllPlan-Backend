@@ -74,10 +74,10 @@ public class SlotAnswerTest
         //Assert
         Mock<ISlotAnswerRepository> mock = new Mock<ISlotAnswerRepository>();
 
-        SlotAnswerDTO answerDTO = new SlotAnswerDTO()
-        {
-            Answer = 1, Email = "MinEmail@ok.dk", EventSlotId = 1, UserName = "Carol"
+        List<SlotAnswerDTO> answerDTO = new List<SlotAnswerDTO>(){
+           new SlotAnswerDTO(){Answer = 1, Email = "MinEmail@ok.dk", EventSlotId = 1, UserName = "Carol"}
         };
+        
 
         ISlotAnswerService slotAnswerService = new SlotAnswerService(mock.Object, _mapper, _validator);
         
@@ -85,7 +85,7 @@ public class SlotAnswerTest
         slotAnswerService.CreateSlotAnswer(answerDTO);
 
         //Assert
-        mock.Verify(repo => repo.CreateSlotAnswer(It.IsAny<SlotAnswer>()),Times.Once());
+        mock.Verify(repo => repo.CreateSlotAnswer(It.IsAny<List<SlotAnswer>>()),Times.Once());
     }
     
     /// <summary>
@@ -93,7 +93,7 @@ public class SlotAnswerTest
     /// </summary>
     [Theory]
     [MemberData(nameof(TestData.InvalidCreateSlotAnswer), MemberType = typeof(TestData))]
-    public void InvalidCreateSlotAnswerTest(SlotAnswerDTO slotAnswerDto, string[] expected)
+    public void InvalidCreateSlotAnswerTest(List<SlotAnswerDTO> slotAnswerDto, string[] expected)
 
     {
 

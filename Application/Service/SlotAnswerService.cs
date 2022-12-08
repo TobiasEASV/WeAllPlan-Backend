@@ -35,21 +35,29 @@ public class SlotAnswerService : ISlotAnswerService
         _emailValidator = new EmailValidator();
     }
 
-    public async Task CreateSlotAnswer(SlotAnswerDTO answerDto)
+    public async Task CreateSlotAnswer(List<SlotAnswerDTO> answerDto)
     {
-        var validation = _validator.Validate(answerDto);
-        if (!validation.IsValid)
+        foreach (var answer in answerDto)
         {
-            throw new ValidationException(validation.ToString());
-        }
+            var validation = _validator.Validate(answer);
+            if (!validation.IsValid)
+            {
+                throw new ValidationException(validation.ToString());
+            }
 
-        if (!_emailValidator.IsValidEmail(answerDto.Email))
-        {
-            throw new ValidationException("E-mail has to be of a correct format");
+            if (!_emailValidator.IsValidEmail(answer.Email))
+            {
+                throw new ValidationException("E-mail has to be of a correct format");
+            }
         }
-        SlotAnswer slotAnswer = _mapper.Map<SlotAnswer>(answerDto); // Map the DTO to an actual Object.
-        setEventSlot(slotAnswer, answerDto.EventSlotId);
-        await _slotAnswerRepository.CreateSlotAnswer(slotAnswer); // Get the actual object from the DB
+        
+        List<SlotAnswer> slotAnswerList = _mapper.Map<List<SlotAnswer>>(answerDto); // Map the DTO to an actual Object.
+        foreach (var slotAnswer in slotAnswerList)
+        {
+            setEventSlot(slotAnswer, answerDto[0].EventSlotId);
+        }
+        
+        await _slotAnswerRepository.CreateSlotAnswer(slotAnswerList); // Get the actual object from the DB
     }
 
     public async Task<List<SlotAnswerDTO>> GetSlotAnswer(int eventSlotId)
