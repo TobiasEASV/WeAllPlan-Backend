@@ -50,11 +50,13 @@ public class SlotAnswerService : ISlotAnswerService
                 throw new ValidationException("E-mail has to be of a correct format");
             }
         }
-        
+
+        int counter = 0;
         List<SlotAnswer> slotAnswerList = _mapper.Map<List<SlotAnswer>>(answerDto); // Map the DTO to an actual Object.
         foreach (var slotAnswer in slotAnswerList)
         {
-            setEventSlot(slotAnswer, answerDto[0].EventSlotId);
+            setEventSlot(slotAnswer, answerDto[counter].EventSlotId);
+            counter++;
         }
         
         await _slotAnswerRepository.CreateSlotAnswer(slotAnswerList); // Get the actual object from the DB
