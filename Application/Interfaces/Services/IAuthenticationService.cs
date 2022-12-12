@@ -8,5 +8,5 @@ public interface IAuthenticationService
 
     public Task<string> Login(LoginUserDto dto);
 
-    Task<string> LogInWithGoogle(string credential);
+    public Task<string> LogInWithGoogle(string credential);
 }

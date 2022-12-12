@@ -5,10 +5,8 @@ namespace Application.Interfaces;
 
 public interface IEventSlotService
 {
-    Task CreateEventSlot(List<EventSlotDTO> eventSlotDtos, int eventId);
-
-    void UpdateEventSlot(List<EventSlotDTO> eventSlotDto, int userId);
-    Task<List<EventSlotDTO>> GetEventSlots(int eventId);
-
-    void DeleteEventSlots(List<EventSlotDTO> listToDelete, int userId);
+    public Task CreateEventSlot(List<EventSlotDTO> eventSlotDtos, int eventId);
+    public void UpdateEventSlot(List<EventSlotDTO> eventSlotDto, int userId);
+    public Task<List<EventSlotDTO>> GetEventSlots(int eventId);
+    public void DeleteEventSlots(List<EventSlotDTO> listToDelete, int userId);
 }

@@ -16,7 +16,7 @@ public class EventTest
     
     private IMapper _mapper;
     private IValidator<EventDTO> _validator;
-    private IValidator<CRUDEventDTO> _createEventValidator;
+    private IValidator<PostEventDTO> _createEventValidator;
 
 
     public EventTest()
@@ -76,7 +76,7 @@ public class EventTest
     /// <param name="eventDto"></param>
     [Theory]
     [MemberData(nameof(TestData.CreateValidEventTestData), MemberType = typeof(TestData))]
-    public void ValidEventCreationTest(CRUDEventDTO eventDto)
+    public void ValidEventCreationTest(PostEventDTO eventDto)
     {
         // Arrange
         Mock<IEventRepository> mockRepo = new Mock<IEventRepository>();
@@ -98,7 +98,7 @@ public class EventTest
     /// <param name="expected"></param>
     [Theory]
     [MemberData(nameof(TestData.CreateInvalidEventTestData), MemberType = typeof(TestData))]
-    public void InvalidEventCreationTest(CRUDEventDTO eventDto, string[] expected)
+    public void InvalidEventCreationTest(PostEventDTO eventDto, string[] expected)
     {
         // Arrange
         Mock<IEventRepository> mockRepo = new Mock<IEventRepository>();
@@ -254,7 +254,7 @@ public class EventTest
          await service.UpdateEvent(eventDTO, userId);
         
         // Assert
-        mockRepo.Verify(repo => repo.UpdateEvent(It.IsAny<Event>(), userId), Times.Once);
+        mockRepo.Verify(repo => repo.UpdateEvent(It.IsAny<Event>()), Times.Once);
         
     }
     

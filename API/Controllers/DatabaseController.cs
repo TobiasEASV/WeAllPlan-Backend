@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
-public class DatabaseController : Controller
+public class DatabaseController : ControllerBase
 {
     private DatabaseRepo _databaseRepo;
 

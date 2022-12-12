@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers;
 
 [ApiController]
-[Authorize]
 [Route("[Controller]")]
 
 public class SlotAnswerController : Controller
@@ -40,12 +39,12 @@ public class SlotAnswerController : Controller
 
     [HttpGet]
     [Route("GetSlotAnswer")]
-    public async Task<IActionResult> GetSlotAnswer(int eventSlotId)
+    public async Task<ActionResult<List<SlotAnswerDTO>>> GetSlotAnswer(int eventSlotId)
     {
         try
         {
-            var x = await _answerService.GetSlotAnswer(eventSlotId);
-            return Ok(x);
+            List<SlotAnswerDTO> SlotAnswer = await _answerService.GetSlotAnswer(eventSlotId);
+            return Ok(SlotAnswer);
         }
         catch (Exception e)
         {

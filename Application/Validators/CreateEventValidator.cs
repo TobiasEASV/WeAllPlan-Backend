@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Application.Validators;
 
-public class CreateEventValidator: AbstractValidator<CRUDEventDTO>
+public class CreateEventValidator: AbstractValidator<PostEventDTO>
 {
     public CreateEventValidator()
     {

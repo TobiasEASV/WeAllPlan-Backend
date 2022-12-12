@@ -1,6 +1,6 @@
 ﻿namespace Application.DTO;
 
-public class CRUDEventDTO
+public class PostEventDTO
 {
     public string Title { get; set; }
     

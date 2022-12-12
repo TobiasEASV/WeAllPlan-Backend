@@ -1,13 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Security.Authentication;
+﻿using System.Security.Authentication;
 using Application.DTO;
 using Application.Helpers;
 using Application.Interfaces;
 using AutoMapper;
 using Core;
 using FluentValidation;
-using ValidationException = FluentValidation.ValidationException;
-using ValidationResult = FluentValidation.Results.ValidationResult;
+using FluentValidation.Results;
 
 namespace Application;
 
@@ -16,25 +14,26 @@ public class EventService : IEventService
     private IEventRepository _repository;
     private IMapper _mapper;
     private IValidator<EventDTO> _eventValidator;
-    private IValidator<CRUDEventDTO> _createEventValidator;
+    private IValidator<PostEventDTO> _createEventValidator;
     private CreateEventMapper _createEventMapper = new CreateEventMapper();
 
-    public EventService(IEventRepository repository, IMapper mapper, IValidator<EventDTO> eventValidator, IValidator<CRUDEventDTO> createEventValidator)
+    public EventService(IEventRepository repository, IMapper mapper, IValidator<EventDTO> eventValidator,
+        IValidator<PostEventDTO> createEventValidator)
     {
         if (repository is null)
             throw new NullReferenceException("Repository is null");
-        if(mapper is null)
+        if (mapper is null)
             throw new NullReferenceException("Mapper is null");
         if (eventValidator is null)
             throw new NullReferenceException("Validator is null");
-        
+
         _repository = repository;
         _mapper = mapper;
         _eventValidator = eventValidator;
         _createEventValidator = createEventValidator;
     }
 
-    public async Task CreateEvent(CRUDEventDTO eventDto)
+    public async Task CreateEvent(PostEventDTO eventDto)
     {
         var validation = _createEventValidator.Validate(eventDto);
         if (!validation.IsValid)
@@ -45,13 +44,12 @@ public class EventService : IEventService
         Event testEvent = _createEventMapper.CrudEventDtoToEvent(eventDto); // Map the DTO to an actual Object.
         testEvent.User = setUserFromId(eventDto.OwnerId);
         await _repository.CreateEvent(testEvent);
-        
     }
 
     public async Task<EventDTO> GetEvent(int id)
     {
         Event Event = _repository.GetEventById(id).Result;
-        if (Event ==null)
+        if (Event == null)
         {
             throw new NullReferenceException("Event doesn't exist");
         }
@@ -64,7 +62,6 @@ public class EventService : IEventService
     public async Task<List<EventDTO>> GetEventsFromUser(int userId)
     {
         return await Task.Run(() => _mapper.Map<List<EventDTO>>(_repository.GetEventByUserId(userId).Result));
-      
     }
 
     public async Task UpdateEvent(EventDTO eventDto, int userId)
@@ -81,20 +78,19 @@ public class EventService : IEventService
         }
 
         Event testEvent = _mapper.Map<Event>(eventDto);
-        
-        await _repository.UpdateEvent(testEvent, userId);
-        
+
+        await _repository.UpdateEvent(testEvent);
     }
 
     public void DeleteEvent(int eventId, int userId)
     {
-        Event eventToDelete= _repository.GetAll().Result.Find(Event => Event.Id == eventId);
+        Event eventToDelete = _repository.GetAll().Result.Find(Event => Event.Id == eventId);
         if (eventToDelete == null)
         {
             throw new NullReferenceException("Event does not exist");
         }
 
-        if (userId !=eventToDelete.User.Id)
+        if (userId != eventToDelete.User.Id)
         {
             throw new AuthenticationException("You do not own this Event");
         }
@@ -102,7 +98,7 @@ public class EventService : IEventService
         _repository.Delete(eventToDelete);
     }
 
-    public User setUserFromId(int userId)
+    private User setUserFromId(int userId)
     {
         return _repository.getUser(userId);
     }

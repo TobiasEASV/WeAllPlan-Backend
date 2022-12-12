@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure;
 
-public class UserRepository: IUserRepository
+public class UserRepository : IUserRepository
 {
     private readonly DBContextSqlite _context;
 
@@ -13,9 +13,11 @@ public class UserRepository: IUserRepository
     {
         _context = context;
     }
+
     public async Task<User> GetUserByEmail(string email)
     {
-        return await _context.Users.FirstOrDefaultAsync(user => user.Email == email) ?? throw new KeyNotFoundException("Invalid login");
+        return await _context.Users.FirstOrDefaultAsync(user => user.Email == email) ??
+               throw new KeyNotFoundException("Invalid login");
     }
 
     public async Task CreateNewUser(User user)

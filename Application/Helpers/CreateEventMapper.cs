@@ -5,7 +5,7 @@ namespace Application.Helpers;
 
 public class CreateEventMapper
 {
-    public Event CrudEventDtoToEvent(CRUDEventDTO eventDto)
+    public Event CrudEventDtoToEvent(PostEventDTO eventDto)
     {
         var eventSlotList = eventDto.TimeSlots.Select(TimeSlot => new EventSlot()
             {

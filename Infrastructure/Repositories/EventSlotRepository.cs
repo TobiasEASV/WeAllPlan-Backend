@@ -3,10 +3,9 @@ using Core;
 using Infrastructure.DB;
 using Microsoft.EntityFrameworkCore;
 
-
 namespace Infrastructure;
 
-public class EventSlotRepository: IEventSlotRepository
+public class EventSlotRepository : IEventSlotRepository
 {
     private DBContextSqlite _dbContextSqlite;
 
@@ -19,14 +18,13 @@ public class EventSlotRepository: IEventSlotRepository
     {
         await _dbContextSqlite.EventSlots.AddRangeAsync(validatedEventSlots);
         await _dbContextSqlite.SaveChangesAsync();
-        
     }
 
     public async Task<List<EventSlot>> GetAll()
     {
         return await _dbContextSqlite.EventSlots.AsNoTracking()
-            .Include( u=> u.Event.User)
-            .Include(u =>u.SlotAnswers)
+            .Include(u => u.Event.User)
+            .Include(u => u.SlotAnswers)
             .ToListAsync();
     }
 
@@ -40,9 +38,8 @@ public class EventSlotRepository: IEventSlotRepository
             _dbContextSqlite.Entry(eventSlot).Property(e => e.EndTime).IsModified = true;
             _dbContextSqlite.Entry(eventSlot).Property(e => e.StartTime).IsModified = true;
         }
-        
-        await _dbContextSqlite.SaveChangesAsync();
 
+        await _dbContextSqlite.SaveChangesAsync();
     }
 
     public async void DeleteEventSlot(List<EventSlot> eventSlotList)
@@ -53,6 +50,6 @@ public class EventSlotRepository: IEventSlotRepository
 
     public async Task<Event> getEventFromId(int eventId)
     {
-        return await _dbContextSqlite.Events.Include(e =>e.User).FirstAsync(e => e.Id == eventId);
+        return await _dbContextSqlite.Events.Include(e => e.User).FirstAsync(e => e.Id == eventId);
     }
 }
