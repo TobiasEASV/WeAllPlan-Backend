@@ -2,12 +2,15 @@
 using Application.DTO;
 using Application.Interfaces;
 using Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("[Controller]")]
+
 
 public class EventSlotController : Controller
 {

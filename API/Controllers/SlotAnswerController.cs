@@ -1,11 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Application;
 using Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("[Controller]")]
 
 public class SlotAnswerController : Controller

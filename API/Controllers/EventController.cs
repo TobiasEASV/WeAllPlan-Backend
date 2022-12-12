@@ -4,11 +4,13 @@ using Application.DTO;
 using Application.Helpers;
 using Application.Interfaces;
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("[Controller]")]
 public class EventController : ControllerBase
 {
@@ -32,7 +34,7 @@ public class EventController : ControllerBase
         }
         catch (ValidationException e)
         {
-            return BadRequest(e.Message);
+            return StatusCode(401, e.Message);
         }
         catch (Exception e)
         {
@@ -42,12 +44,12 @@ public class EventController : ControllerBase
 
     [HttpGet]
     [Route("GetEvent")]
-    public async Task<IActionResult> GetEvent(string eventId)
+    public async Task<ActionResult<EventDTO>> GetEvent(string eventId)
     {
         try
         {
-            var x = await _eventService.GetEvent(int.Parse(eventId));
-            return Ok(x);
+            EventDTO Event = await _eventService.GetEvent(int.Parse(eventId));
+            return Ok(Event);
         }
         catch (NullReferenceException e)
         {
@@ -61,12 +63,12 @@ public class EventController : ControllerBase
 
     [HttpGet]
     [Route("GetEventsFromUser")]
-    public async Task<IActionResult> GetEventsFromUser(string userId)
+    public async Task<ActionResult<List<EventDTO>>> GetEventsFromUser(string userId)
     {
         try
         {
-            var x = await _eventService.GetEventsFromUser(int.Parse(userId));
-            return Ok(x);
+            List<EventDTO> events = await _eventService.GetEventsFromUser(int.Parse(userId));
+            return Ok(events);
         }
         catch (NullReferenceException e)
         {
@@ -125,15 +127,13 @@ public class EventController : ControllerBase
     }
 
     [HttpGet]
+    [AllowAnonymous]
     [Route("GetEventFromInviteLink")]
     public async Task<ActionResult<EventDTO>> GetEventFromInviteLink(string EncryptedEventId)
     {
-        Console.WriteLine(EncryptedEventId);
         try
-        {
-            string DecryptedEventId = _encryptionService.DecryptMessage(EncryptedEventId + "==");
+        { string DecryptedEventId = _encryptionService.DecryptMessage(EncryptedEventId + "==");
             EventDTO eventDto = await _eventService.GetEvent(Int32.Parse(DecryptedEventId));
-            Console.WriteLine(eventDto.Title);
             return Ok(eventDto);
         }
         catch (Exception e)

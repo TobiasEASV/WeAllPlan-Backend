@@ -56,8 +56,19 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 });
 
 
-builder.Services.AddCors();
+// Setup Policy Service 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "AccPolicy",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:4200")
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials();
 
+        });
+});
 
 // Setup DependencyResolver Service
 Application.DependencyResolver.DependencyResolverService.RegisterApplicationLayer(builder.Services);
@@ -94,13 +105,8 @@ if (app.Environment.IsProduction())
     
 }
 
-app.UseCors(options =>
-{
-    options.SetIsOriginAllowed(option => true)
-        .AllowAnyMethod()
-        .AllowAnyHeader()
-        .AllowCredentials();
-});
+app.UseCors("AccPolicy");
+
 
 app.UseAuthentication();
 app.UseAuthorization();
