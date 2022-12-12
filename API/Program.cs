@@ -65,12 +65,23 @@ Infrastructure.DependencyResolver.DependencyResolverService.RegisterInfrastructu
 
 builder.Services.AddValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
 
+
+
+var uriString = builder.Configuration.GetConnectionString("ConnectionStringsDevelopment");
+var uri = new Uri(uriString);
+var db = uri.AbsolutePath.Trim('/');
+var user = uri.UserInfo.Split(':')[0];
+var passwd = uri.UserInfo.Split(':')[1];
+var port = uri.Port > 0 ? uri.Port : 5432;
+var connStr = string.Format("Server={0};Database={1};User Id={2};Password={3};Port={4}",
+    uri.Host, db, user, passwd, port);
+
+
 if (builder.Environment.IsDevelopment())
 {
     /* Setup the Database Context Class with ConnectionString in AppSettings */
    
-    builder.Services.AddDbContext<DBContextSqlite>(options => options.UseSqlite(
-       builder.Configuration.GetConnectionString("ConnectionStringsDevelopment")));
+    builder.Services.AddDbContext<DBContextPostgresql>(options => options.UseNpgsql(connStr));
 }
 
 if (builder.Environment.IsProduction())
@@ -101,6 +112,7 @@ app.UseCors(options =>
         .AllowAnyHeader()
         .AllowCredentials();
 });
+
 
 app.UseAuthentication();
 app.UseAuthorization();

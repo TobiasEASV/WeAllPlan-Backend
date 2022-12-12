@@ -1,15 +1,16 @@
 ﻿using Application.Interfaces;
 using Core;
 using Infrastructure.DB;
+using Infrastructure.DBPostgresql;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure;
 
 public class UserRepository: IUserRepository
 {
-    private readonly DBContextSqlite _context;
+    private readonly DBContextPostgresql _context;
 
-    public UserRepository(DBContextSqlite context)
+    public UserRepository(DBContextPostgresql context)
     {
         _context = context;
     }

@@ -3,6 +3,7 @@ using Application.Interfaces;
 using AutoMapper;
 using Core;
 using Infrastructure.DB;
+using Infrastructure.DBPostgresql;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
@@ -11,8 +12,8 @@ namespace Infrastructure;
 public class SlotAnswerRepository : ISlotAnswerRepository
 {
     
-    private DBContextSqlite _dbContextSqlite;
-    public SlotAnswerRepository(DBContextSqlite dbContextSqlite)
+    private DBContextPostgresql _dbContextSqlite;
+    public SlotAnswerRepository(DBContextPostgresql dbContextSqlite)
     {
         _dbContextSqlite = dbContextSqlite;
     }

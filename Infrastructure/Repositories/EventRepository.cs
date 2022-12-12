@@ -2,6 +2,7 @@
 using Application.Interfaces;
 using Core;
 using Infrastructure.DB;
+using Infrastructure.DBPostgresql;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
@@ -9,9 +10,9 @@ namespace Infrastructure;
 
 public class EventRepository : IEventRepository
 {
-    private DBContextSqlite _dbContextSqlite;
+    private DBContextPostgresql _dbContextSqlite;
 
-    public EventRepository(DBContextSqlite dbContextSqlite)
+    public EventRepository(DBContextPostgresql dbContextSqlite)
     {
         _dbContextSqlite = dbContextSqlite;
     }

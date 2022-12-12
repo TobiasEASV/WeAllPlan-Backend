@@ -1,6 +1,7 @@
 ﻿using Application.Interfaces;
 using Core;
 using Infrastructure.DB;
+using Infrastructure.DBPostgresql;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -8,9 +9,9 @@ namespace Infrastructure;
 
 public class EventSlotRepository: IEventSlotRepository
 {
-    private DBContextSqlite _dbContextSqlite;
+    private DBContextPostgresql _dbContextSqlite;
 
-    public EventSlotRepository(DBContextSqlite dbContextSqlite)
+    public EventSlotRepository(DBContextPostgresql dbContextSqlite)
     {
         _dbContextSqlite = dbContextSqlite;
     }
