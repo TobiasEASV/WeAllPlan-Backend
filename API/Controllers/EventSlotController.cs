@@ -8,7 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("[Controller]")]
+
 
 public class EventSlotController : Controller
 {
@@ -20,7 +22,6 @@ public class EventSlotController : Controller
     }
 
     [HttpPost]
-    [Authorize]
     [Route("CreateEventSlot")]
     public async Task<IActionResult> CreateEventSlot(List<EventSlotDTO> eventSlotDtos, int eventId)
     {
@@ -36,7 +37,6 @@ public class EventSlotController : Controller
     }
 
     [HttpGet]
-    [Authorize]
     [Route("GetEventSlots")]
     public async Task<IActionResult> GetEventSlots(int eventId)
     {
@@ -52,7 +52,6 @@ public class EventSlotController : Controller
     }
 
     [HttpPut]
-    [Authorize]
     [Route("UpdateEventSlot")]
     public async Task<IActionResult> UpdateEventSlot (List<EventSlotDTO> eventSlotDto, int userId)
     {
@@ -68,7 +67,6 @@ public class EventSlotController : Controller
     }
 
     [HttpDelete]
-    [Authorize]
     [Route("DeleteEventSlots")]
     public async Task<IActionResult> DeleteEventSlots(List<EventSlotDTO> listToDelete, int userId)
     {

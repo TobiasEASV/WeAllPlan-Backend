@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("[Controller]")]
 public class EventController : ControllerBase
 {
@@ -23,7 +24,6 @@ public class EventController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize]
     [Route("CreateEvent")]
     public async Task<IActionResult> CreateEvent(CRUDEventDTO eventDto)
     {
@@ -43,7 +43,6 @@ public class EventController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize]
     [Route("GetEvent")]
     public async Task<ActionResult<EventDTO>> GetEvent(string eventId)
     {
@@ -63,7 +62,6 @@ public class EventController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize]
     [Route("GetEventsFromUser")]
     public async Task<ActionResult<List<EventDTO>>> GetEventsFromUser(string userId)
     {
@@ -83,7 +81,6 @@ public class EventController : ControllerBase
     }
 
     [HttpPut]
-    [Authorize]
     [Route("UpdateEvent")]
     public async Task<IActionResult> UpdateEvent(EventDTO eventDto, int userId)
     {
@@ -107,7 +104,6 @@ public class EventController : ControllerBase
     }
 
     [HttpDelete]
-    [Authorize]
     [Route("DeleteEvent")]
     public IActionResult DeleteEvent(string eventId, string userId)
     {
@@ -147,7 +143,6 @@ public class EventController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize]
     [Route("GetEventToAnswer")]
     public async Task<ActionResult<EventDTO>> GetEventToAnswer(string EventId)
     {
@@ -156,7 +151,6 @@ public class EventController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize]
     [Route("GenerateInviteLink")]
     public ActionResult<string> GenerateInviteLink(string EventId)
     {

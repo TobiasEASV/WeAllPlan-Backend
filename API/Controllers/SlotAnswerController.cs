@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("[Controller]")]
 
 public class SlotAnswerController : Controller
@@ -19,7 +20,6 @@ public class SlotAnswerController : Controller
     }
 
     [HttpPost]
-    [Authorize]
     [Route("CreateSlotAnswer")]
     public async Task<IActionResult> CreateSlotAnswer(List<SlotAnswerDTO> answerDto)
     {
@@ -39,7 +39,6 @@ public class SlotAnswerController : Controller
     }
 
     [HttpGet]
-    [Authorize]
     [Route("GetSlotAnswer")]
     public async Task<IActionResult> GetSlotAnswer(int eventSlotId)
     {
@@ -55,7 +54,6 @@ public class SlotAnswerController : Controller
     }
 
     [HttpPut]
-    [Authorize]
     [Route("UpdateSlotAnswer")]
     public async Task<IActionResult> UpdateSlotAnswer(SlotAnswerDTO slotAnswerDto, int slotAnswerId)
     {
@@ -75,7 +73,6 @@ public class SlotAnswerController : Controller
     }
 
     [HttpDelete]
-    [Authorize]
     [Route("DeleteSlotAnswer")]
     public IActionResult DeleteSlotAnswer(int EventId, string Email, List<SlotAnswerDTO> slotAnswerDtos)
     {
