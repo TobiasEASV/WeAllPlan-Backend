@@ -39,6 +39,12 @@ public class SlotAnswerService : ISlotAnswerService
 
     public async Task CreateSlotAnswer(List<SlotAnswerDTO> answerDto)
     {
+        List<SlotAnswer> existingAnswers = _slotAnswerRepository.GetAll().Result
+            .FindAll(s => s.EventSlot.Id == answerDto[0].EventSlotId);
+        if (existingAnswers.FindAll(s=> s.Email == answerDto[0].Email).Count < 0)
+        {
+            throw new ValidationException("There has been an entry for this email.");
+        }
         foreach (var answer in answerDto)
         {
             var validation = _validator.Validate(answer);
