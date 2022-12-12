@@ -20,6 +20,7 @@
 */bin
 */obj
 /API/appsettings.json
+/WeAllPlan-Backend.sln.DotSettings.user
 
 # Sensitive or high-churn files
 .idea/**/dataSources/

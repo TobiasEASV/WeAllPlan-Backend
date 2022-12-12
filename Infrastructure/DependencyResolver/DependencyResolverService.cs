@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Application.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Infrastructure.DependencyResolver;
 
@@ -6,6 +7,11 @@ public static class DependencyResolverService
 {
     public static void RegisterInfrastructureLayer(IServiceCollection services)
     {
-        // Setup Infrastructure Dependency services
+        services.AddScoped<IEventSlotRepository, EventSlotRepository>();
+        services.AddScoped<IEventRepository, EventRepository>();
+        services.AddScoped<ISlotAnswerRepository, SlotAnswerRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<DatabaseRepo>();
+
     }
 }
