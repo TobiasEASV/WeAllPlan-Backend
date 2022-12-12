@@ -33,7 +33,7 @@ public class LoginController : ControllerBase
 
     [HttpPost]
     [Route("LoginWithGoogle")]
-    public async Task<ActionResult<string>> LoginWithGoogle([FromBody]CredentialDTO dto)
+    public async Task<ActionResult<string>> LoginWithGoogle(CredentialDTO dto)
     {
         try
         {

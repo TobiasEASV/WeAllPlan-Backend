@@ -38,12 +38,12 @@ public class EventSlotController : Controller
 
     [HttpGet]
     [Route("GetEventSlots")]
-    public async Task<IActionResult> GetEventSlots(int eventId)
+    public async Task<ActionResult<EventSlotDTO>> GetEventSlots(int eventId)
     {
         try
         {
-            var x = await _slotService.GetEventSlots(eventId);
-            return Ok(x);
+            List<EventSlotDTO> EventSlots = await _slotService.GetEventSlots(eventId);
+            return Ok(EventSlots);
         }
         catch (Exception e)
         {

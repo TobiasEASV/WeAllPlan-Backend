@@ -25,7 +25,7 @@ public class EventController : ControllerBase
 
     [HttpPost]
     [Route("CreateEvent")]
-    public async Task<IActionResult> CreateEvent(CRUDEventDTO eventDto)
+    public async Task<IActionResult> CreateEvent(PostEventDTO eventDto)
     {
         try
         {
@@ -132,9 +132,9 @@ public class EventController : ControllerBase
     public async Task<ActionResult<EventDTO>> GetEventFromInviteLink(string EncryptedEventId)
     {
         try
-        { string DecryptedEventId = _encryptionService.DecryptMessage(EncryptedEventId + "==");
-            EventDTO eventDto = await _eventService.GetEvent(Int32.Parse(DecryptedEventId));
-            return Ok(eventDto);
+        {   string DecryptedEventId = _encryptionService.DecryptMessage(EncryptedEventId + "==");
+            EventDTO EventDto = await _eventService.GetEvent(Int32.Parse(DecryptedEventId));
+            return Ok(EventDto);
         }
         catch (Exception e)
         {
@@ -146,18 +146,18 @@ public class EventController : ControllerBase
     [Route("GetEventToAnswer")]
     public async Task<ActionResult<EventDTO>> GetEventToAnswer(string EventId)
     {
-        EventDTO eventDto = await _eventService.GetEvent(Int32.Parse(EventId));
-        return Ok(eventDto);
+        EventDTO EventDto = await _eventService.GetEvent(Int32.Parse(EventId));
+        return Ok(EventDto);
     }
 
     [HttpGet]
     [Route("GenerateInviteLink")]
     public ActionResult<string> GenerateInviteLink(string EventId)
     {
-        string generateInviteLink = _encryptionService.EncryptMessage(EventId);
+        string GenerateInviteLink = _encryptionService.EncryptMessage(EventId);
 
-        string inviteLink = generateInviteLink.Remove(generateInviteLink.Length - 2);
+        string InviteLink = GenerateInviteLink.Remove(GenerateInviteLink.Length - 2);
 
-        return Ok(inviteLink);
+        return Ok(InviteLink);
     }
 }

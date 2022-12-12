@@ -1,9 +1,7 @@
-﻿using System.Globalization;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.RegularExpressions;
 using Application.DTO;
 using Application.Helpers;
 using Application.Interfaces;
@@ -101,7 +99,7 @@ public class AuthenticationService : IAuthenticationService
     {
         var settings = new GoogleJsonWebSignature.ValidationSettings()
         {
-            Audience = new List<string> { this._appSettings.GoogleClientId}
+            Audience = new List<string> {_appSettings.GoogleClientId }
         };
 
         try
@@ -123,7 +121,6 @@ public class AuthenticationService : IAuthenticationService
         {
             throw new Exception("Invalid google login");
         }
-        
     }
 
     private async Task<string> registerGoogleAccount(GoogleJsonWebSignature.Payload payload)
@@ -143,9 +140,8 @@ public class AuthenticationService : IAuthenticationService
 
     public string GenerateToken(User user, bool KeepMeLoggedIn)
     {
-
         DateTime ExpireDate;
-        
+
         if (KeepMeLoggedIn)
         {
             ExpireDate = DateTime.UtcNow.AddYears(25);
@@ -154,17 +150,18 @@ public class AuthenticationService : IAuthenticationService
         {
             ExpireDate = DateTime.UtcNow.AddHours(2);
         }
-        
+
         var key = Encoding.UTF8.GetBytes(_appSettings.Secret);
         var tokenDescriptor = new SecurityTokenDescriptor();
         tokenDescriptor = new SecurityTokenDescriptor
         {
-            Subject = new ClaimsIdentity(new[] { 
+            Subject = new ClaimsIdentity(new[]
+            {
                 new Claim("Email", user.Email),
                 new Claim("Id", user.Id.ToString()),
                 new Claim("UserName", user.Name)
             }),
-            
+
             Expires = ExpireDate,
             SigningCredentials =
                 new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)

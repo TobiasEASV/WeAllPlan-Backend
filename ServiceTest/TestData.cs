@@ -23,7 +23,7 @@ public class TestData
         //2.1 Some fields filled out
         yield return new Object[]
         {
-            new CRUDEventDTO()
+            new PostEventDTO()
             {
                 Title = "Kæmpe fedt event",
                 OwnerId = 1,
@@ -35,7 +35,7 @@ public class TestData
 
         yield return new Object[]
         {
-            new CRUDEventDTO()
+            new PostEventDTO()
             {
                 Title = "SIMONS GODE FEST",
                 OwnerId = 1,
@@ -51,7 +51,7 @@ public class TestData
         //2.3 Invalid Title, exists, but empty.
         yield return new Object[]
         {
-            new CRUDEventDTO()
+            new PostEventDTO()
             {
                 Title = "",
                 OwnerId = 1,
@@ -63,7 +63,7 @@ public class TestData
         //2.3 Invalid Title, doesnt exist.
         yield return new Object[]
         {
-            new CRUDEventDTO()
+            new PostEventDTO()
             {
                 Title = null,
                 OwnerId = 1,
@@ -77,7 +77,7 @@ public class TestData
         //2.3 Invalid User, doesnt exist.
         yield return new Object[]
         {
-            new CRUDEventDTO()
+            new PostEventDTO()
             {
                 Title = "ffs",
                 OwnerId = -5,

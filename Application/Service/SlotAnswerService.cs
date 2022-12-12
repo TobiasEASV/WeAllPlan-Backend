@@ -13,9 +13,10 @@ public class SlotAnswerService : ISlotAnswerService
     private IValidator<SlotAnswerDTO> _validator;
     private EmailValidator _emailValidator;
 
-    public SlotAnswerService(ISlotAnswerRepository slotAnswerRepository, IMapper mapper, IValidator<SlotAnswerDTO> validator)
+    public SlotAnswerService(ISlotAnswerRepository slotAnswerRepository, IMapper mapper,
+        IValidator<SlotAnswerDTO> validator)
     {
-        if (slotAnswerRepository is null   )
+        if (slotAnswerRepository is null)
         {
             throw new NullReferenceException("Repository is null");
         }
@@ -29,6 +30,7 @@ public class SlotAnswerService : ISlotAnswerService
         {
             throw new NullReferenceException("Validator is null");
         }
+
         _slotAnswerRepository = slotAnswerRepository;
         _mapper = mapper;
         _validator = validator;
@@ -58,7 +60,7 @@ public class SlotAnswerService : ISlotAnswerService
             setEventSlot(slotAnswer, answerDto[counter].EventSlotId);
             counter++;
         }
-        
+
         await _slotAnswerRepository.CreateSlotAnswer(slotAnswerList); // Get the actual object from the DB
     }
 
@@ -76,7 +78,8 @@ public class SlotAnswerService : ISlotAnswerService
         {
             throw new ValidationException("You can only change your own answers");
         }
-            if (!validation.IsValid)
+
+        if (!validation.IsValid)
         {
             throw new ValidationException(validation.ToString());
         }
@@ -85,20 +88,22 @@ public class SlotAnswerService : ISlotAnswerService
         {
             throw new ValidationException("E-mail has to be of a correct format");
         }
+
         await _slotAnswerRepository.UpdateSlotAnswer(_mapper.Map<SlotAnswer>(slotAnswerDto));
-      
     }
 
     public void DeleteSlotAnswers(int eventId, string email, List<SlotAnswerDTO> slotAnswerDtos)
     {
-        List<SlotAnswer> listOfSlotAnswers = _slotAnswerRepository.GetAll().Result.FindAll(s => s.EventSlot.Event.Id == eventId );
+        List<SlotAnswer> listOfSlotAnswers =
+            _slotAnswerRepository.GetAll().Result.FindAll(s => s.EventSlot.Event.Id == eventId);
         List<SlotAnswer> listToDelete = new List<SlotAnswer>();
         foreach (var dto in slotAnswerDtos)
         {
             foreach (var slotAnswers in listOfSlotAnswers)
             {
                 if (dto.Id == slotAnswers.Id)
-                { if ((slotAnswers.Email != email && slotAnswers.EventSlot.Event.User.Email == email)
+                {
+                    if ((slotAnswers.Email != email && slotAnswers.EventSlot.Event.User.Email == email)
                         || (slotAnswers.EventSlot.Event.User.Email != email && slotAnswers.Email == email)
                         || (slotAnswers.EventSlot.Event.User.Email == email && slotAnswers.Email == email))
                     {
@@ -106,14 +111,14 @@ public class SlotAnswerService : ISlotAnswerService
                     }
                     else throw new ValidationException("You do not have permission to delete these answers");
                 }
-                
             }
         }
+
         _slotAnswerRepository.DeleteSlotAnswers(listToDelete);
     }
 
-    public  void setEventSlot(SlotAnswer slotAnswer, int eventSlotId)
+    public void setEventSlot(SlotAnswer slotAnswer, int eventSlotId)
     {
-        slotAnswer.EventSlot =_slotAnswerRepository.getEventSlot(eventSlotId).Result;
+        slotAnswer.EventSlot = _slotAnswerRepository.getEventSlot(eventSlotId).Result;
     }
 }

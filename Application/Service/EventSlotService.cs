@@ -1,11 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Application.DTO;
+﻿using Application.DTO;
 using Application.Interfaces;
 using AutoMapper;
 using Core;
 using FluentValidation;
-using ValidationException = FluentValidation.ValidationException;
-using ValidationResult = FluentValidation.Results.ValidationResult;
+using FluentValidation.Results;
 
 namespace Application;
 
@@ -37,7 +35,7 @@ public class EventSlotService : IEventSlotService
         _validator = validator;
     }
 
-   public async Task CreateEventSlot(List<EventSlotDTO> eventSlotDtos, int eventId)
+    public async Task CreateEventSlot(List<EventSlotDTO> eventSlotDtos, int eventId)
     {
         List<EventSlot> allEventSlots = _repository.GetAll().Result.FindAll(e => e.Event.Id == eventId);
         List<EventSlotDTO> createDTOs = new List<EventSlotDTO>();
@@ -48,15 +46,16 @@ public class EventSlotService : IEventSlotService
                 foreach (var eventSlotsDb in allEventSlots)
                 {
                     var validation = await _validator.ValidateAsync(eventSlotDto);
-                    if (validation.IsValid || ((eventSlotDto.StartTime <= eventSlotsDb.StartTime.AddMinutes(5) || eventSlotDto.StartTime >= eventSlotsDb.StartTime.AddMinutes(-5)) 
+                    if (validation.IsValid || ((eventSlotDto.StartTime <= eventSlotsDb.StartTime.AddMinutes(5) ||
+                                                eventSlotDto.StartTime >= eventSlotsDb.StartTime.AddMinutes(-5))
                                                &&
-                                                (eventSlotDto.EndTime <= eventSlotsDb.EndTime.AddMinutes(5) || eventSlotDto.EndTime >= eventSlotsDb.EndTime.AddMinutes(-5))))
+                                               (eventSlotDto.EndTime <= eventSlotsDb.EndTime.AddMinutes(5) ||
+                                                eventSlotDto.EndTime >= eventSlotsDb.EndTime.AddMinutes(-5))))
                     {
                         if (!createDTOs.Contains(eventSlotDto))
                         {
                             createDTOs.Add(eventSlotDto);
                         }
-                        
                     }
                 }
             }
@@ -76,6 +75,7 @@ public class EventSlotService : IEventSlotService
             getEventsToEventSlot(createList, eventId);
             _repository.CreateEventSlot(createList);
         }
+
         if (createDTOs.Count != 0)
         {
             List<EventSlot> createList = _mapper.Map<List<EventSlot>>(createDTOs);
@@ -87,42 +87,41 @@ public class EventSlotService : IEventSlotService
     public void UpdateEventSlot(List<EventSlotDTO> eventSlotDto, int userId)
     {
         bool dropList = false;
-       List<EventSlot> listToCheck = _repository.GetAll().Result.FindAll(e => e.Event.Id == eventSlotDto[0].EventId);
-       
-       foreach (var eventSlot in listToCheck)
-       {
-           if (eventSlot.Event.User.Id != userId)
-           {
-               dropList = true;
-           }
-       }
+        List<EventSlot> listToCheck = _repository.GetAll().Result.FindAll(e => e.Event.Id == eventSlotDto[0].EventId);
 
-       if (dropList) { }
-       else
-       {
-           List<EventSlotDTO> listToUpdate = new List<EventSlotDTO>();
-           foreach (var dto in eventSlotDto)
-           {
-               ValidationResult validate = _validator.Validate(dto);
-               if (validate.IsValid)
-               {
-                   listToUpdate.Add(dto);
-               }
-           }
+        foreach (var eventSlot in listToCheck)
+        {
+            if (eventSlot.Event.User.Id != userId)
+            {
+                dropList = true;
+            }
+        }
 
-           if (listToUpdate.Count != 0)
-           {
-               _repository.UpdateEventSlot(_mapper.Map<List<EventSlot>>(listToUpdate));
-           }
-       }
+        if (!dropList)
+        {
+            List<EventSlotDTO> listToUpdate = new List<EventSlotDTO>();
+            foreach (var dto in eventSlotDto)
+            {
+                ValidationResult validate = _validator.Validate(dto);
+                if (validate.IsValid)
+                {
+                    listToUpdate.Add(dto);
+                }
+            }
+
+            if (listToUpdate.Count != 0)
+            {
+                _repository.UpdateEventSlot(_mapper.Map<List<EventSlot>>(listToUpdate));
+            }
+        }
     }
 
     public async Task<List<EventSlotDTO>> GetEventSlots(int eventId)
     {
         List<EventSlot> eventSlots = _repository.GetAll().Result.FindAll(e => e.Event.Id == eventId);
-        return await Task.Run( () =>_mapper.Map<List<EventSlotDTO>>(eventSlots));
+        return await Task.Run(() => _mapper.Map<List<EventSlotDTO>>(eventSlots));
     }
-    
+
 
     public void DeleteEventSlots(List<EventSlotDTO> listToDelete, int userId)
     {
@@ -133,9 +132,8 @@ public class EventSlotService : IEventSlotService
             {
                 throw new ValidationException("You do not own this Event.");
             }
-            
         }
-        
+
         _repository.DeleteEventSlot(_mapper.Map<List<EventSlot>>(listToDelete));
     }
 

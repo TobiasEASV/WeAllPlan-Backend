@@ -5,13 +5,11 @@ using Application.DTO;
 using AutoMapper;
 using Core;
 using FluentValidation;
-using Infrastructure;
 using Application.Helpers;
 using Infrastructure.DB;
 using Infrastructure.DBPostgresql;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
 using Microsoft.IdentityModel.Tokens;
 
 
@@ -29,7 +27,7 @@ var mapper = new MapperConfiguration(config =>
     config.CreateMap<EventSlotDTO, EventSlot>();
     config.CreateMap<EventSlot, EventSlotDTO>();
     config.CreateMap<EventDTO, Event>();
-    config.CreateMap<Event,EventDTO>();
+    config.CreateMap<Event, EventDTO>();
     config.CreateMap<SlotAnswerDTO, SlotAnswer>();
     config.CreateMap<SlotAnswer, SlotAnswerDTO>();
 }).CreateMapper();
@@ -66,7 +64,6 @@ builder.Services.AddCors(options =>
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials();
-
         });
 });
 
@@ -79,9 +76,9 @@ builder.Services.AddValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssembli
 if (builder.Environment.IsDevelopment())
 {
     /* Setup the Database Context Class with ConnectionString in AppSettings */
-   
+
     builder.Services.AddDbContext<DBContextSqlite>(options => options.UseSqlite(
-       builder.Configuration.GetConnectionString("ConnectionStringsDevelopment")));
+        builder.Configuration.GetConnectionString("ConnectionStringsDevelopment")));
 }
 
 if (builder.Environment.IsProduction())
@@ -102,7 +99,6 @@ if (app.Environment.IsDevelopment())
 
 if (app.Environment.IsProduction())
 {
-    
 }
 
 app.UseCors("AccPolicy");
@@ -114,4 +110,3 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
-

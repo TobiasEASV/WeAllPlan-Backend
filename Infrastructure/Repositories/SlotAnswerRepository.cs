@@ -1,17 +1,14 @@
-﻿using System.Net.Sockets;
-using Application.Interfaces;
-using AutoMapper;
+﻿using Application.Interfaces;
 using Core;
 using Infrastructure.DB;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Infrastructure;
 
 public class SlotAnswerRepository : ISlotAnswerRepository
 {
-    
     private DBContextSqlite _dbContextSqlite;
+
     public SlotAnswerRepository(DBContextSqlite dbContextSqlite)
     {
         _dbContextSqlite = dbContextSqlite;
@@ -21,12 +18,11 @@ public class SlotAnswerRepository : ISlotAnswerRepository
     {
         await _dbContextSqlite.SlotAnswers.AddRangeAsync(slotAnswer);
         await _dbContextSqlite.SaveChangesAsync();
-       
     }
 
     public async Task<List<SlotAnswer>> GetAll()
     {
-        return await _dbContextSqlite.SlotAnswers.Include( s =>s.EventSlot.Event.User).ToListAsync();
+        return await _dbContextSqlite.SlotAnswers.Include(s => s.EventSlot.Event.User).ToListAsync();
     }
 
     public async Task<SlotAnswer> UpdateSlotAnswer(SlotAnswer slotAnswer)

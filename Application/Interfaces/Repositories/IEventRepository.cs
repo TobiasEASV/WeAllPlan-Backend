@@ -4,12 +4,12 @@ namespace Application.Interfaces;
 
 public interface IEventRepository
 {
-    Task<Event> CreateEvent(Event testEvent);
-    Task<List<Event>> GetAll();
-    Task<Event> UpdateEvent(Event Event, int userId);
-    void Delete(Event Event);
+    public Task<Event> CreateEvent(Event testEvent);
+    public Task<List<Event>> GetAll();
+    public Task<Event> UpdateEvent(Event Event);
+    public void Delete(Event Event);
 
-    User getUser(int userId);
-    Task<Event> GetEventById(int id);
-    Task<List<Event>> GetEventByUserId(int userId);
+    public User getUser(int userId);
+    public Task<Event> GetEventById(int id);
+    public Task<List<Event>> GetEventByUserId(int userId);
 }

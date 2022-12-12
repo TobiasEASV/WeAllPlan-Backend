@@ -1,5 +1,4 @@
-﻿using Application;
-using Application.Interfaces;
+﻿using Application.Interfaces;
 using Core;
 using Infrastructure.DB;
 using Microsoft.EntityFrameworkCore;
@@ -28,7 +27,7 @@ public class EventRepository : IEventRepository
         return await _dbContextSqlite.Events.Include(e => e.User).ToListAsync();
     }
 
-    public async Task<Event> UpdateEvent(Event Event, int userId)
+    public async Task<Event> UpdateEvent(Event Event)
     {
         await Task.Run(() => _dbContextSqlite.Events.Attach(Event));
         _dbContextSqlite.Entry(Event).Property(e => e.Title).IsModified = true;
@@ -51,10 +50,10 @@ public class EventRepository : IEventRepository
 
     public async Task<Event> GetEventById(int id)
     {
-        return await _dbContextSqlite.Events.Include(e => e.User)
-            .Include(e => e.EventSlots)
-            .ThenInclude(e => e.SlotAnswers)
-            .SingleAsync<Event>(e => e.Id == id);
+        return await _dbContextSqlite.Events.Include(Event => Event.User)
+            .Include(Event => Event.EventSlots)!
+            .ThenInclude(EventSlot => EventSlot.SlotAnswers)
+            .SingleAsync<Event>(Event => Event.Id == id);
     }
 
     public async Task<List<Event>> GetEventByUserId(int userId)

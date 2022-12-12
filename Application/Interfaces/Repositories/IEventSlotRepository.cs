@@ -4,10 +4,9 @@ namespace Application.Interfaces;
 
 public interface IEventSlotRepository
 {
-    void CreateEventSlot(List<EventSlot> validatedEventSlots);
-    Task<List<EventSlot>> GetAll();
-    
-    void UpdateEventSlot(List<EventSlot> isAny);
-    void DeleteEventSlot(List<EventSlot> isAny);
-    Task<Event> getEventFromId(int eventId);
+    public void CreateEventSlot(List<EventSlot> validatedEventSlots);
+    public Task<List<EventSlot>> GetAll();
+    public void UpdateEventSlot(List<EventSlot> isAny);
+    public void DeleteEventSlot(List<EventSlot> isAny);
+    public Task<Event> getEventFromId(int eventId);
 }
