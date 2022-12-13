@@ -22,6 +22,7 @@
 
     <ItemGroup>
       <Folder Include="DB" />
+      <Folder Include="DBPostgresql" />
       <Folder Include="Migrations" />
     </ItemGroup>
 

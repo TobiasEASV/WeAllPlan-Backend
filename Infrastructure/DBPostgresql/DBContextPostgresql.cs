@@ -6,11 +6,11 @@ namespace Infrastructure.DBPostgresql;
 
 public class DBContextPostgresql: DbContext
 {
-    readonly IConfiguration _Configuration;
 
-    public DBContextPostgresql(IConfiguration Configuration)
+
+    public DBContextPostgresql()
     {
-        _Configuration = Configuration;
+
     }
     
     protected override void OnConfiguring(DbContextOptionsBuilder options)
