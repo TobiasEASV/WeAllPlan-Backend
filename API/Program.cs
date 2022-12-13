@@ -59,7 +59,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: "AccPolicy",
         policy =>
         {
-            policy.WithOrigins("https://proud-pebble-07d4d8c03.2.azurestaticapps.net")
+            policy.WithOrigins("https://weallplan.herokuapp.com")
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials();
