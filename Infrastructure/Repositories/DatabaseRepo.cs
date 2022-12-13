@@ -1,12 +1,12 @@
-﻿using Infrastructure.DB;
+﻿using Infrastructure.DBPostgresql;
 
 namespace Infrastructure;
 
 public class DatabaseRepo
 {
-    private readonly DBContextSqlite _context;
+    private readonly DBContextPostgresql _context;
 
-    public DatabaseRepo(DBContextSqlite context)
+    public DatabaseRepo(DBContextPostgresql context)
     {
         _context = context;
     }

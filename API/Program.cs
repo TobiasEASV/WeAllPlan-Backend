@@ -6,7 +6,6 @@ using AutoMapper;
 using Core;
 using FluentValidation;
 using Application.Helpers;
-using Infrastructure.DB;
 using Infrastructure.DBPostgresql;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -60,33 +59,32 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: "AccPolicy",
         policy =>
         {
-            policy.WithOrigins("http://localhost:4200")
+            policy.WithOrigins("https://proud-pebble-07d4d8c03.2.azurestaticapps.net")
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials();
         });
 });
 
-// Setup DependencyResolver Service
-Application.DependencyResolver.DependencyResolverService.RegisterApplicationLayer(builder.Services);
-Infrastructure.DependencyResolver.DependencyResolverService.RegisterInfrastructureLayer(builder.Services);
 
-builder.Services.AddValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
 
 if (builder.Environment.IsDevelopment())
 {
     /* Setup the Database Context Class with ConnectionString in AppSettings */
 
-    builder.Services.AddDbContext<DBContextSqlite>(options => options.UseSqlite(
-        builder.Configuration.GetConnectionString("ConnectionStringsDevelopment")));
+    builder.Services.AddDbContext<DBContextPostgresql>();
 }
 
 if (builder.Environment.IsProduction())
 {
-    builder.Services.AddDbContext<DBContextPostgresql>(options => options.UseNpgsql(
-        builder.Configuration.GetConnectionString("ConnectionStringsProduction")));
+    builder.Services.AddDbContext<DBContextPostgresql>();
 }
 
+// Setup DependencyResolver Service
+Application.DependencyResolver.DependencyResolverService.RegisterApplicationLayer(builder.Services);
+Infrastructure.DependencyResolver.DependencyResolverService.RegisterInfrastructureLayer(builder.Services);
+
+builder.Services.AddValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
 
