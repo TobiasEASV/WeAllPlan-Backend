@@ -1,6 +1,6 @@
 ﻿using Application.Interfaces;
 using Core;
-using Infrastructure.DB;
+using Infrastructure.DBPostgresql;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
@@ -8,56 +8,56 @@ namespace Infrastructure;
 
 public class EventRepository : IEventRepository
 {
-    private DBContextSqlite _dbContextSqlite;
+    private DBContextPostgresql _Context;
 
-    public EventRepository(DBContextSqlite dbContextSqlite)
+    public EventRepository(DBContextPostgresql context)
     {
-        _dbContextSqlite = dbContextSqlite;
+        _Context = context;
     }
 
     public async Task<Event> CreateEvent(Event anEvent)
     {
-        EntityEntry<Event> x = await _dbContextSqlite.Events.AddAsync(anEvent);
-        await _dbContextSqlite.SaveChangesAsync();
+        EntityEntry<Event> x = await _Context.Events.AddAsync(anEvent);
+        await _Context.SaveChangesAsync();
         return x.Entity;
     }
 
     public async Task<List<Event>> GetAll()
     {
-        return await _dbContextSqlite.Events.Include(e => e.User).ToListAsync();
+        return await _Context.Events.Include(e => e.User).ToListAsync();
     }
 
     public async Task<Event> UpdateEvent(Event Event)
     {
-        await Task.Run(() => _dbContextSqlite.Events.Attach(Event));
-        _dbContextSqlite.Entry(Event).Property(e => e.Title).IsModified = true;
-        _dbContextSqlite.Entry(Event).Property(e => e.Description).IsModified = true;
-        _dbContextSqlite.Entry(Event).Property(e => e.Location).IsModified = true;
-        await _dbContextSqlite.SaveChangesAsync();
+        await Task.Run(() => _Context.Events.Attach(Event));
+        _Context.Entry(Event).Property(e => e.Title).IsModified = true;
+        _Context.Entry(Event).Property(e => e.Description).IsModified = true;
+        _Context.Entry(Event).Property(e => e.Location).IsModified = true;
+        await _Context.SaveChangesAsync();
         return Event;
     }
 
     public void Delete(Event Event)
     {
-        _dbContextSqlite.Events.Remove(Event);
-        _dbContextSqlite.SaveChanges();
+        _Context.Events.Remove(Event);
+        _Context.SaveChanges();
     }
 
     public User getUser(int userId)
     {
-        return _dbContextSqlite.Users.Find(userId);
+        return _Context.Users.Find(userId);
     }
 
     public async Task<Event> GetEventById(int id)
     {
-        return await _dbContextSqlite.Events.Include(Event => Event.User)
+        return await _Context.Events.Include(Event => Event.User)
             .Include(Event => Event.EventSlots)!
-            .ThenInclude(EventSlot => EventSlot.SlotAnswers)
+            .ThenInclude<Event, EventSlot, List<SlotAnswer>>(EventSlot => EventSlot.SlotAnswers)
             .SingleAsync<Event>(Event => Event.Id == id);
     }
 
     public async Task<List<Event>> GetEventByUserId(int userId)
     {
-        return await _dbContextSqlite.Events.Include(e => e.User).Where(e => e.User.Id == userId).ToListAsync();
+        return await _Context.Events.Include(e => e.User).Where(e => e.User.Id == userId).ToListAsync();
     }
 }
