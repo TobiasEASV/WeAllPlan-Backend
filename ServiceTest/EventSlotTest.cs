@@ -220,7 +220,6 @@ public class EventSlotTest
     /// <summary>
     /// 5.1
     /// </summary>
-
     [Fact]
     public void ValidDeleteEventSlotTest()
     {
@@ -241,7 +240,7 @@ public class EventSlotTest
         //Assert
         mockRepo.Verify(repo => repo.DeleteEventSlot(It.IsAny<List<EventSlot>>()), Times.Once);
     }
-    
+
     /// <summary>
     /// 5.2
     /// </summary>
@@ -262,8 +261,9 @@ public class EventSlotTest
 
         string expected = "You do not own this Event.";
         //Act + Assert
-        ValidationException actual = Assert.Throws<ValidationException>(() => service.DeleteEventSlots(listToDelete,userId));
-        Assert.Equal(expected,actual.Message);
+        ValidationException actual =
+            Assert.Throws<ValidationException>(() => service.DeleteEventSlots(listToDelete, userId));
+        Assert.Equal(expected, actual.Message);
     }
 
     // DATA
@@ -274,7 +274,7 @@ public class EventSlotTest
         new EventSlotDTO()
         {
             Confirmed = false,
-            EventId =1,
+            EventId = 1,
             Id = 1,
             EndTime = NewDate.Today().AddMinutes(22),
             SlotAnswers = new List<SlotAnswer>()
@@ -310,7 +310,7 @@ public class EventSlotTest
             StartTime = NewDate.Today()
         }
     };
-    
+
     //EventSlots
     private List<EventSlot> validEventSlot = new List<EventSlot>()
     {
@@ -353,7 +353,7 @@ public class EventSlotTest
             StartTime = NewDate.Today().AddMinutes(22)
         }
     };
-    
+
     //Events
     public static Event eventIdOne = new Event()
     {

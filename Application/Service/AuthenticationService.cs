@@ -10,7 +10,6 @@ using Core.Interfaces;
 using FluentValidation;
 using FluentValidation.Results;
 using Google.Apis.Auth;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using ValidationException = System.ComponentModel.DataAnnotations.ValidationException;
 
@@ -19,24 +18,17 @@ namespace Application;
 public class AuthenticationService : IAuthenticationService
 {
     private readonly IUserRepository _userRepository;
-    private readonly AppSettings _appSettings;
     private readonly IValidator<RegisterUserDto> _userValidator;
     private readonly EmailValidator _emailValidator;
 
-    public AuthenticationService(IUserRepository userRepository, IOptions<AppSettings> appSettings,
+    public AuthenticationService(IUserRepository userRepository,
         IValidator<RegisterUserDto> userValidator)
     {
-        if (appSettings is null)
-        {
-            throw new NullReferenceException("Can't create service object without secret file (appsetting).");
-        }
-
         if (userRepository is null)
         {
             throw new NullReferenceException("Can't create service object with null repository.");
         }
 
-        _appSettings = appSettings.Value;
         _userRepository = userRepository;
         _userValidator = userValidator;
         _emailValidator = new EmailValidator();
@@ -99,7 +91,7 @@ public class AuthenticationService : IAuthenticationService
     {
         var settings = new GoogleJsonWebSignature.ValidationSettings()
         {
-            Audience = new List<string> {_appSettings.GoogleClientId }
+            Audience = new List<string> { AppSettings.GoogleClientId }
         };
 
         try
@@ -151,7 +143,7 @@ public class AuthenticationService : IAuthenticationService
             ExpireDate = DateTime.UtcNow.AddHours(2);
         }
 
-        var key = Encoding.UTF8.GetBytes(_appSettings.Secret);
+        var key = Encoding.UTF8.GetBytes(AppSettings.Secret);
         var tokenDescriptor = new SecurityTokenDescriptor();
         tokenDescriptor = new SecurityTokenDescriptor
         {

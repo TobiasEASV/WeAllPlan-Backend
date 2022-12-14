@@ -2,11 +2,13 @@
 
 public class AppSettings
 {
-    public string Secret { get; set; }
+    public static string Secret { get; set; }
 
-    public string Key { get; set; }
+    public static string Key { get; set; }
 
-    public string Iv { get; set; }
+    public static string Iv { get; set; }
 
-    public string GoogleClientId { get; set; }
+    public static string GoogleClientId { get; set; }
+
+    public static string UriString { get; set; }
 }

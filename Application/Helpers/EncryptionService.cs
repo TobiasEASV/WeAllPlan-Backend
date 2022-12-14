@@ -8,14 +8,12 @@ public class EncryptionService
     private byte[] _key;
     private byte[] _iv;
     private AesCryptoServiceProvider _aes;
-    private readonly AppSettings _appSettings;
 
 
-    public EncryptionService(IOptions<AppSettings> appSettings)
+    public EncryptionService()
     {
-        _appSettings = appSettings.Value;
-        _key = Convert.FromHexString(_appSettings.Key); //E.g. 256 bit hex string
-        _iv = Convert.FromHexString(_appSettings.Iv); //E.g. 128 bit hex string
+        _key = Convert.FromHexString(AppSettings.Key); //E.g. 256 bit hex string
+        _iv = Convert.FromHexString(AppSettings.Iv); //E.g. 128 bit hex string
         _aes = new AesCryptoServiceProvider();
 
 

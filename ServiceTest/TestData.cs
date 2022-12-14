@@ -102,7 +102,7 @@ public class TestData
         {
             new List<SlotAnswerDTO>()
             {
-                new SlotAnswerDTO(){Answer = 1, Email = "MyEmail", EventSlotId = 1, Id = 1, UserName = null}
+                new SlotAnswerDTO(){Answer = 1, Email = "MyEmail", EventSlotId = 1, Id = 1, UserName = ""}
             },
             new[]{"Username cannot be empty"}
         };

@@ -32,12 +32,16 @@ var mapper = new MapperConfiguration(config =>
 }).CreateMapper();
 builder.Services.AddSingleton(mapper);
 
+AppSettings.UriString = builder.Configuration.GetValue<string>("AppSettings:UriString");
+AppSettings.Iv = builder.Configuration.GetValue<string>("AppSettings:Iv");
+AppSettings.Key = builder.Configuration.GetValue<string>("AppSettings:Key");
+AppSettings.GoogleClientId = builder.Configuration.GetValue<string>("AppSettings:GoogleClientId");
+AppSettings.Secret = builder.Configuration.GetValue<string>("AppSettings:Secret");
+
 builder.Services.AddValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddControllers()
     .AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
-
-builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
 
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
@@ -59,7 +63,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: "AccPolicy",
         policy =>
         {
-            policy.WithOrigins("https://weallplan.herokuapp.com")
+            policy.WithOrigins(builder.Configuration.GetValue<string>("AppSettings:AllowOrigins"))
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials();

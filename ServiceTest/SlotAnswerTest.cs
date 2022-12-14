@@ -77,9 +77,9 @@ public class SlotAnswerTest
         List<SlotAnswerDTO> answerDTO = new List<SlotAnswerDTO>(){
            new SlotAnswerDTO(){Answer = 1, Email = "MinEmail@ok.dk", EventSlotId = 1, UserName = "Carol"}
         };
-        
 
         ISlotAnswerService slotAnswerService = new SlotAnswerService(mock.Object, _mapper, _validator);
+        mock.Setup(repo => repo.GetAll()).ReturnsAsync(_mapper.Map<List<SlotAnswer>>(fakeRepo));
         
         //Act
         slotAnswerService.CreateSlotAnswer(answerDTO);
@@ -101,6 +101,8 @@ public class SlotAnswerTest
         Mock<ISlotAnswerRepository> mock = new Mock<ISlotAnswerRepository>();
 
         ISlotAnswerService service = new SlotAnswerService(mock.Object, _mapper, _validator);
+        
+        mock.Setup(repo => repo.GetAll()).ReturnsAsync(_mapper.Map<List<SlotAnswer>>(fakeRepo));
 
         //Act + Assert
         ValidationException actual =
